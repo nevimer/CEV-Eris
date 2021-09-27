@@ -7,14 +7,6 @@
 //Checks if all high bits in req_mask are set in bitfield
 #define BIT_TEST_ALL(bitfield, req_mask) ((~(bitfield) & (req_mask)) == 0)
 
-/// isnum() returns TRUE for NaN. Also, NaN != NaN. Checkmate, BYOND.
-#define isnan(x) ( (x) != (x) )
-
-#define isinf(x) (isnum((x)) && (((x) == text2num("inf")) || ((x) == text2num("-inf"))))
-
-/// NaN isn't a number, damn it. Infinity is a problem too.
-#define isnum_safe(x) ( isnum((x)) && !isnan((x)) && !isinf((x)) )
-
 //Inverts the colour of an HTML string
 /proc/invertHTML(HTMLstring)
 	if(!istext(HTMLstring))
@@ -299,8 +291,8 @@ Turf and target are seperate in case you want to teleport some distance from a t
 		var/search_pda = 1
 
 		for(var/A in searching)
-			if( search_id && istype(A,/obj/item/card/id) )
-				var/obj/item/card/id/ID = A
+			if( search_id && istype(A,/obj/item/weapon/card/id) )
+				var/obj/item/weapon/card/id/ID = A
 				if(ID.registered_name == oldname)
 					ID.registered_name = newname
 					ID.name = "[newname]'s ID Card ([ID.assignment])"
@@ -466,6 +458,8 @@ Turf and target are seperate in case you want to teleport some distance from a t
 	for(var/mob/living/carbon/human/M in sortmob)
 		moblist.Add(M)
 	for(var/mob/living/carbon/brain/M in sortmob)
+		moblist.Add(M)
+	for(var/mob/living/carbon/alien/M in sortmob)
 		moblist.Add(M)
 	for(var/mob/observer/ghost/M in sortmob)
 		moblist.Add(M)
@@ -691,7 +685,7 @@ proc/GaussRandRound(var/sigma, var/roundto)
 	return "[displayed_x]:[displayed_y]:[displayed_z][displayed_area]"
 
 
-/area/proc/move_contents_to(var/area/A, var/turftoleave, var/direction)
+/area/proc/move_contents_to(var/area/A, var/turftoleave=null, var/direction)
 	//Takes: Area. Optional: turf type to leave behind.
 	//Returns: Nothing.
 	//Notes: Attempts to move the contents of one area to another area.
@@ -952,26 +946,27 @@ GLOBAL_LIST_INIT(duplicate_forbidden_vars,list(
 					var/list/mobs = new/list()
 					var/list/newmobs = new/list()
 
+					// Copy objects
 					for(var/obj/O in T)
 						objs += O
 
 					for(var/obj/O in objs)
 						newobjs += DuplicateObject(O , 1)
 
-
 					for(var/obj/O in newobjs)
-						O.loc = X
+						O.forceMove(X)
 
+					// Copy mobs
 					for(var/mob/M in T)
 
-						if(!ismob(M) || isEye(M)) continue // If we need to check for more mobs, I'll add a variable
+						if(!istype(M,/mob) || isEye(M)) continue // If we need to check for more mobs, I'll add a variable
 						mobs += M
 
 					for(var/mob/M in mobs)
 						newmobs += DuplicateObject(M , 1)
 
 					for(var/mob/M in newmobs)
-						M.loc = X
+						M.forceMove(X)
 
 					copiedobjs += newobjs
 					copiedobjs += newmobs
@@ -1018,10 +1013,20 @@ GLOBAL_LIST_INIT(duplicate_forbidden_vars,list(
 			return "left arm"
 		if(BP_R_ARM)
 			return "right arm"
+		if(BP_R_HAND)
+			return "right hand"
+		if(BP_L_HAND)
+			return "left hand"
+
 		if(BP_L_LEG )
 			return "left leg"
 		if(BP_R_LEG)
 			return "right leg"
+		if(BP_L_FOOT)
+			return "left foot"
+		if(BP_R_FOOT)
+			return "right foot"
+
 		else
 			return zone
 
@@ -1039,12 +1044,12 @@ proc/is_hot(obj/item/W)
 	if(QUALITY_WELDING in W.tool_qualities)
 		return 3800
 	switch(W.type)
-		if(/obj/item/flame/lighter)
+		if(/obj/item/weapon/flame/lighter)
 			if(W:lit)
 				return 1500
 			else
 				return 0
-		if(/obj/item/flame/match)
+		if(/obj/item/weapon/flame/match)
 			if(W:lit)
 				return 1000
 			else
@@ -1054,7 +1059,7 @@ proc/is_hot(obj/item/W)
 				return 1000
 			else
 				return 0
-		if(/obj/item/melee/energy)
+		if(/obj/item/weapon/melee/energy)
 			return 3500
 		else
 			return 0
@@ -1078,20 +1083,20 @@ proc/is_hot(obj/item/W)
 	if(W.sharp) return TRUE
 	return ( \
 		W.sharp														|| \
-		istool(W)													|| \
-		istype(W, /obj/item/pen)								|| \
-		istype(W, /obj/item/flame/lighter/zippo)				|| \
-		istype(W, /obj/item/flame/match)						|| \
+		istype(W, /obj/item/weapon/tool)							|| \
+		istype(W, /obj/item/weapon/pen)								|| \
+		istype(W, /obj/item/weapon/flame/lighter/zippo)				|| \
+		istype(W, /obj/item/weapon/flame/match)						|| \
 		istype(W, /obj/item/clothing/mask/smokable/cigarette)		\
 	)
 
 /proc/is_surgery_tool(obj/item/W)
 	return (	\
-	istype(W, /obj/item/tool/scalpel)			||	\
-	istype(W, /obj/item/tool/hemostat)		||	\
-	istype(W, /obj/item/tool/retractor)		||	\
-	istype(W, /obj/item/tool/cautery)			||	\
-	istype(W, /obj/item/tool/bonesetter)
+	istype(W, /obj/item/weapon/tool/scalpel)			||	\
+	istype(W, /obj/item/weapon/tool/hemostat)		||	\
+	istype(W, /obj/item/weapon/tool/retractor)		||	\
+	istype(W, /obj/item/weapon/tool/cautery)			||	\
+	istype(W, /obj/item/weapon/tool/bonesetter)
 	)
 
 /proc/reverse_direction(var/dir)
@@ -1121,7 +1126,7 @@ var/list/WALLITEMS = list(
 	/obj/structure/extinguisher_cabinet, /obj/structure/reagent_dispensers/peppertank,
 	/obj/machinery/status_display, /obj/machinery/requests_console, /obj/machinery/light_switch, /obj/structure/sign,
 	/obj/machinery/newscaster, /obj/machinery/firealarm, /obj/structure/noticeboard,
-	/obj/item/storage/secure/safe, /obj/machinery/door_timer, /obj/machinery/flasher, /obj/machinery/keycard_auth,
+	/obj/item/weapon/storage/secure/safe, /obj/machinery/door_timer, /obj/machinery/flasher, /obj/machinery/keycard_auth,
 	/obj/structure/mirror, /obj/structure/fireaxecabinet, /obj/item/modular_computer/telescreen,
 	/obj/machinery/light_construct, /obj/machinery/light, /obj/machinery/holomap
 	)
@@ -1260,20 +1265,3 @@ var/list/FLOORITEMS = list(
 		return 1
 	else
 		return 0
-
-//datum may be null, but it does need to be a typed var
-#define NAMEOF(datum, X) (#X || ##datum.##X)
-
-#define VARSET_LIST_CALLBACK(target, var_name, var_value) CALLBACK(GLOBAL_PROC, /proc/___callbackvarset, ##target, ##var_name, ##var_value)
-//dupe code because dm can't handle 3 level deep macros
-#define VARSET_CALLBACK(datum, var, var_value) CALLBACK(GLOBAL_PROC, /proc/___callbackvarset, ##datum, NAMEOF(##datum, ##var), ##var_value)
-
-/proc/___callbackvarset(list_or_datum, var_name, var_value)
-	if(length(list_or_datum))
-		list_or_datum[var_name] = var_value
-		return
-	var/datum/D = list_or_datum
-	// if(IsAdminAdvancedProcCall())
-	// 	D.vv_edit_var(var_name, var_value) //same result generally, unless badmemes
-	// else
-	D.vars[var_name] = var_value

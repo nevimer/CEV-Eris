@@ -12,7 +12,7 @@
 		rad = 30
 	)
 	siemens_coefficient = 0.35
-	species_restricted = list(SPECIES_HUMAN)
+	species_restricted = list("Human")
 	camera_networks = list(NETWORK_MERCENARY)
 	light_overlay = "helmet_light_green"
 
@@ -34,7 +34,7 @@
 	siemens_coefficient = 0.35
 	breach_threshold = 10
 	resilience = 0.07
-	species_restricted = list(SPECIES_HUMAN)
+	species_restricted = list("Human")
 	supporting_limbs = list()
 	helmet = /obj/item/clothing/head/space/void/SCAF
 	spawn_blacklisted = TRUE
@@ -55,7 +55,7 @@
 		rad = 75
 	)
 	siemens_coefficient = 0.35
-	species_restricted = list(SPECIES_HUMAN)
+	species_restricted = list("Human")
 	camera_networks = list(NETWORK_MERCENARY)
 	light_overlay = "helmet_light_ihs"
 
@@ -83,17 +83,16 @@
 	siemens_coefficient = 0.35
 	breach_threshold = 8
 	resilience = 0.08
-	species_restricted = list(SPECIES_HUMAN)
+	species_restricted = list("Human")
 	helmet = /obj/item/clothing/head/space/void/merc
+	rarity_value = 50
 
 /obj/item/clothing/suit/space/void/merc/equipped
-	spawn_blacklisted = TRUE
 	boots = /obj/item/clothing/shoes/magboots
-	tank = /obj/item/tank/oxygen
+	tank = /obj/item/weapon/tank/oxygen
 	accompanying_object = null
 	spawn_blacklisted = TRUE
 
 /obj/item/clothing/suit/space/void/merc/boxed
-	spawn_blacklisted = TRUE
-	tank = /obj/item/tank/emergency_oxygen/double
+	tank = /obj/item/weapon/tank/emergency_oxygen/double
 	spawn_blacklisted = TRUE

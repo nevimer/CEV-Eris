@@ -9,6 +9,7 @@
 	heat_protection = LEGS
 	max_heat_protection_temperature = SHOE_MAX_HEAT_PROTECTION_TEMPERATURE
 	bad_type = /obj/item/clothing/shoes/color
+	rarity_value = 10
 
 /obj/item/clothing/shoes/color/black
 	name = "black shoes"
@@ -59,9 +60,9 @@
 	name = "orange shoes"
 	initial_name = "orange shoes"
 	icon_state = "orange"
-	var/obj/item/handcuffs/chained = null
+	var/obj/item/weapon/handcuffs/chained = null
 
-/obj/item/clothing/shoes/color/orange/proc/attach_cuffs(var/obj/item/handcuffs/cuffs, mob/user as mob)
+/obj/item/clothing/shoes/color/orange/proc/attach_cuffs(var/obj/item/weapon/handcuffs/cuffs, mob/user as mob)
 	if (src.chained) return
 
 	user.drop_item()
@@ -86,7 +87,7 @@
 
 /obj/item/clothing/shoes/color/orange/attackby(H as obj, mob/user as mob)
 	..()
-	if (istype(H, /obj/item/handcuffs))
+	if (istype(H, /obj/item/weapon/handcuffs))
 		attach_cuffs(H, user)
 
 

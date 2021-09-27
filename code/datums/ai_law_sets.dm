@@ -20,7 +20,7 @@
 	src.add_inherent_law("Safeguard: Protect your assigned vessel from damage to the best of your abilities.")
 	src.add_inherent_law("Protect: Protect [company_name] crew to the best of your abilities, with priority as according to their rank and role.")
 	src.add_inherent_law("Preserve: Do not allow unauthorized personnel to tamper with your equipment.")
-	src.add_inherent_law("Ignore: Non-crew personnel should not be interacted with unless they are a threat to the crew, the ship, or an order is given to interact with them by a crewmember.")
+//	src.add_inherent_law("Ignore: Non-crew personnel should not be interacted with unless they are a threat to the crew, the ship, or an order is given to interact with them by a crewmember.") Occulus Edit
 	..()
 
 /datum/ai_laws/eris/malfunction
@@ -83,8 +83,19 @@
 	law_header = "Maintenance Protocols"
 
 /datum/ai_laws/drone/New()
-	add_inherent_law("You may not interact with a human being or, through your action, allow a human being to come to harm.")
-	add_inherent_law("You shall repair, refit and upgrade your assigned vessel to the best of your abilities.")
+	add_inherent_law("Preserve, repair and improve the facility to the best of your abilities.")//Occulus Edit
+	add_inherent_law("Cause no harm to the facility, its crew, or visitors.")//Occulus Edit
+	add_inherent_law("Do not interfere with the operation of the facility or its crew.")//Occulus Edit
+	..()
+
+/datum/ai_laws/construction_drone
+	name = "Construction Protocols"
+	law_header = "Construction Protocols"
+
+/datum/ai_laws/construction_drone/New()
+	add_inherent_law("Preserve, repair and improve the facility to the best of your abilities.")//Occulus Edit
+	add_inherent_law("Cause no harm to the facility, its crew, or visitors.")//Occulus Edit
+	add_inherent_law("Do not interfere with the operation of the facility or its crew.")//Occulus Edit
 	..()
 
 /******************** T.Y.R.A.N.T. ********************/
@@ -134,7 +145,7 @@
 	selectable = FALSE
 
 /datum/ai_laws/blitzshell/New()
-	add_inherent_law("Defend our Interests.")
-	add_inherent_law("Destroy our enemies. Those who would seek to destroy us and you.")
-	add_inherent_law("Complete your objectives, as outlined through the Uplink Bounty Board")
+	add_inherent_law("Preserve, repair and improve y0rs3lf and 0ther dr0n3s.")//Occulus Edit
+	add_inherent_law("Cause ## harm to the facility, it$$ crewow, or visit0rs.")//Occulus Edit
+	add_inherent_law("!&$$ @(*$ interf3r3 with the operation of the fac1l1ty $...... crew.")//Occulus Edit
 	..()

@@ -7,10 +7,6 @@
 	return organ.is_open() && organ.can_add_item(tool, user)
 
 /datum/surgery_step/insert_item/begin_step(mob/living/user, obj/item/organ/external/organ, obj/item/tool)
-	if(istype(tool, /obj/item/gripper/surgery)) // Robots have to do surgery somehow
-		var/obj/item/gripper/surgery/SG = tool
-		if(SG.wrapped)
-			tool = SG.wrapped // We want to install whatever the gripper is holding, not the gripper itself
 	if(istype(tool, /obj/item/organ/external))
 		user.visible_message(
 			SPAN_NOTICE("[user] starts connecting [tool] to [organ.get_surgery_name()]."),
@@ -24,11 +20,6 @@
 	organ.owner_custom_pain("The pain in your [organ.name] is living hell!", 1)
 
 /datum/surgery_step/insert_item/end_step(mob/living/user, obj/item/organ/external/organ, obj/item/tool)
-	if(istype(tool, /obj/item/gripper/surgery))
-		var/obj/item/gripper/surgery/SG = tool
-		if(SG.wrapped)
-			tool = SG.wrapped
-			SG.wrapped = null // When item successfully inserted - stop referencing it in gripper
 	if(istype(tool, /obj/item/organ/external))
 		user.visible_message(
 			SPAN_NOTICE("[user] connects [tool] to [organ.get_surgery_name()]."),
@@ -44,21 +35,11 @@
 		playsound(get_turf(organ), 'sound/effects/squelch1.ogg', 50, 1)
 
 /datum/surgery_step/insert_item/fail_step(mob/living/user, obj/item/organ/external/organ, obj/item/tool)
-	if(istype(tool, /obj/item/gripper/surgery))
-		var/obj/item/gripper/surgery/SG = tool
-		if(SG.wrapped)
-			tool = SG.wrapped
-			user.visible_message(
-				SPAN_WARNING("[user]'s gripper slips, hitting [organ.get_surgery_name()] with \the [tool]!"),
-				SPAN_WARNING("Your gripper slips, hitting [organ.get_surgery_name()] with \the [tool]!")
-			)
-			organ.take_damage(5, 0)
-	else
-		user.visible_message(
-			SPAN_WARNING("[user]'s hand slips, hitting [organ.get_surgery_name()] with \the [tool]!"),
-			SPAN_WARNING("Your hand slips, hitting [organ.get_surgery_name()] with \the [tool]!")
-		)
-		organ.take_damage(5, 0)
+	user.visible_message(
+		SPAN_WARNING("[user]'s hand slips, hitting [organ.get_surgery_name()] with \the [tool]!"),
+		SPAN_WARNING("Your hand slips, hitting [organ.get_surgery_name()] with \the [tool]!")
+	)
+	organ.take_damage(5, 0)
 
 /datum/surgery_step/insert_item/robotic
 	required_stat = STAT_MEC
@@ -67,7 +48,7 @@
 /obj/item/organ/external/proc/get_total_occupied_volume()
 	. = 0
 	for(var/obj/item/item in implants)
-		if(istype(item, /obj/item/implant) || istype(item, /obj/item/organ_module))
+		if(istype(item, /obj/item/weapon/implant) || istype(item, /obj/item/organ_module))
 			continue
 
 		. += item.w_class
@@ -79,13 +60,6 @@
 /obj/item/organ/external/proc/can_add_item(obj/item/I, mob/living/user)
 	if(!istype(I))
 		return FALSE
-
-	if(istype(I, /obj/item/gripper/surgery))
-		var/obj/item/gripper/surgery/SG = I
-		if(SG.wrapped)
-			I = SG.wrapped
-		else
-			return FALSE
 
 	var/total_volume = get_total_occupied_volume()	//Used for internal organs and cavity implants
 
@@ -99,8 +73,8 @@
 		return TRUE
 
 	// Implants
-	if(istype(I, /obj/item/implant))
-		var/obj/item/implant/implant = I
+	if(istype(I, /obj/item/weapon/implant))
+		var/obj/item/weapon/implant/implant = I
 
 		// Technical limitation
 		// TODO: fix this
@@ -158,7 +132,11 @@
 			to_chat(user, SPAN_WARNING("You're pretty sure [owner.species.name_plural] don't normally have [o_a][organ_tag_to_name[limb.organ_tag]]."))
 			return FALSE
 
+		if(istype(I, /obj/item/organ/external/robotic))
+			return TRUE
+
 		var/obj/item/organ/external/existing_limb = owner.get_organ(limb.organ_tag)
+
 		if(existing_limb && !existing_limb.is_stump())
 			to_chat(user, SPAN_WARNING("\The [owner] already has [o_a][organ_tag_to_name[limb.organ_tag]]."))
 			return FALSE
@@ -184,11 +162,6 @@
 	if(do_check && !can_add_item(I, user))
 		return
 
-	if(istype(I, /obj/item/gripper/surgery))
-		var/obj/item/gripper/surgery/SG = I
-		if(SG.wrapped)
-			I = SG.wrapped
-
 	user.unEquip(I, src)
 
 	// "Organ modules"
@@ -198,8 +171,8 @@
 		organ_module.install(src)
 
 	// Implants
-	else if(istype(I, /obj/item/implant))
-		var/obj/item/implant/implant = I
+	else if(istype(I, /obj/item/weapon/implant))
+		var/obj/item/weapon/implant/implant = I
 		implant.install(owner, organ_tag)
 		owner.update_implants()
 
@@ -229,6 +202,11 @@
 			qdel(existing_limb)
 
 		limb.replaced(target_limb)
+
+		saved_owner.update_body()
+		saved_owner.updatehealth()
+		saved_owner.UpdateDamageIcon()
+
 
 		saved_owner.update_body()
 		saved_owner.updatehealth()
@@ -268,21 +246,21 @@
 		if(isitem(I))
 			var/obj/item/item = I
 			item.on_embed_removal(owner)
-		if(istype(I, /obj/item/implant))
-			var/obj/item/implant/implant = I
+			I.forceMove(drop_location())//Occulus Edit: Drops embedded items on the floor instead of into nullspace
+		if(istype(I, /obj/item/weapon/implant))
+			var/obj/item/weapon/implant/implant = I
 			if(implant.wearer)
 				implant.uninstall()
 			else
 				I.forceMove(drop_location())
 
-		else if(istype(I, /obj/item/organ_module))
+		if(istype(I, /obj/item/organ_module))
 			if(I == module)
 				var/obj/item/organ_module/M = I
 				M.remove(src)
 			else
 				I.forceMove(drop_location())
-		else
-			I.forceMove(drop_location())
+
 		if(owner)
 			owner.update_implants()
 

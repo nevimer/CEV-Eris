@@ -17,10 +17,10 @@
 	var/inventory_shown = 1
 
 	//Damage related vars, NOTE: THESE SHOULD ONLY BE MODIFIED BY PROCS
-	var/bruteloss = 0	//Brutal damage caused by brute force (punching, being clubbed by a toolbox ect... this also accounts for pressure damage)
-	var/oxyloss = 0	//Oxygen depravation damage (no air in lungs)
-	var/toxloss = 0	//Toxic damage caused by being poisoned or radiated
-	var/fireloss = 0	//Burn damage caused by being way too hot, too cold or burnt.
+	var/bruteloss = 0.0	//Brutal damage caused by brute force (punching, being clubbed by a toolbox ect... this also accounts for pressure damage)
+	var/oxyloss = 0.0	//Oxygen depravation damage (no air in lungs)
+	var/toxloss = 0.0	//Toxic damage caused by being poisoned or radiated
+	var/fireloss = 0.0	//Burn damage caused by being way too hot, too cold or burnt.
 	var/cloneloss = 0	//Damage caused by being cloned or ejected from the cloner early. slimes also deal cloneloss damage to victims
 	var/brainloss = 0	//'Retardation' damage caused by someone hitting you in the head with a bible or being infected with brainrot.
 	var/halloss = 0		//Hallucination damage. 'Fake' damage obtained through hallucinating or the holodeck. Sleeping should cause it to wear off.
@@ -32,6 +32,7 @@
 	var/t_sl_gas
 	var/t_n2
 
+	var/fuzzy = 1	//Sprite scaling Fuzzy/Sharp toggle
 	var/now_pushing
 	var/mob_bump_flag = 0
 	var/mob_swap_flags = 0
@@ -45,6 +46,7 @@
 	var/list/datum/action/actions = list()
 	var/step_count = 0
 
+	var/tod // Time of death
 	var/update_slimes = 1
 	var/silent 		// Can't talk. Value goes down every life proc.
 	var/on_fire = 0 //The "Are we on fire?" var
@@ -69,11 +71,14 @@
 
 	//Used in living/recoil.dm
 	var/recoil = 0 //What our current recoil level is
-	var/recoil_reduction_timer
+	var/last_recoil_update = 0 //When our last recoil update was
+	var/recoil_timer //Holds the timer ID
 	var/falls_mod = 1
 	var/mob_bomb_defense = 0	// protection from explosives
 	var/mod_climb_delay = 1 // delay for climb
 	var/noise_coeff = 1 //noise coefficient
+
+	var/agony_coefficient = 1 // OCCULUS EDIT - Making mobs selectively stronger against non-lethals
 
 	spawn_frequency = 10
 	bad_type = /mob/living

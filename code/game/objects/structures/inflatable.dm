@@ -37,7 +37,7 @@
 	icon_state = "wall"
 
 	var/undeploy_path = null
-	var/health = 50
+	var/health = 50.0
 
 /obj/structure/inflatable/wall
 	name = "inflatable wall"
@@ -66,13 +66,13 @@
 
 /obj/structure/inflatable/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(1.0)
 			qdel(src)
 			return
-		if(2)
+		if(2.0)
 			deflate(1)
 			return
-		if(3)
+		if(3.0)
 			if(prob(50))
 				deflate(1)
 				return
@@ -81,8 +81,8 @@
 	add_fingerprint(user)
 	return
 
-/obj/structure/inflatable/attackby(obj/item/W as obj, mob/user as mob)
-	if(!istype(W) || istype(W, /obj/item/inflatable_dispenser)) return
+/obj/structure/inflatable/attackby(obj/item/weapon/W as obj, mob/user as mob)
+	if(!istype(W) || istype(W, /obj/item/weapon/inflatable_dispenser)) return
 
 	if (can_puncture(W))
 		visible_message(SPAN_DANGER("[user] pierces [src] with [W]!"))
@@ -247,7 +247,7 @@
 		to_chat(user, SPAN_NOTICE("The inflatable door is too torn to be inflated!"))
 		add_fingerprint(user)
 
-/obj/item/storage/briefcase/inflatable
+/obj/item/weapon/storage/briefcase/inflatable
 	name = "inflatable barrier box"
 	desc = "Contains inflatable walls and doors."
 	icon_state = "inf_box"
@@ -265,5 +265,5 @@
 			init_inflatable_count -= 1
 		init_inflatable_count = initial(init_inflatable_count)
 
-/obj/item/storage/briefcase/inflatable/empty/init_inflatable_count = 0
+/obj/item/weapon/storage/briefcase/inflatable/empty/init_inflatable_count = 0
 

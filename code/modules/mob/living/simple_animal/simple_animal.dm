@@ -35,7 +35,6 @@
 	var/stop_automated_movement_when_pulled = TRUE //When set to 1 this stops the animal from moving when someone is pulling it.
 	var/atom/movement_target = null//Thing we're moving towards
 	var/turns_since_scan = 0
-	var/eat_from_hand = TRUE
 
 	//Interaction
 	var/response_help   = "tries to help"
@@ -50,7 +49,7 @@
 	var/cold_damage_per_tick = 2	//same as heat_damage_per_tick, only if the bodytemperature it's lower than minbodytemp
 	var/fire_alert = 0
 
-	//Atmos effect - Yes, you can make creatures that require plasma or co2 to survive. N2O is a trace gas and handled separately, hence why it isn't here. It'd be hard to add it. Hard and me don't mix (Yes, yes make all the dick jokes you want with that.) - Errorage
+	//Atmos effect - Yes, you can make creatures that require phoron or co2 to survive. N2O is a trace gas and handled separately, hence why it isn't here. It'd be hard to add it. Hard and me don't mix (Yes, yes make all the dick jokes you want with that.) - Errorage
 	var/min_oxy = 5
 	var/max_oxy = 0					//Leaving something at 0 means it's off - has no maximum
 	var/min_tox = 0
@@ -131,7 +130,7 @@
 	. = ..()
 	if(.)
 		if(src.nutrition && src.stat != DEAD)
-			src.adjustNutrition(-nutrition_step)
+			src.nutrition -= nutrition_step
 
 /mob/living/simple_animal/Released()
 	//These will cause mobs to immediately do things when released.
@@ -160,7 +159,7 @@
 	if(hunger_enabled)
 		if (!nutrition)
 			to_chat(user, SPAN_DANGER("It looks starving!"))
-		else if (nutrition < max_nutrition *0.5)
+		else if (nutrition < max_nutrition *0.49)
 			to_chat(user, SPAN_NOTICE("It looks hungry."))
 		else if ((reagents.total_volume > 0 && nutrition > max_nutrition *0.75) || nutrition > max_nutrition *0.9)
 			to_chat(user, "It looks full and contented.")
@@ -181,7 +180,7 @@
 		if(!.)
 			return FALSE
 
-		if(health <= 0 && stat != DEAD)
+		if(health <= 0)
 			death()
 			return FALSE
 
@@ -218,10 +217,10 @@
 					if(Environment.gas["oxygen"] > max_oxy)
 						atmos_suitable = 0
 				if(min_tox)
-					if(Environment.gas["plasma"] < min_tox)
+					if(Environment.gas["phoron"] < min_tox)
 						atmos_suitable = 0
 				if(max_tox)
-					if(Environment.gas["plasma"] > max_tox)
+					if(Environment.gas["phoron"] > max_tox)
 						atmos_suitable = 0
 				if(min_n2)
 					if(Environment.gas["nitrogen"] < min_n2)
@@ -289,7 +288,7 @@
 /mob/living/simple_animal/proc/process_food()
 	if (hunger_enabled)
 		if (nutrition)
-			adjustNutrition(-nutrition_step)//Bigger animals get hungry faster
+			nutrition -= nutrition_step//Bigger animals get hungry faster
 			nutrition = max(0,min(nutrition, max_nutrition))//clamp the value
 		else
 			if (prob(3))
@@ -360,7 +359,7 @@
 			if (!(status_flags & CANPUSH))
 				return
 
-			var/obj/item/grab/G = new /obj/item/grab(M, src)
+			var/obj/item/weapon/grab/G = new /obj/item/weapon/grab(M, src)
 
 			M.put_in_active_hand(G)
 
@@ -380,10 +379,10 @@
 	return
 
 /mob/living/simple_animal/attackby(var/obj/item/O, var/mob/user)
-	if(istype(O, /obj/item/gripper))
+	if(istype(O, /obj/item/weapon/gripper))
 		return ..(O, user)
 
-	else if(istype(O, /obj/item/reagent_containers) || istype(O, /obj/item/stack/medical))
+	else if(istype(O, /obj/item/weapon/reagent_containers) || istype(O, /obj/item/stack/medical))
 		..()
 
 	else if(meat_type && (stat == DEAD))	//if the animal has a meat, and if it is dead.
@@ -426,7 +425,6 @@
 	movement_target = null
 	icon_state = icon_dead
 	density = FALSE
-	stasis = TRUE
 	return ..(gibbed,deathmessage)
 
 /mob/living/simple_animal/ex_act(severity)
@@ -434,16 +432,16 @@
 		if (HUDtech.Find("flash"))
 			FLICK("flash", HUDtech["flash"])
 	switch (severity)
-		if (1)
+		if (1.0)
 			adjustBruteLoss(500)
 			gib()
 			return
 
-		if (2)
+		if (2.0)
 			adjustBruteLoss(60)
 
 
-		if(3)
+		if(3.0)
 			adjustBruteLoss(30)
 
 
@@ -508,7 +506,7 @@
 				foodtarget = 0
 				stop_automated_movement = 0
 				if (can_eat())
-					for(var/obj/item/reagent_containers/food/snacks/S in oview(src,7))
+					for(var/obj/item/weapon/reagent_containers/food/snacks/S in oview(src,7))
 						if(isturf(S.loc) || ishuman(S.loc))
 							movement_target = S
 							foodtarget = 1
@@ -516,12 +514,12 @@
 
 					//Look for food in people's hand
 					if (!movement_target && beg_for_food)
-						var/obj/item/reagent_containers/food/snacks/F = null
+						var/obj/item/weapon/reagent_containers/food/snacks/F = null
 						for(var/mob/living/carbon/human/H in oview(src,scan_range))
-							if(istype(H.l_hand, /obj/item/reagent_containers/food/snacks))
+							if(istype(H.l_hand, /obj/item/weapon/reagent_containers/food/snacks))
 								F = H.l_hand
 
-							if(istype(H.r_hand, /obj/item/reagent_containers/food/snacks))
+							if(istype(H.r_hand, /obj/item/weapon/reagent_containers/food/snacks))
 								F = H.r_hand
 
 							if (F)

@@ -16,14 +16,14 @@ GLOBAL_DATUM(last_shelter, /obj/item/device/last_shelter)
 
 /obj/item/device/last_shelter/New()
 	..()
-	GLOB.last_shelter = src
-	GLOB.all_faction_items[src] = GLOB.department_church
+//	GLOB.last_shelter = src
+//	GLOB.all_faction_items[src] = GLOB.department_church
 
 /obj/item/device/last_shelter/Destroy()
-	for(var/mob/living/carbon/human/H in viewers(get_turf(src)))
-		SEND_SIGNAL(H, COMSIG_OBJ_FACTION_ITEM_DESTROY, src)
-	GLOB.all_faction_items -= src
-	GLOB.neotheology_faction_item_loss++
+//	for(var/mob/living/carbon/human/H in viewers(get_turf(src)))
+//		SEND_SIGNAL(H, COMSIG_OBJ_FACTION_ITEM_DESTROY, src)
+//	GLOB.all_faction_items -= src
+//	GLOB.neotheology_faction_item_loss++
 	..()
 
 /obj/item/device/last_shelter/attackby(obj/item/I, mob/living/user, params)
@@ -39,7 +39,7 @@ GLOBAL_DATUM(last_shelter, /obj/item/device/last_shelter)
 		to_chat(user, SPAN_NOTICE("The [src] scans deep space for a cruciforms, it's will take a while..."))
 		last_teleport = world.time
 		scan = TRUE
-		var/obj/item/implant/core_implant/cruciform/cruciform = get_cruciform()
+		var/obj/item/weapon/implant/core_implant/cruciform/cruciform = get_cruciform()
 		if(cruciform)
 			scan = FALSE
 			if(istype(src.loc, /mob/living/carbon/human))
@@ -79,7 +79,7 @@ GLOBAL_DATUM(last_shelter, /obj/item/device/last_shelter)
 	var/datum/perk/perk_random = pick(subtypesof(/datum/perk/oddity))
 	H.stats.addPerk(perk_random)
 	H.stats.addPerk(pick(/datum/perk/survivor, /datum/perk/selfmedicated, /datum/perk/vagabond, /datum/perk/merchant, /datum/perk/inspiration))
-	var/obj/item/implant/core_implant/cruciform/cruciform = new /obj/item/implant/core_implant/cruciform(src)
+	var/obj/item/weapon/implant/core_implant/cruciform/cruciform = new /obj/item/weapon/implant/core_implant/cruciform(src)
 	cruciform.add_module(new CRUCIFORM_CLONING)
 	cruciform.activated = TRUE
 	MN.name = H.real_name
@@ -100,7 +100,7 @@ GLOBAL_DATUM(last_shelter, /obj/item/device/last_shelter)
 	for(var/mob/observer/ghost/O in GLOB.player_list)
 		if(O.client)
 			O << 'sound/effects/magic/blind.ogg' //Play this sound to a player whenever when he's chosen to decide.
-			if(alert(O, "Do you want to be cloned as NT disciple? Hurry up, you have 60 seconds to make choice!","Player Request","OH YES","No, I'm autist") == "OH YES")
+			if(alert(O, "Do you want to be cloned as NT disciple? Hurry up, you have 60 seconds to make choice!","Player Request","Yes","No") == "Yes")//Occulus Edit: Removed particularily autistic text in a popup
 				if(!agree_time_out)
 					if(MN)
 						to_chat(O, SPAN_WARNING("Somebody already took this place."))

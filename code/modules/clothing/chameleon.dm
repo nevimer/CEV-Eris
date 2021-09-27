@@ -44,6 +44,7 @@
 	item_state = "bl_suit"
 	spawn_blacklisted = TRUE
 	spawn_tags = SPAWN_TAG_CLOTHING_UNDER_CHAMALEON
+	rarity_value = 50
 
 	origin_tech = list(TECH_COVERT = 3)
 	var/global/list/clothing_choices
@@ -83,6 +84,7 @@
 	body_parts_covered = 0
 	spawn_blacklisted = TRUE
 	spawn_tags = SPAWN_TAG_CLOTHING_HEAD_CHAMALEON
+	rarity_value = 50
 	var/global/list/clothing_choices
 
 /obj/item/clothing/head/chameleon/New()
@@ -155,6 +157,7 @@
 	origin_tech = list(TECH_COVERT = 3)
 	spawn_blacklisted = TRUE
 	spawn_tags = SPAWN_TAG_SHOES_CHAMALEON
+	rarity_value = 50
 	var/global/list/clothing_choices
 
 /obj/item/clothing/shoes/chameleon/New()
@@ -184,7 +187,7 @@
 //**********************
 //**Chameleon Backpack**
 //**********************
-/obj/item/storage/backpack/chameleon
+/obj/item/weapon/storage/backpack/chameleon
 	name = "grey backpack"
 	icon_state = "backpack"
 	item_state = "backpack"
@@ -195,13 +198,13 @@
 	rarity_value = 50
 	var/global/list/clothing_choices
 
-/obj/item/storage/backpack/chameleon/Initialize()
+/obj/item/weapon/storage/backpack/chameleon/Initialize()
 	. = ..()
 	if(!clothing_choices)
-		var/blocked = list(src.type, /obj/item/storage/backpack/satchel/leather/withwallet)
-		clothing_choices = generate_chameleon_choices(/obj/item/storage/backpack, blocked)
+		var/blocked = list(src.type, /obj/item/weapon/storage/backpack/satchel/leather/withwallet)
+		clothing_choices = generate_chameleon_choices(/obj/item/weapon/storage/backpack, blocked)
 
-/obj/item/storage/backpack/chameleon/emp_act(severity) //Because we don't have psych for all slots right now but still want a downside to EMP.  In this case your cover's blown.
+/obj/item/weapon/storage/backpack/chameleon/emp_act(severity) //Because we don't have psych for all slots right now but still want a downside to EMP.  In this case your cover's blown.
 	name = "grey backpack"
 	desc = "A backpack outfitted with cloaking tech. It seems to have a small dial inside, kept away from the storage."
 	icon_state = "backpack"
@@ -209,7 +212,7 @@
 	update_icon()
 	update_wear_icon()
 
-/obj/item/storage/backpack/chameleon/verb/change(picked in clothing_choices)
+/obj/item/weapon/storage/backpack/chameleon/verb/change(picked in clothing_choices)
 	set name = "Change Backpack Appearance"
 	set category = "Chameleon Items"
 	set src in usr
@@ -231,6 +234,7 @@
 	origin_tech = list(TECH_COVERT = 3)
 	spawn_blacklisted = TRUE
 	spawn_tags = SPAWN_TAG_GLOVES_CHAMALEON
+	rarity_value = 50
 	var/global/list/clothing_choices
 
 /obj/item/clothing/gloves/chameleon/New()
@@ -267,6 +271,7 @@
 	origin_tech = list(TECH_COVERT = 3)
 	spawn_blacklisted = TRUE
 	spawn_tags = SPAWN_TAG_MASK_CONTRABAND
+	rarity_value = 50
 	flags_inv = HIDEEYES|HIDEFACE
 	var/global/list/clothing_choices
 
@@ -304,6 +309,7 @@
 	origin_tech = list(TECH_COVERT = 3)
 	spawn_blacklisted = TRUE
 	spawn_tags = SPAWN_TAG_GLASSES_CHAMALEON
+	rarity_value = 50
 	var/list/global/clothing_choices
 
 /obj/item/clothing/glasses/chameleon/New()
@@ -331,7 +337,7 @@
 //*****************
 //**Chameleon Gun**
 //*****************
-/obj/item/gun/energy/chameleon
+/obj/item/weapon/gun/energy/chameleon
 	name = "FS HG .40 Magnum \"Avasarala\""
 	desc = "A hologram projector in the shape of a gun. There is a dial on the side to change the gun's disguise."
 	icon = 'icons/obj/guns/projectile/avasarala.dmi'
@@ -351,16 +357,16 @@
 	var/obj/item/projectile/copy_projectile
 	var/global/list/gun_choices
 
-/obj/item/gun/energy/chameleon/New()
+/obj/item/weapon/gun/energy/chameleon/New()
 	..()
 
 	if(!gun_choices)
 		gun_choices = list()
-		for(var/gun_type in typesof(/obj/item/gun/) - src.type)
-			var/obj/item/gun/G = gun_type
+		for(var/gun_type in typesof(/obj/item/weapon/gun/) - src.type)
+			var/obj/item/weapon/gun/G = gun_type
 			src.gun_choices[initial(G.name)] = gun_type
 
-/obj/item/gun/energy/chameleon/consume_next_projectile()
+/obj/item/weapon/gun/energy/chameleon/consume_next_projectile()
 	var/obj/item/projectile/P = ..()
 	if(P && ispath(copy_projectile))
 		P.name = initial(copy_projectile.name)
@@ -374,21 +380,21 @@
 		P.impact_type = initial(copy_projectile.impact_type)
 	return P
 
-/obj/item/gun/energy/chameleon/emp_act(severity)
+/obj/item/weapon/gun/energy/chameleon/emp_act(severity)
 	name = "FS HG .40 Magnum \"Avasarala\""
 	desc = "A hologram projector in the shape of a gun. There is a dial on the side to change the gun's disguise."
 	icon_state = "avasarala"
 	update_icon()
 	update_wear_icon()
 
-/obj/item/gun/energy/chameleon/disguise(newtype)
-	var/obj/item/gun/copy = ..()
+/obj/item/weapon/gun/energy/chameleon/disguise(newtype)
+	var/obj/item/weapon/gun/copy = ..()
 
 	flags_inv = copy.flags_inv
 	fire_sound = copy.fire_sound
 	fire_sound_text = copy.fire_sound_text
 
-	var/obj/item/gun/energy/E = copy
+	var/obj/item/weapon/gun/energy/E = copy
 	if(istype(E))
 		copy_projectile = E.projectile_type
 		//charge_meter = E.charge_meter //does not work very well with icon_state changes, ATM
@@ -396,7 +402,7 @@
 		copy_projectile = null
 		//charge_meter = 0
 
-/obj/item/gun/energy/chameleon/verb/change(picked in gun_choices)
+/obj/item/weapon/gun/energy/chameleon/verb/change(picked in gun_choices)
 	set name = "Change Gun Appearance"
 	set category = "Chameleon Items"
 	set src in usr
@@ -405,39 +411,3 @@
 		return
 
 	disguise(gun_choices[picked], usr)
-
-//*****************
-//**Chameleon Headset**
-//*****************
-
-/obj/item/device/radio/headset/chameleon
-	name = "radio headset"
-	desc = "An updated, modular intercom that fits over the head. Takes encryption keys. There is a dial on the side to change the headset's disguise."
-	icon_state = "headset"
-	item_state = "headset"
-	origin_tech = list(TECH_COVERT = 1)
-	spawn_blacklisted = TRUE
-	ks1type = null // No keys pre-installed
-	var/list/global/clothing_choices
-
-/obj/item/device/radio/headset/chameleon/New()
-	..()
-	if(!clothing_choices)
-		clothing_choices = generate_chameleon_choices(/obj/item/device/radio/headset, list(src.type))
-
-/obj/item/device/radio/headset/chameleon/emp_act(severity)
-	name = "radio headset"
-	desc = "An updated, modular intercom that fits over the head. Takes encryption keys"
-	icon_state = "headset"
-	update_icon()
-	update_wear_icon()
-
-/obj/item/device/radio/headset/chameleon/verb/change(picked in clothing_choices)
-	set name = "Change Headset Appearance"
-	set category = "Chameleon Items"
-	set src in usr
-
-	if(!ispath(clothing_choices[picked]))
-		return
-
-	disguise(clothing_choices[picked], usr) 

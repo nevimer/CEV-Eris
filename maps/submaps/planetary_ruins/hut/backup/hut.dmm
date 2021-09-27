@@ -53,7 +53,7 @@
 /area/template_noop)
 "m" = (
 /obj/structure/table/marble,
-/obj/item/paper_bin,
+/obj/item/weapon/paper_bin,
 /turf/simulated/floor/tiled/dark,
 /area/template_noop)
 "n" = (
@@ -70,7 +70,7 @@
 /turf/simulated/floor/tiled/dark,
 /area/template_noop)
 "q" = (
-/obj/item/pen/multi,
+/obj/item/weapon/pen/multi,
 /turf/simulated/floor/tiled/dark,
 /area/template_noop)
 "r" = (
@@ -79,7 +79,7 @@
 /area/template_noop)
 "t" = (
 /obj/structure/bed,
-/obj/item/bedsheet/rainbow,
+/obj/item/weapon/bedsheet/rainbow,
 /obj/spawner/drinkbottle,
 /obj/spawner/junk,
 /turf/simulated/floor/carpet,

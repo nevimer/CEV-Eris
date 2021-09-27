@@ -237,6 +237,10 @@
 			M.change_mob_type( /mob/observer/ghost , null, null, delmob )
 		if("angel")
 			M.change_mob_type( /mob/observer/eye/angel , null, null, delmob )
+/*
+		if("larva")
+			M.change_mob_type( /mob/living/carbon/alien/larva , null, null, delmob )
+*/
 		if("human")
 			M.change_mob_type( /mob/living/carbon/human , null, null, delmob, input["species"])
 		if("slime")
@@ -839,9 +843,12 @@
 		to_chat(usr, "This can only be used on instances of type /mob/living")
 		return
 
-	L.revive()
-	message_admins("\red Admin [key_name_admin(usr)] healed / revived [key_name_admin(L)]!", 1)
-	log_admin("[key_name(usr)] healed / Revived [key_name(L)]")
+	if(config.allow_admin_rev)
+		L.revive()
+		message_admins("\red Admin [key_name_admin(usr)] healed / revived [key_name_admin(L)]!", 1)
+		log_admin("[key_name(usr)] healed / Revived [key_name(L)]")
+	else
+		to_chat(usr, "Admin Rejuvinates have been disabled")
 
 
 /datum/admin_topic/makeai
@@ -1025,8 +1032,8 @@
 		to_chat(usr, "This can only be used on instances of type /mob/living/carbon/human")
 		return
 
-	if(!H.equip_to_slot_or_del( new /obj/item/reagent_containers/food/snacks/cookie(H), slot_l_hand ))
-		if(!H.equip_to_slot_or_del( new /obj/item/reagent_containers/food/snacks/cookie(H), slot_r_hand ))
+	if(!H.equip_to_slot_or_del( new /obj/item/weapon/reagent_containers/food/snacks/cookie(H), slot_l_hand ))
+		if(!H.equip_to_slot_or_del( new /obj/item/weapon/reagent_containers/food/snacks/cookie(H), slot_r_hand ))
 			log_admin("[key_name(H)] has their hands full, so they did not receive their cookie, spawned by [key_name(source.owner)].")
 			message_admins("[key_name(H)] has their hands full, so they did not receive their cookie, spawned by [key_name(source.owner)].")
 			return
@@ -1089,17 +1096,17 @@
 /datum/admin_topic/adminfaxview/Run(list/input)
 	var/obj/item/fax = locate(input["AdminFaxView"])
 
-	if (istype(fax, /obj/item/paper))
-		var/obj/item/paper/P = fax
+	if (istype(fax, /obj/item/weapon/paper))
+		var/obj/item/weapon/paper/P = fax
 		P.show_content(usr, TRUE)
-	else if (istype(fax, /obj/item/photo))
-		var/obj/item/photo/H = fax
+	else if (istype(fax, /obj/item/weapon/photo))
+		var/obj/item/weapon/photo/H = fax
 		H.show(usr)
-	else if (istype(fax, /obj/item/paper_bundle))
+	else if (istype(fax, /obj/item/weapon/paper_bundle))
 		//having multiple people turning pages on a paper_bundle can cause issues
 		//open a browse window listing the contents instead
 		var/data = ""
-		var/obj/item/paper_bundle/B = fax
+		var/obj/item/weapon/paper_bundle/B = fax
 
 		for (var/page = 1, page <= B.pages.len, page++)
 			var/obj/pageobj = B.pages[page]
@@ -1114,35 +1121,35 @@
 
 /datum/admin_topic/adminfaxviewpage/Run(list/input)
 	var/page = text2num(input["AdminFaxViewPage"])
-	var/obj/item/paper_bundle/bundle = locate(input["paper_bundle"])
+	var/obj/item/weapon/paper_bundle/bundle = locate(input["paper_bundle"])
 
 	if (!bundle)
 		return
 
-	if (istype(bundle.pages[page], /obj/item/paper))
-		var/obj/item/paper/P = bundle.pages[page]
+	if (istype(bundle.pages[page], /obj/item/weapon/paper))
+		var/obj/item/weapon/paper/P = bundle.pages[page]
 		P.show_content(source.owner, TRUE)
-	else if (istype(bundle.pages[page], /obj/item/photo))
-		var/obj/item/photo/H = bundle.pages[page]
+	else if (istype(bundle.pages[page], /obj/item/weapon/photo))
+		var/obj/item/weapon/photo/H = bundle.pages[page]
 		H.show(source.owner)
 
 
-/datum/admin_topic/centcomfaxreply
-	keyword = "CentcomFaxReply"
+/datum/admin_topic/centcommfaxreply
+	keyword = "CentcommFaxReply"
 
-/datum/admin_topic/centcomfaxreply/Run(list/input)
-	var/mob/sender = locate(input["CentcomFaxReply"])
+/datum/admin_topic/centcommfaxreply/Run(list/input)
+	var/mob/sender = locate(input["CentcommFaxReply"])
 	var/obj/machinery/photocopier/faxmachine/fax = locate(input["originfax"])
 
 	//todo: sanitize
-	var/msg = input(source.owner, "Please enter a message to reply to [key_name(sender)] via secure connection. NOTE: BBCode does not work, but HTML tags do! Use <br> for line breaks.", "Outgoing message from Centcom", "") as message|null
+	var/msg = input(source.owner, "Please enter a message to reply to [key_name(sender)] via secure connection. NOTE: BBCode does not work, but HTML tags do! Use <br> for line breaks.", "Outgoing message from Centcomm", "") as message|null
 	if(!msg)
 		return
 
 	var/customname = input(source.owner, "Pick a title for the report", "Title") as text|null
 
 	// Create the reply message
-	var/obj/item/paper/P = new /obj/item/paper( null ) //hopefully the null loc won't cause trouble for us
+	var/obj/item/weapon/paper/P = new /obj/item/weapon/paper( null ) //hopefully the null loc won't cause trouble for us
 	P.name = "[command_name()]- [customname]"
 	P.info = msg
 	P.update_icon()
@@ -1152,7 +1159,7 @@
 	stampoverlay.icon_state = "paper_stamp-cent"
 	if(!P.stamped)
 		P.stamped = new
-	P.stamped += /obj/item/stamp
+	P.stamped += /obj/item/weapon/stamp
 	P.add_overlays(stampoverlay)
 	P.stamps += "<HR><i>This paper has been stamped by the Central Command Quantum Relay.</i>"
 
@@ -1289,6 +1296,10 @@
 	require_perms = list(R_FUN)
 
 /datum/admin_topic/object_list/Run(list/input)
+	if(!config.allow_admin_spawning)
+		to_chat(usr, "Spawning of items is not allowed.")
+		return
+
 	var/atom/loc = usr.loc
 
 	var/dirty_paths
@@ -1366,7 +1377,7 @@
 						O.set_dir(obj_dir)
 						if(obj_name)
 							O.name = obj_name
-							if(ismob(O))
+							if(istype(O,/mob))
 								var/mob/M = O
 								M.real_name = obj_name
 						if(where == "inhand" && isliving(usr) && istype(O, /obj/item))
@@ -1656,3 +1667,4 @@
 			notes_remove(ckey, text2num(input["from"]), text2num(input["to"]))
 
 	source.notes_show(ckey)
+

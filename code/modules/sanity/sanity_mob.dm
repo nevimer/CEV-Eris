@@ -1,23 +1,23 @@
-#define SANITY_PASSIVE_GAIN 0.2
+#define SANITY_PASSIVE_GAIN 0.3
 
 #define SANITY_DAMAGE_MOD 0.6
 
-#define SANITY_VIEW_DAMAGE_MOD 0.4
+#define SANITY_VIEW_DAMAGE_MOD 0.2
 
 // Damage received from unpleasant stuff in view
-#define SANITY_DAMAGE_VIEW(damage, vig, dist) ((damage) * SANITY_VIEW_DAMAGE_MOD * (1.2 - (vig) / STAT_LEVEL_MAX) * (1 - (dist)/15))
+#define SANITY_DAMAGE_VIEW(damage, vig, dist) ((damage) * SANITY_VIEW_DAMAGE_MOD * max(0.1,(1.2 - (vig) / STAT_LEVEL_MAX)) * (1 - (dist)/15))//Occulus Edit
 
 // Damage received from body damage
-#define SANITY_DAMAGE_HURT(damage, vig) (min((damage) / 5 * SANITY_DAMAGE_MOD * (1.2 - (vig) / STAT_LEVEL_MAX), 60))
+#define SANITY_DAMAGE_HURT(damage, vig) (min((damage) / 5 * SANITY_DAMAGE_MOD * max(0.1, (1.2 - (vig) / STAT_LEVEL_MAX)), 60))//Occulus Edit
 
 // Damage received from shock
-#define SANITY_DAMAGE_SHOCK(shock, vig) ((shock) / 50 * SANITY_DAMAGE_MOD * (1.2 - (vig) / STAT_LEVEL_MAX))
+#define SANITY_DAMAGE_SHOCK(shock, vig) ((shock) / 50 * SANITY_DAMAGE_MOD * max(0.1, (1.2 - (vig) / STAT_LEVEL_MAX)))//Occulus Edit
 
 // Damage received from psy effects
-#define SANITY_DAMAGE_PSY(damage, vig) (damage * SANITY_DAMAGE_MOD * (2 - (vig) / STAT_LEVEL_MAX))
+#define SANITY_DAMAGE_PSY(damage, vig) (damage * SANITY_DAMAGE_MOD * max(0.1, (2 - (vig) / STAT_LEVEL_MAX)))//Occulus Edit
 
 // Damage received from seeing someone die
-#define SANITY_DAMAGE_DEATH(vig) (10 * SANITY_DAMAGE_MOD * (1 - (vig) / STAT_LEVEL_MAX))
+#define SANITY_DAMAGE_DEATH(vig) (10 * SANITY_DAMAGE_MOD * max(0.1, (1 - (vig) / STAT_LEVEL_MAX)))//Occulus Edit
 
 #define SANITY_GAIN_SMOKE 0.05 // A full cig restores 300 times that
 #define SANITY_GAIN_SAY 1
@@ -39,7 +39,10 @@
 
 
 #define EAT_COOLDOWN_MESSAGE 15 SECONDS
-#define SANITY_MOB_DISTANCE_ACTIVATION 12
+
+#define INSIGHT_DESIRE_MUSIC "music" //Occulus edit
+#define INSIGHT_DESIRE_EXERCISE "exercise" //Occulus edit
+#define SANITY_GAIN_MUSIC 0.05//Occulus edit - same rate as smoking
 
 /datum/sanity
 	var/flags
@@ -61,7 +64,7 @@
 	var/resting = 0
 	var/max_resting = INFINITY
 
-	var/list/valid_inspirations = list(/obj/item/oddity)
+	var/list/valid_inspirations = list(/obj/item/weapon/oddity)
 	var/list/desires = list()
 	var/positive_prob = 20
 	var/positive_prob_multiplier = 1
@@ -118,23 +121,25 @@
 	changeLevel(max(affect  * life_tick_modifier, min((view_damage_threshold*environment_cap_coeff) - level, 0)))
 	handle_Insight()
 	handle_level()
-	SEND_SIGNAL(owner, COMSIG_HUMAN_SANITY, level)
 
 /datum/sanity/proc/handle_view()
 	. = 0
-	activate_mobs_in_range(owner, SANITY_MOB_DISTANCE_ACTIVATION)
 	if(sanity_invulnerability)//Sorry, but that needed to be added here :C
+		for(var/mob/living/L in view(owner.client ? owner.client : owner))
+			L.try_activate_ai()
 		return
 	var/vig = owner.stats.getStat(STAT_VIG)
 	for(var/atom/A in view(owner.client ? owner.client : owner))
 		if(A.sanity_damage) //If this thing is not nice to behold
 			. += SANITY_DAMAGE_VIEW(A.sanity_damage, vig, get_dist(owner, A))
+			if(isliving(A))
+				var/mob/living/L = A
+				L.try_activate_ai()
 
-		if(owner.stats.getPerk(PERK_MORALIST) && ishuman(A)) //Moralists react negatively to people in distress
+		if(owner.stats.getPerk(PERK_MORALIST) && istype(A, /mob/living/carbon/human)) //Moralists react negatively to people in distress
 			var/mob/living/carbon/human/H = A
 			if(H.sanity.level < 30 || H.health < 50)
 				. += SANITY_DAMAGE_VIEW(0.1, vig, get_dist(owner, A))
-
 
 /datum/sanity/proc/handle_area()
 	var/area/my_area = get_area(owner)
@@ -158,13 +163,13 @@
 				moralist_factor += 0.02
 	give_insight(INSIGHT_GAIN(level_change) * insight_passive_gain_multiplier * moralist_factor * style_factor * life_tick_modifier)
 	while(resting < max_resting && insight >= 100)
-		give_resting(1)
 		if(owner.stats.getPerk(PERK_ARTIST))
 			to_chat(owner, SPAN_NOTICE("You have gained insight.[resting ? null : " Now you need to make art. You cannot gain more insight before you do."]"))
 		else
 			to_chat(owner, SPAN_NOTICE("You have gained insight.[resting ? null : " Now you need to rest and rethink your life choices."]"))
 			pick_desires()
 			insight -= 100
+		give_resting(1)
 		owner.playsound_local(get_turf(owner), 'sound/sanity/psychochimes.ogg', 100)
 
 	var/obj/screen/sanity/hud = owner.HUDneed["sanity"]
@@ -198,6 +203,8 @@
 		INSIGHT_DESIRE_ALCOHOL,
 		INSIGHT_DESIRE_SMOKING,
 		INSIGHT_DESIRE_DRUGS,
+		INSIGHT_DESIRE_MUSIC, //Occulus Edit
+		INSIGHT_DESIRE_EXERCISE //Occulus Edit
 	)
 	for(var/i = 0; i < INSIGHT_DESIRE_COUNT; i++)
 		var/desire = pick_n_take(candidates)
@@ -238,15 +245,13 @@
 	for(var/stat in stat_change)
 		owner.stats.changeStat(stat, stat_change[stat])
 
-	if(!owner.stats.getPerk(PERK_ARTIST))
-		INVOKE_ASYNC(src, .proc/oddity_stat_up, resting)
+	INVOKE_ASYNC(src, .proc/oddity_stat_up, resting)//Occulus Edit. Artists should still gain stats from perks.
 
 	if(owner.stats.getPerk(PERK_ARTIST))
 		to_chat(owner, SPAN_NOTICE("You have created art and improved your stats."))
 	else
 		to_chat(owner, SPAN_NOTICE("You have rested well and improved your stats."))
 	owner.playsound_local(get_turf(owner), 'sound/sanity/rest.ogg', 100)
-	owner.pick_individual_objective()
 	resting = 0
 
 /datum/sanity/proc/oddity_stat_up(multiplier)
@@ -265,8 +270,7 @@
 			to_chat(owner, SPAN_NOTICE("Your [stat] stat goes up by [stat_up]"))
 			owner.stats.changeStat(stat, stat_up)
 		if(I.perk)
-			if(owner.stats.addPerk(I.perk))
-				I.perk = null
+			owner.stats.addPerk(I.perk)
 		for(var/mob/living/carbon/human/H in viewers(owner))
 			SEND_SIGNAL(H, COMSIG_HUMAN_ODDITY_LEVEL_UP, owner, O)
 
@@ -279,7 +283,7 @@
 /datum/sanity/proc/onSeeDeath(mob/M)
 	if(ishuman(M))
 		var/penalty = -SANITY_DAMAGE_DEATH(owner.stats.getStat(STAT_VIG))
-		if(owner.stats.getPerk(PERK_NIHILIST))
+		if(M.stats.getPerk(PERK_NIHILIST))
 			var/effect_prob = rand(1, 100)
 			switch(effect_prob)
 				if(1 to 25)
@@ -290,10 +294,7 @@
 					penalty *= -1
 				if(75 to 100)
 					penalty *= 0
-		if(M.stats.getPerk(PERK_TERRIBLE_FATE) && prob(100-owner.stats.getStat(STAT_VIG)))
-			setLevel(0)
-		else
-			changeLevel(penalty*death_view_multiplier)
+		changeLevel(penalty*death_view_multiplier)
 
 /datum/sanity/proc/onShock(amount)
 	changeLevel(-SANITY_DAMAGE_SHOCK(amount, owner.stats.getStat(STAT_VIG)))
@@ -307,25 +308,22 @@
 	changeLevel(-R.sanityloss * multiplier)
 
 /datum/sanity/proc/onReagent(datum/reagent/E, multiplier)
-	var/sanity_gain = E.sanity_gain_ingest
-	if(E.id == "ethanol")
-		sanity_gain /= 5
-	changeLevel(sanity_gain * multiplier)
+	changeLevel(E.sanity_gain_ingest * multiplier)
 	if(resting && E.taste_tag.len)
 		for(var/taste_tag in E.taste_tag)
 			if(multiplier <= 1 )
-				add_rest(taste_tag, 4 * 1/E.taste_tag.len)  //just so it got somme effect of things with small multipliers
+				add_rest(taste_tag, 9 * 1/E.taste_tag.len)  //just so it got somme effect of things with small multipliers      //occulus edit
 			else
-				add_rest(taste_tag, 4 * multiplier/E.taste_tag.len)
+				add_rest(taste_tag, 9 * multiplier/E.taste_tag.len) //occulus edit
 
-/datum/sanity/proc/onEat(obj/item/reagent_containers/food/snacks/snack, snack_sanity_gain, snack_sanity_message)
+/datum/sanity/proc/onEat(obj/item/weapon/reagent_containers/food/snacks/snack, snack_sanity_gain, snack_sanity_message)
 	if(world.time > eat_time_message && snack_sanity_message)
 		eat_time_message = world.time + EAT_COOLDOWN_MESSAGE
 		to_chat(owner, "[snack_sanity_message]")
 	changeLevel(snack_sanity_gain)
 	if(snack.cooked && resting && snack.taste_tag.len)
 		for(var/taste in snack.taste_tag)
-			add_rest(taste, snack_sanity_gain * 50/snack.taste_tag.len)
+			add_rest(taste, snack_sanity_gain * 90/snack.taste_tag.len) //occulus edit
 
 /datum/sanity/proc/onSmoke(obj/item/clothing/mask/smokable/S)
 	changeLevel(SANITY_GAIN_SMOKE * S.quality_multiplier)
@@ -370,7 +368,7 @@
 		if(get_turf(M) in view(get_turf(owner)))
 			M.reg_break(owner)
 
-	for(var/obj/item/implant/carrion_spider/mindboil/S in GLOB.active_mindboil_spiders)
+	for(var/obj/item/weapon/implant/carrion_spider/mindboil/S in GLOB.active_mindboil_spiders)
 		if(get_turf(S) in view(get_turf(owner)))
 			S.reg_break(owner)
 
@@ -396,8 +394,6 @@
 
 		if(B.occur())
 			breakdowns += B
-			for(var/mob/living/carbon/human/H in viewers(owner))
-				SEND_SIGNAL(H, COMSIG_HUMAN_BREAKDOWN, owner, B)
 		return
 
 #undef SANITY_PASSIVE_GAIN

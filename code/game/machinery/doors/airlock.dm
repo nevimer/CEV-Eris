@@ -7,7 +7,6 @@ GLOBAL_LIST_EMPTY(wedge_icon_cache)
 	power_channel = STATIC_ENVIRON
 
 	explosion_resistance = 10
-	maxhealth = 400
 
 	var/aiControlDisabled = 0
 	//If 1, AI control is disabled until the AI hacks back in and disables the lock.
@@ -34,7 +33,7 @@ GLOBAL_LIST_EMPTY(wedge_icon_cache)
 	var/justzap = 0
 	var/safe = 1
 	normalspeed = 1
-	var/obj/item/electronics/airlock/electronics
+	var/obj/item/weapon/electronics/airlock/electronics
 	var/hasShocked = 0 //Prevents multiple shocks from happening
 	var/secured_wires = 0
 	var/datum/wires/airlock/wires
@@ -44,7 +43,7 @@ GLOBAL_LIST_EMPTY(wedge_icon_cache)
 	var/_wifi_id
 	var/datum/wifi/receiver/button/door/wifi_receiver
 	var/obj/item/wedged_item
-
+	var/obj/item/device/magnetic_lock/bracer = null //Occulus edit
 	damage_smoke = TRUE
 
 
@@ -311,7 +310,17 @@ GLOBAL_LIST_EMPTY(wedge_icon_cache)
 	var/last_event = 0
 
 /obj/machinery/door/airlock/Process()
-	return PROCESS_KILL
+	// Deliberate no call to parent.
+	if(main_power_lost_until > 0 && world.time >= main_power_lost_until)
+		regainMainPower()
+
+	if(backup_power_lost_until > 0 && world.time >= backup_power_lost_until)
+		regainBackupPower()
+
+	else if(electrified_until > 0 && world.time >= electrified_until)
+		electrify(0)
+
+	..()
 
 /obj/machinery/door/airlock/uranium/Process()
 	if(world.time > last_event+20)
@@ -325,27 +334,27 @@ GLOBAL_LIST_EMPTY(wedge_icon_cache)
 		L.apply_effect(15,IRRADIATE,0)
 	return
 
-/obj/machinery/door/airlock/plasma
-	name = "Plasma Airlock"
+/obj/machinery/door/airlock/phoron
+	name = "Phoron Airlock"
 	desc = "No way this can end badly."
 	icon = 'icons/obj/doors/Doorplasma.dmi'
-	mineral = "plasma"
+	mineral = "phoron"
 
-/obj/machinery/door/airlock/plasma/fire_act(datum/gas_mixture/air, exposed_temperature, exposed_volume)
+/obj/machinery/door/airlock/phoron/fire_act(datum/gas_mixture/air, exposed_temperature, exposed_volume)
 	if(exposed_temperature > 300)
-		PlasmaBurn(exposed_temperature)
+		PhoronBurn(exposed_temperature)
 
-/obj/machinery/door/airlock/plasma/proc/ignite(exposed_temperature)
+/obj/machinery/door/airlock/phoron/proc/ignite(exposed_temperature)
 	if(exposed_temperature > 300)
-		PlasmaBurn(exposed_temperature)
+		PhoronBurn(exposed_temperature)
 
-/obj/machinery/door/airlock/plasma/proc/PlasmaBurn(temperature)
-	for(var/turf/simulated/floor/target_tile in RANGE_TURFS(2,loc))
-		target_tile.assume_gas("plasma", 35, 400+T0C)
+/obj/machinery/door/airlock/phoron/proc/PhoronBurn(temperature)
+	for(var/turf/simulated/floor/target_tile in trange(2,loc))
+		target_tile.assume_gas("phoron", 35, 400+T0C)
 		spawn (0) target_tile.hotspot_expose(temperature, 400)
-	for(var/turf/simulated/wall/W in RANGE_TURFS(3,src))
+	for(var/turf/simulated/wall/W in trange(3,src))
 		W.burn((temperature/4))//Added so that you can't set off a massive chain reaction with a small flame
-	for(var/obj/machinery/door/airlock/plasma/D in range(3,src))
+	for(var/obj/machinery/door/airlock/phoron/D in range(3,src))
 		D.ignite(temperature/4)
 	new/obj/structure/door_assembly( src.loc )
 	qdel(src)
@@ -430,16 +439,16 @@ There are 9 wires.
 					src.justzap = 1
 					spawn (10)
 						src.justzap = 0
-					return FALSE
+					return
 			else /*if(src.justzap)*/
-				return FALSE
+				return
 		else if(prob(10) && src.operating == 0)
 			var/mob/living/carbon/C = user
 			if(istype(C) && C.hallucination_power > 25)
 				to_chat(user, "<span class='danger'>You feel a powerful shock course through your body!</span>")
 				user.adjustHalLoss(10)
 				user.Stun(10)
-				return FALSE
+				return
 	..()
 
 /obj/machinery/door/airlock/proc/isElectrified()
@@ -479,23 +488,18 @@ There are 9 wires.
 	return src.isWireCut(AIRLOCK_WIRE_BACKUP_POWER1) || src.isWireCut(AIRLOCK_WIRE_BACKUP_POWER2)
 
 /obj/machinery/door/airlock/proc/loseMainPower()
-	main_power_lost_until = mainPowerCablesCut() ? -1 : SecondsToTicks(60)
-	if(main_power_lost_until > 0)
-		addtimer(CALLBACK(src, .proc/regainMainPower), main_power_lost_until)
+	main_power_lost_until = mainPowerCablesCut() ? -1 : world.time + SecondsToTicks(60)
 
 	// If backup power is permanently disabled then activate in 10 seconds if possible, otherwise it's already enabled or a timer is already running
 	if(backup_power_lost_until == -1 && !backupPowerCablesCut())
-		backup_power_lost_until = SecondsToTicks(10)
-		addtimer(CALLBACK(src, .proc/regainBackupPower), backup_power_lost_until)
+		backup_power_lost_until = world.time + SecondsToTicks(10)
 
 	// Disable electricity if required
 	if(electrified_until && isAllPowerLoss())
 		electrify(0)
 
 /obj/machinery/door/airlock/proc/loseBackupPower()
-	backup_power_lost_until = backupPowerCablesCut() ? -1 : SecondsToTicks(60)
-	if(backup_power_lost_until > 0)
-		addtimer(CALLBACK(src, .proc/regainBackupPower), backup_power_lost_until)
+	backup_power_lost_until = backupPowerCablesCut() ? -1 : world.time + SecondsToTicks(60)
 
 	// Disable electricity if required
 	if(electrified_until && isAllPowerLoss())
@@ -531,9 +535,7 @@ There are 9 wires.
 		else
 			shockedby += text("\[[time_stamp()]\] - EMP)")
 		message = "The door is now electrified [duration == -1 ? "permanently" : "for [duration] second\s"]."
-		electrified_until = duration == -1 ? -1 : SecondsToTicks(duration)
-		if(electrified_until > 0)
-			addtimer(CALLBACK(src, .proc/electrify), electrified_until)
+		electrified_until = duration == -1 ? -1 : world.time + SecondsToTicks(duration)
 
 	if(feedback && message)
 		to_chat(usr, message)
@@ -581,7 +583,7 @@ There are 9 wires.
 	else
 		return 0
 
-/obj/machinery/door/airlock/proc/force_wedge_item(obj/item/tool/T)
+/obj/machinery/door/airlock/proc/force_wedge_item(obj/item/weapon/tool/T)
 	T.forceMove(src)
 	wedged_item = T
 	update_icon()
@@ -596,7 +598,7 @@ There are 9 wires.
 	if(!isliving(usr))
 		to_chat(usr, SPAN_WARNING("You can't do this."))
 		return
-	var/obj/item/tool/T = usr.get_active_hand()
+	var/obj/item/weapon/tool/T = usr.get_active_hand()
 	if(istype(T) && T.w_class >= ITEM_SIZE_NORMAL) // We do the checks before proc call, because see "proc overhead".
 		if(!density)
 			usr.drop_item()
@@ -642,7 +644,7 @@ There are 9 wires.
 	var/cache_string = "[wedged_item.icon]||[wedged_item.icon_state]||[wedged_item.overlays.len]||[wedged_item.underlays.len]"
 
 	if(!GLOB.wedge_icon_cache[cache_string])
-		var/icon/I = getFlatIcon(wedged_item, SOUTH, always_use_defdir = TRUE)
+		var/icon/I = getFlatIcon(wedged_item, SOUTH)
 
 		// #define COOL_LOOKING_SHIFT_USING_CROWBAR_RIGHT 14, #define COOL_LOOKING_SHIFT_USING_CROWBAR_DOWN 6 - throw a rock at me if this looks less magic.
 		I.Shift(SOUTH, 6) // These numbers I got by sticking the crowbar in and looking what will look good.
@@ -714,8 +716,7 @@ There are 9 wires.
 	return
 
 /obj/machinery/door/airlock/attack_ai(mob/user as mob)
-	if(!isblitzshell(user))
-		ui_interact(user)
+	ui_interact(user)
 
 /obj/machinery/door/airlock/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS, var/datum/topic_state/state = GLOB.default_state)
 	var/data[0]
@@ -968,7 +969,16 @@ There are 9 wires.
 	if(density && user.a_intent == I_HURT && !I.GetIdCard())
 		hit(user, I)
 		return
+	//occulus edit start
+	if (istype(I, /obj/item/device/magnetic_lock))
+		if (bracer)
+			user << "<span class='notice'>There is already a [bracer] on [src]!</span>"
+			return
 
+		var/obj/item/device/magnetic_lock/newbracer = I
+		newbracer.attachto(src, user)
+		return
+	//occulus edit end
 	var/tool_type = I.get_tool_type(user, list(QUALITY_PRYING, QUALITY_SCREW_DRIVING, QUALITY_WELDING), src)
 	switch(tool_type)
 		if(QUALITY_PRYING)
@@ -991,7 +1001,7 @@ There are 9 wires.
 						da.update_state()
 
 						if(operating == -1 || (stat & BROKEN))
-							new /obj/item/electronics/circuitboard/broken(loc)
+							new /obj/item/weapon/electronics/circuitboard/broken(loc)
 							operating = 0
 						else
 							if (!electronics) create_electronics()
@@ -1046,15 +1056,15 @@ There are 9 wires.
 		return attack_hand(user)
 	else if(istype(I, /obj/item/device/assembly/signaler))
 		return attack_hand(user)
-	else if(istype(I, /obj/item/pai_cable))	// -- TLE
-		var/obj/item/pai_cable/cable = I
+	else if(istype(I, /obj/item/weapon/pai_cable))	// -- TLE
+		var/obj/item/weapon/pai_cable/cable = I
 		cable.plugin(src, user)
 
 	else
 		..()
 	return
 
-/obj/machinery/door/airlock/plasma/attackby(C as obj, mob/user)
+/obj/machinery/door/airlock/phoron/attackby(C as obj, mob/user as mob)
 	if(C)
 		ignite(is_hot(C))
 	..()
@@ -1085,13 +1095,16 @@ There are 9 wires.
 /obj/machinery/door/airlock/open(forced=0)
 	if(!can_open(forced))
 		return 0
+	if (bracer)
+		visible_message("<span class='notice'>[src]'s actuators whirr, but the door does not open.</span>")
+		return 0
 	use_power(360)	//360 W seems much more appropriate for an actuator moving an industrial door capable of crushing people
 
 	//if the door is unpowered then it doesn't make sense to hear the woosh of a pneumatic actuator
 	if(arePowerSystemsOn())
 		playsound(loc, open_sound_powered, 70, 1, -2)
 	else
-		var/obj/item/tool/T = forced
+		var/obj/item/weapon/tool/T = forced
 		if (istype(T) && T.item_flags & SILENT)
 			playsound(loc, open_sound_unpowered, 3, 1, -5) //Silenced tools can force open airlocks silently
 		else if (istype(T) && T.item_flags & LOUD)
@@ -1099,7 +1112,7 @@ There are 9 wires.
 		else
 			playsound(loc, open_sound_unpowered, 70, 1, -1)
 
-	var/obj/item/tool/T = forced
+	var/obj/item/weapon/tool/T = forced
 	if (istype(T) && T.item_flags & HONKING)
 		playsound(loc, WORKSOUND_HONK, 70, 1, -2)
 
@@ -1163,7 +1176,7 @@ There are 9 wires.
 		AM.airlock_crush()
 	return TRUE
 
-/obj/item/tool/airlock_crush(crush_damage)
+/obj/item/weapon/tool/airlock_crush(crush_damage)
 	. = ..()
 	health += crush_damage * degradation * (1 - get_tool_quality(QUALITY_PRYING) * 0.01) * 0.4
 
@@ -1199,14 +1212,13 @@ There are 9 wires.
 		for(var/turf/turf in locs)
 			for(var/atom/movable/AM in turf)
 				if(AM.blocks_airlock())
-					if(autoclose && tryingToLock)
-						addtimer(CALLBACK(src, .proc/close), 30 SECONDS)
 					if(world.time > next_beep_at)
 						playsound(loc, 'sound/machines/buzz-two.ogg', 30, 1, -1)
 						next_beep_at = world.time + SecondsToTicks(10)
+					close_door_at = world.time + 6
 					return
-				if(istool(AM))
-					var/obj/item/tool/T = AM
+				if(istype(AM, /obj/item/weapon/tool))
+					var/obj/item/weapon/tool/T = AM
 					if(T.w_class >= ITEM_SIZE_NORMAL)
 						operating = TRUE
 						density = TRUE
@@ -1228,11 +1240,10 @@ There are 9 wires.
 				take_damage(DOOR_CRUSH_DAMAGE)
 
 	use_power(360)	//360 W seems much more appropriate for an actuator moving an industrial door capable of crushing people
-	tryingToLock = FALSE
 	if(arePowerSystemsOn())
 		playsound(src.loc, close_sound, 70, 1, -2)
 	else
-		var/obj/item/tool/T = forced
+		var/obj/item/weapon/tool/T = forced
 		if (istype(T) && T.item_flags & SILENT)
 			playsound(src.loc, open_sound_unpowered, 3, 1, -5) //Silenced tools can force airlocks silently
 		else if (istype(T) && T.item_flags & LOUD)
@@ -1240,7 +1251,7 @@ There are 9 wires.
 		else
 			playsound(src.loc, open_sound_unpowered, 70, 1, -2)
 
-	var/obj/item/tool/T = forced
+	var/obj/item/weapon/tool/T = forced
 	if (istype(T) && T.item_flags & HONKING)
 		playsound(src.loc, WORKSOUND_HONK, 70, 1, -2)
 
@@ -1336,9 +1347,9 @@ There are 9 wires.
 /obj/machinery/door/airlock/proc/create_electronics()
 	//create new electronics
 	if (secured_wires)
-		src.electronics = new/obj/item/electronics/airlock/secure( src.loc )
+		src.electronics = new/obj/item/weapon/electronics/airlock/secure( src.loc )
 	else
-		src.electronics = new/obj/item/electronics/airlock( src.loc )
+		src.electronics = new/obj/item/weapon/electronics/airlock( src.loc )
 
 	//update the electronics to match the door's access
 	if(!src.req_access)
@@ -1377,12 +1388,12 @@ There are 9 wires.
 
 //Override to check locked var
 /obj/machinery/door/airlock/hit(var/mob/user, var/obj/item/I)
-	var/obj/item/W = I
+	var/obj/item/weapon/W = I
 	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN*1.5)
 	var/calc_damage = W.force*W.structure_damage_factor
 	var/quiet = FALSE
 	if (istool(I))
-		var/obj/item/tool/T = I
+		var/obj/item/weapon/tool/T = I
 		quiet = T.item_flags & SILENT
 
 	if (locked)
@@ -1394,7 +1405,7 @@ There are 9 wires.
 		quiet ? null : playsound(src.loc, hitsound, 20, 1)
 	else
 		user.visible_message(SPAN_DANGER("\The [user] forcefully strikes \the [src] with \the [W]!"))
-		playsound(src.loc, hitsound, quiet? 3: calc_damage*2, 1, 3,quiet?-5 :2)
+		playsound(src.loc, hitsound, quiet? 3: calc_damage*2.0, 1, 3,quiet?-5 :2)
 		take_damage(W.force)
 
 

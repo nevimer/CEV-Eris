@@ -1,4 +1,4 @@
-/obj/item/gun/projectile/automatic/ak47
+/obj/item/weapon/gun/projectile/automatic/ak47
 	name = "Excelsior .30 AKMS"
 	desc = "Weapon of the oppressed, oppressors, and extremists of all flavours. \
 		 This is a copy of an ancient semi-automatic rifle chambered for .30 Rifle. If it won't fire, percussive maintenance should get it working again. \
@@ -18,34 +18,27 @@
 	matter = list(MATERIAL_PLASTEEL = 20, MATERIAL_PLASTIC = 10)
 	price_tag = 3500
 	fire_sound = 'sound/weapons/guns/fire/ltrifle_fire.ogg'
-	unload_sound = 'sound/weapons/guns/interact/ltrifle_magout.ogg'
-	reload_sound = 'sound/weapons/guns/interact/ltrifle_magin.ogg'
-	cocked_sound = 'sound/weapons/guns/interact/ltrifle_cock.ogg'
-	recoil_buildup = 1.8
+	unload_sound 	= 'sound/weapons/guns/interact/ltrifle_magout.ogg'
+	reload_sound 	= 'sound/weapons/guns/interact/ltrifle_magin.ogg'
+	cocked_sound 	= 'sound/weapons/guns/interact/ltrifle_cock.ogg'
+	recoil_buildup = 10
 	one_hand_penalty = 15 //automatic rifle level
 	spawn_blacklisted = TRUE
 	gun_parts = list(/obj/item/part/gun = 3 ,/obj/item/stack/material/plasteel = 7)
-
-	gun_tags = list(GUN_SILENCABLE)
 
 	init_firemodes = list(
 		FULL_AUTO_400,
 		SEMI_AUTO_NODELAY,
 		BURST_5_ROUND
 		)
-	spawn_blacklisted = TRUE
 
 	var/folded = FALSE
 
-/obj/item/gun/projectile/automatic/ak47/on_update_icon()
+/obj/item/weapon/gun/projectile/automatic/ak47/on_update_icon()
 	..()
 
 	var/iconstring = initial(icon_state)
 	var/itemstring = ""
-
-	if(gilded)
-		iconstring += "_gold"
-		itemstring += "_gold"
 
 	if (ammo_magazine)
 		iconstring += "[ammo_magazine? "_mag[ammo_magazine.max_ammo]": ""]"
@@ -61,13 +54,13 @@
 	icon_state = iconstring
 	set_item_state(itemstring)
 
-/obj/item/gun/projectile/automatic/ak47/Initialize()
+/obj/item/weapon/gun/projectile/automatic/ak47/Initialize()
 	. = ..()
 	update_icon()
 
 //////////////////////////////////////////SA//////////////////////////////////////////
 
-/obj/item/gun/projectile/automatic/ak47/sa
+/obj/item/weapon/gun/projectile/automatic/ak47/sa
 	name = "SA Car .30 \"Krinkov\""					// US nickname for AKSu
 	desc = "Weapon of the oppressed, oppressors, and extremists of all flavours. \
 			This is a copy of an ancient semi-automatic rifle chambered for .30 Rifle. If it won't fire, percussive maintenance should get it working again. \
@@ -83,7 +76,7 @@
 
 	price_tag = 3500
 
-/obj/item/gun/projectile/automatic/ak47/sa/CtrlShiftClick()
+/obj/item/weapon/gun/projectile/automatic/ak47/sa/CtrlShiftClick()
 	. = ..()
 
 	if((!ishuman(usr) && (src.loc != usr)) || usr.stat || usr.restrained())
@@ -92,7 +85,7 @@
 	fold()
 
 
-/obj/item/gun/projectile/automatic/ak47/sa/verb/quick_fold()
+/obj/item/weapon/gun/projectile/automatic/ak47/sa/verb/quick_fold()
 	set name = "Fold or Unfold Stock"
 	set category = "Object"
 	set src in view(1)
@@ -101,7 +94,7 @@
 		return
 	fold()
 
-/obj/item/gun/projectile/automatic/ak47/sa/proc/fold()
+/obj/item/weapon/gun/projectile/automatic/ak47/sa/proc/fold()
 
 	if(folded)
 		to_chat(usr, SPAN_NOTICE("You unfold the stock on the [src]."))
@@ -119,7 +112,7 @@
 
 //////////////////////////////////////////FS//////////////////////////////////////////
 
-/obj/item/gun/projectile/automatic/ak47/fs
+/obj/item/weapon/gun/projectile/automatic/ak47/fs
 	name = "FS AR .30 \"Vipr\""						// Vipr like a play on Viper and Vepr
 	desc = "Weapon of the oppressed, oppressors, and extremists of all flavours. \
 			This is a copy of an ancient semi-automatic rifle chambered for .30 Rifle. If it won't fire, percussive maintenance should get it working again. \
@@ -132,11 +125,12 @@
 
 	origin_tech = list(TECH_COMBAT = 5, TECH_MATERIAL = 2)
 	matter = list(MATERIAL_PLASTEEL = 20, MATERIAL_WOOD = 10)
-
+	price_tag = 3000
+	origin_tech = list(TECH_COMBAT = 5, TECH_MATERIAL = 2)
 	init_firemodes = list(
-		SEMI_AUTO_NODELAY,
-		BURST_3_ROUND,
-		BURST_5_ROUND
+	SEMI_AUTO_NODELAY,
+	BURST_3_ROUND,
+	BURST_5_ROUND
 	)
 
 	price_tag = 2000
@@ -147,7 +141,7 @@
 
 //////////////////////////////////////////IH//////////////////////////////////////////
 
-/obj/item/gun/projectile/automatic/ak47/fs/ih
+/obj/item/weapon/gun/projectile/automatic/ak47/fs/ih
 	name = "FS AR .30 \"Venger\""						// From a song
 	desc = "Weapon of the oppressed, oppressors, and extremists of all flavours. \
 			This is a copy of an ancient semi-automatic rifle chambered for .30 Rifle. If it won't fire, percussive maintenance should get it working again. \
@@ -157,7 +151,7 @@
 	spawn_blacklisted = TRUE
 	matter = list(MATERIAL_PLASTEEL = 20, MATERIAL_PLASTIC = 10)
 
-/obj/item/gun/projectile/automatic/ak47/fs/ih/CtrlShiftClick()
+/obj/item/weapon/gun/projectile/automatic/ak47/fs/ih/CtrlShiftClick()
 	. = ..()
 
 	if((!ishuman(usr) && (src.loc != usr)) || usr.stat || usr.restrained())
@@ -165,7 +159,7 @@
 
 	fold()
 
-/obj/item/gun/projectile/automatic/ak47/fs/ih/verb/quick_fold()	//Easier to redo the proc than redo everything else
+/obj/item/weapon/gun/projectile/automatic/ak47/fs/ih/verb/quick_fold()	//Easier to redo the proc than redo everything else
 	set name = "Fold or Unfold Stock"
 	set category = "Object"
 	set src in view(1)
@@ -174,7 +168,7 @@
 		return
 	fold()
 
-/obj/item/gun/projectile/automatic/ak47/fs/ih/proc/fold()
+/obj/item/weapon/gun/projectile/automatic/ak47/fs/ih/proc/fold()
 
 	if(folded)
 		to_chat(usr, SPAN_NOTICE("You unfold the stock on the [src]."))
@@ -192,7 +186,7 @@
 
 //////////////////////////////////////////Makeshift//////////////////////////////////////////
 
-/obj/item/gun/projectile/automatic/ak47/makeshift
+/obj/item/weapon/gun/projectile/automatic/ak47/makeshift
 	name = "Makeshift AR .30 \"Kalash\""
 	desc = "Weapon of the oppressed, oppressors, and extremists of all flavours. \
 			This is a copy of an ancient semi-automatic rifle chambered for .30 Rifle. If it won't fire, percussive maintenance should get it working again. \
@@ -210,23 +204,3 @@
 	)
 
 	price_tag = 500
-
-/obj/item/gun/projectile/automatic/ak47/makeshift/attackby(obj/item/W, mob/user)
-	if(QUALITY_SCREW_DRIVING in W.tool_qualities)
-		to_chat(user, SPAN_NOTICE("You begin to rechamber \the [src]."))
-		if(!ammo_magazine && W.use_tool(user, src, WORKTIME_NORMAL, QUALITY_SCREW_DRIVING, FAILCHANCE_NORMAL, required_stat = STAT_MEC))
-			if(caliber == CAL_LRIFLE)
-				caliber = CAL_SRIFLE
-				to_chat(user, SPAN_WARNING("You successfully rechamber \the [src] to .20 Caliber."))
-			else if(caliber == CAL_SRIFLE)
-				caliber = CAL_CLRIFLE
-				mag_well = MAG_WELL_IH
-				to_chat(user, SPAN_WARNING("You successfully rechamber \the [src] to .25 Caseless."))
-			else if(caliber == CAL_CLRIFLE)
-				caliber = CAL_LRIFLE
-				mag_well = MAG_WELL_RIFLE
-				to_chat(user, SPAN_WARNING("You successfully rechamber \the [src] to .30 Caliber."))
-		else 
-			to_chat(user, SPAN_WARNING("You cannot rechamber a loaded firearm!"))
-			return
-	..()

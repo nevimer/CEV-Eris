@@ -14,7 +14,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Rock sliver
 
-/obj/item/rocksliver
+/obj/item/weapon/rocksliver
 	name = "rock sliver"
 	desc = "It looks extremely delicate."
 	icon = 'icons/obj/xenoarchaeology.dmi'
@@ -26,7 +26,7 @@
 	var/source_rock = "/turf/simulated/mineral/"
 	var/datum/geosample/geological_data
 
-/obj/item/rocksliver/Initialize(mapload)
+/obj/item/weapon/rocksliver/Initialize(mapload)
 	. = ..()
 	icon_state = "sliver[rand(1,3)]"
 	pixel_x = rand(0,16)-8

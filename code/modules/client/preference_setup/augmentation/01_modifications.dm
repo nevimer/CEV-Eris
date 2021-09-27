@@ -2,9 +2,9 @@
 	var/list/modifications_data   = list()
 	var/list/modifications_colors = list()
 	var/current_organ = BP_CHEST
-	var/global/list/r_organs = list(BP_HEAD, BP_R_ARM, BP_CHEST, BP_R_LEG, BP_L_ARM, BP_GROIN, BP_L_LEG)
-	var/global/list/l_organs = list(BP_EYES, OP_HEART, OP_KIDNEY_LEFT, OP_KIDNEY_RIGHT, OP_STOMACH, BP_BRAIN, OP_LUNGS, OP_LIVER)
-	var/global/list/internal_organs = list("chest2", OP_HEART, OP_KIDNEY_LEFT, OP_KIDNEY_RIGHT, OP_STOMACH, BP_BRAIN, OP_LUNGS, OP_LIVER)
+	var/global/list/r_organs = list(BP_HEAD, BP_R_ARM, BP_R_HAND, BP_CHEST, BP_GROIN, BP_R_LEG, BP_R_FOOT, OP_LUNGS, OP_LIVER)
+	var/global/list/l_organs = list(BP_EYES, BP_L_ARM, BP_L_HAND, BP_L_LEG, BP_L_FOOT, BP_BRAIN, OP_HEART, OP_KIDNEYS, OP_STOMACH)
+	var/global/list/internal_organs = list("chest2", OP_HEART, OP_KIDNEYS, OP_STOMACH, BP_BRAIN, OP_LUNGS, OP_LIVER)
 
 /datum/category_item/player_setup_item/augmentation/modifications
 	name = "Augmentation"
@@ -85,7 +85,7 @@
 			dat += "<div><a class='Organs_active' href='?src=\ref[src];organ=[organ]'><b>[organ_name]</b></a>"
 		else
 			dat += "<a href='?src=\ref[src];organ=[organ]'><b>[organ_name]</b></a>"
-		dat += "<br><div>[disp_name]</div></div>"
+		dat += "<br><div >[disp_name]</div></div>"
 
 	dat += "</td></tr></table><hr>"
 
@@ -135,7 +135,13 @@
 	var/datum/body_modification/mod = get_modification(organ)
 	for(var/child_organ in organ_data["children"])
 		var/datum/body_modification/child_mod = get_modification(child_organ)
-		if(child_mod.nature < mod.nature)
+		if(child_mod.nature < mod.nature && mod.nature == MODIFICATION_REMOVED)
+			if(mod.is_allowed(child_organ, src))
+				modifications_data[child_organ] = mod
+			else
+				modifications_data[child_organ] = get_default_modificaton(mod.nature)
+			check_child_modifications(child_organ)
+		if(mod.nature == MODIFICATION_SILICON && child_mod.nature == MODIFICATION_ORGANIC)
 			if(mod.is_allowed(child_organ, src))
 				modifications_data[child_organ] = mod
 			else

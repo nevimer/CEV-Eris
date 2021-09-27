@@ -1,4 +1,4 @@
-/obj/item/gun/projectile/automatic/zoric
+/obj/item/weapon/gun/projectile/automatic/zoric
 	name = "SA SMG .40 Magnum \"Zoric\""
 	desc = "A Heavy Submachine Gun made by \"Serbian Arms\", for paramilitary and private security use. \
 			Rifled to take a larger caliber than a typical submachine gun, it boasts a greater impact, but suffers \
@@ -18,18 +18,17 @@
 	price_tag = 2000
 	damage_multiplier = 1	 // 34 lethal
 	penetration_multiplier = 0.5 // 7.5 lethal
-	recoil_buildup = 0.7
+	recoil_buildup = 7
 	twohanded = FALSE
 	one_hand_penalty = 5 //smg level
+	rarity_value = 32
 
 	init_firemodes = list(
 		FULL_AUTO_300,
 		SEMI_AUTO_NODELAY,
 		)
 
-	gun_tags = list(GUN_SILENCABLE)
-
-/obj/item/gun/projectile/automatic/zoric/on_update_icon()
+/obj/item/weapon/gun/projectile/automatic/zoric/on_update_icon()
 	cut_overlays()
 	icon_state = "[initial(icon_state)][silenced ? "_s" : ""]"
 	if(ammo_magazine)
@@ -37,6 +36,6 @@
 	if (!ammo_magazine || !length(ammo_magazine.stored_ammo))
 		add_overlays("slide[silenced ? "_s" : ""]")
 
-/obj/item/gun/projectile/automatic/zoric/Initialize()
+/obj/item/weapon/gun/projectile/automatic/zoric/Initialize()
 	. = ..()
 	update_icon()

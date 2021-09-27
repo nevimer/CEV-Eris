@@ -10,7 +10,7 @@
 
 /mob/living/proc/process_resist()
 	//Getting out of someone's inventory.
-	if(istype(src.loc, /obj/item/holder))
+	if(istype(src.loc, /obj/item/weapon/holder))
 		escape_inventory(src.loc)
 		return
 
@@ -29,7 +29,7 @@
 		spawn() C.mob_breakout(src)
 		return TRUE
 
-/mob/living/proc/escape_inventory(obj/item/holder/H)
+/mob/living/proc/escape_inventory(obj/item/weapon/holder/H)
 	if(H != src.loc) return
 
 	var/mob/M = H.loc //Get our mob holder (if any).
@@ -41,7 +41,7 @@
 
 		// Update whether or not this mob needs to pass emotes to contents.
 		for(var/atom/A in M.contents)
-			if(istype(A,/mob/living/simple_animal/borer) || istype(A,/obj/item/holder))
+			if(istype(A,/mob/living/simple_animal/borer) || istype(A,/obj/item/weapon/holder))
 				return
 		M.status_flags &= ~PASSEMOTES
 
@@ -63,7 +63,7 @@
 		requests.Remove(O)
 		qdel(O)
 		resisting++
-	for(var/obj/item/grab/G in grabbed_by)
+	for(var/obj/item/weapon/grab/G in grabbed_by)
 		resisting++
 		switch(G.state)
 			if(GRAB_PASSIVE)
@@ -123,17 +123,23 @@
 		break_handcuffs()
 		return
 
-	var/obj/item/handcuffs/HC = handcuffed
+	var/obj/item/weapon/handcuffs/HC = handcuffed
 
-	//A default in case you are somehow handcuffed with something that isn't an obj/item/handcuffs type
-	var/breakouttime = 1200 - src.stats.getStat(STAT_ROB) * 10
-	//If you are handcuffed with actual handcuffs... Well what do I know, maybe someone will want to handcuff you with toilet paper in the future...
-	if(istype(HC))
-		breakouttime = HC.breakouttime - src.stats.getStat(STAT_ROB) * 10
+	var/base_breakout
+	if(HC.breakouttime)
+		base_breakout = HC.breakouttime
+	else
+		base_breakout = 1200 //2 minute fallback timer for objects with no breakouttime
+		return
+	var/min_breakout = base_breakout / 5
+	var/rob_breakout = base_breakout - src.stats.getStat(STAT_ROB) * 10
+	var/breakouttime = max(rob_breakout, min_breakout) //reduces times by 1s*ROB, until it reaches 1/5 of the original breakouttime
+	var/displaytime = round(breakouttime / 10)
 
 	var/mob/living/carbon/human/H = src
 	if(istype(H) && H.gloves && istype(H.gloves,/obj/item/clothing/gloves/rig))
 		breakouttime /= 2
+		displaytime /= 2
 
 	if(do_after(src, breakouttime, incapacitation_flags = INCAPACITATION_DEFAULT & ~INCAPACITATION_RESTRAINED))
 		visible_message(
@@ -147,7 +153,7 @@
 			)
 		drop_from_inventory(handcuffed)
 
-	if(istype(buckled, /obj/item/beartrap))
+	if(istype(buckled, /obj/item/weapon/beartrap))
 		breakouttime /= 2
 		visible_message(
 		SPAN_DANGER("\The [src] attempts to remove \the [HC] using the trap!"),
@@ -172,17 +178,19 @@
 		break_legcuffs()
 		return
 
-	var/obj/item/legcuffs/HC = legcuffed
+	var/obj/item/weapon/legcuffs/HC = legcuffed
 
-	//A default in case you are somehow legcuffed with something that isn't an obj/item/legcuffs type
+	//A default in case you are somehow legcuffed with something that isn't an obj/item/weapon/legcuffs type
 	var/breakouttime = 1200
+	var/displaytime = 2 //Minutes to display in the "this will take X minutes."
 	//If you are legcuffed with actual legcuffs... Well what do I know, maybe someone will want to legcuff you with toilet paper in the future...
 	if(istype(HC))
 		breakouttime = HC.breakouttime
+		displaytime = breakouttime / 600 //Minutes
 
 	visible_message(
 		SPAN_DANGER("[usr] attempts to remove \the [HC]!"),
-		SPAN_WARNING("You attempt to remove \the [HC]. (This will take around [breakouttime / 10] seconds and you need to stand still)")
+		SPAN_WARNING("You attempt to remove \the [HC]. (This will take around [displaytime] minutes and you need to stand still)")
 		)
 
 	if(do_after(src, breakouttime, incapacitation_flags = INCAPACITATION_DEFAULT & ~INCAPACITATION_RESTRAINED))
@@ -280,5 +288,3 @@
 			visible_message(SPAN_DANGER("\The [usr] manages to unbuckle themself!"),
 							SPAN_NOTICE("You successfully unbuckle yourself."))
 			buckled.user_unbuckle_mob(src)
-
-

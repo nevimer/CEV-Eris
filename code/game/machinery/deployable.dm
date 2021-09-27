@@ -120,11 +120,11 @@ for reference:
 
 /obj/structure/barricade/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(1.0)
 			visible_message(SPAN_DANGER("\The [src] is blown apart!"))
 			qdel(src)
 			return
-		if(2)
+		if(2.0)
 			health -= 25
 			if(health <= 0)
 				visible_message(SPAN_DANGER("\The [src] is blown apart!"))
@@ -155,7 +155,7 @@ for reference:
 	icon_state = "barrier0"
 	var/health = 100
 	var/maxhealth = 100
-	var/locked = FALSE
+	var/locked = 0
 //	req_access = list(access_maint_tunnels)
 
 /obj/machinery/deployable/barrier/New()
@@ -163,17 +163,17 @@ for reference:
 
 	icon_state = "barrier[locked]"
 
-/obj/machinery/deployable/barrier/attackby(obj/item/W, mob/user)
+/obj/machinery/deployable/barrier/attackby(obj/item/weapon/W as obj, mob/user as mob)
 	if(W.GetIdCard())
 		if(allowed(user))
-			if	(emagged < 2)
+			if	(emagged < 2.0)
 				locked = !locked
 				anchored = !anchored
 				icon_state = "barrier[locked]"
-				if((locked) && (emagged < 2))
+				if((locked == 1.0) && (emagged < 2.0))
 					to_chat(user, "Barrier lock toggled on.")
 					return
-				else if((!locked) && (emagged < 2))
+				else if((locked == 0.0) && (emagged < 2.0))
 					to_chat(user, "Barrier lock toggled off.")
 					return
 			else
@@ -183,7 +183,7 @@ for reference:
 				visible_message(SPAN_WARNING("BZZzZZzZZzZT"))
 				return
 		return
-	else if(istype(W, /obj/item/tool/wrench))
+	else if(istype(W, /obj/item/weapon/tool/wrench))
 		if(health < maxhealth)
 			health = maxhealth
 			emagged = 0
@@ -209,10 +209,10 @@ for reference:
 
 /obj/machinery/deployable/barrier/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(1.0)
 			explode()
 			return
-		if(2)
+		if(2.0)
 			health -= 25
 			if(health <= 0)
 				explode()

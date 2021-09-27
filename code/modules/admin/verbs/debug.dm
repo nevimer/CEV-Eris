@@ -171,7 +171,7 @@ ADMIN_VERB_ADD(/client/proc/Debug2, R_DEBUG, FALSE)
 		else
 			if(alert("Spawn that person a tome?",,"Yes","No")=="Yes")
 				to_chat(M, "\red You catch a glimpse of the Realm of Nar-Sie, The Geometer of Blood. You now see how flimsy the world is, you see that it should be open to the knowledge of Nar-Sie. A tome, a message from your new master, appears on the ground.")
-				new /obj/item/book/tome(M.loc)
+				new /obj/item/weapon/book/tome(M.loc)
 			else
 				to_chat(M, "\red You catch a glimpse of the Realm of Nar-Sie, The Geometer of Blood. You now see how flimsy the world is, you see that it should be open to the knowledge of Nar-Sie.")
 			var/glimpse=pick("1","2","3","4","5","6","7","8")
@@ -216,35 +216,6 @@ ADMIN_VERB_ADD(/client/proc/cmd_debug_del_all, R_ADMIN|R_DEBUG, FALSE)
 		log_admin("[key_name(src)] has deleted all instances of [hsbitem].")
 		message_admins("[key_name_admin(src)] has deleted all instances of [hsbitem].", 0)
 
-ADMIN_VERB_ADD(/client/proc/cmd_display_del_log, R_ADMIN|R_DEBUG, FALSE)
-/client/proc/cmd_display_del_log()
-	set category = "Debug"
-	set name = "Display del() Log"
-	set desc = "Display del's log of everything that's passed through it."
-
-	var/list/dellog = list("<B>List of things that have gone through qdel this round</B><BR><BR><ol>")
-	sortTim(SSgarbage.items, cmp=/proc/cmp_qdel_item_time, associative = TRUE)
-	for(var/path in SSgarbage.items)
-		var/datum/qdel_item/I = SSgarbage.items[path]
-		dellog += "<li><u>[path]</u><ul>"
-		if (I.failures)
-			dellog += "<li>Failures: [I.failures]</li>"
-		dellog += "<li>qdel() Count: [I.qdels]</li>"
-		dellog += "<li>Destroy() Cost: [I.destroy_time]ms</li>"
-		if (I.hard_deletes)
-			dellog += "<li>Total Hard Deletes [I.hard_deletes]</li>"
-			dellog += "<li>Time Spent Hard Deleting: [I.hard_delete_time]ms</li>"
-		if (I.slept_destroy)
-			dellog += "<li>Sleeps: [I.slept_destroy]</li>"
-		if (I.no_respect_force)
-			dellog += "<li>Ignored force: [I.no_respect_force]</li>"
-		if (I.no_hint)
-			dellog += "<li>No hint: [I.no_hint]</li>"
-		dellog += "</ul></li>"
-
-	dellog += "</ol>"
-
-	usr << browse(dellog.Join(), "window=dellog")
 
 ADMIN_VERB_ADD(/client/proc/cmd_debug_make_powernets, R_DEBUG, FALSE)
 /client/proc/cmd_debug_make_powernets()
@@ -254,18 +225,29 @@ ADMIN_VERB_ADD(/client/proc/cmd_debug_make_powernets, R_DEBUG, FALSE)
 	log_admin("[key_name(src)] has remade the powernet. makepowernets() called.")
 	message_admins("[key_name_admin(src)] has remade the powernets. makepowernets() called.", 0)
 
+
+ADMIN_VERB_ADD(/client/proc/cmd_debug_tog_aliens, R_DEBUG, FALSE)
+/client/proc/cmd_debug_tog_aliens()
+	set category = "Server"
+	set name = "Toggle Aliens"
+
+	config.aliens_allowed = !config.aliens_allowed
+	log_admin("[key_name(src)] has turned aliens [config.aliens_allowed ? "on" : "off"].")
+	message_admins("[key_name_admin(src)] has turned aliens [config.aliens_allowed ? "on" : "off"].", 0)
+
+
 /client/proc/cmd_admin_grantfullaccess(var/mob/M in SSmobs.mob_list)
 	set category = "Admin"
 	set name = "Grant Full Access"
 
 	if (ishuman(M))
 		var/mob/living/carbon/human/H = M
-		var/obj/item/card/id/id = H.GetIdCard()
+		var/obj/item/weapon/card/id/id = H.GetIdCard()
 		if(id)
 			id.icon_state = "gold"
 			id.access = get_all_accesses()
 		else
-			var/obj/item/card/id/new_id = new/obj/item/card/id(M);
+			var/obj/item/weapon/card/id/new_id = new/obj/item/weapon/card/id(M);
 			new_id.icon_state = "gold"
 			new_id.access = get_all_accesses()
 			new_id.registered_name = H.real_name
@@ -445,11 +427,11 @@ ADMIN_VERB_ADD(/client/proc/cmd_admin_dress, R_FUN, FALSE)
 	for(var/obj/machinery/power/rad_collector/Rad in world)
 		if(Rad.anchored)
 			if(!Rad.P)
-				var/obj/item/tank/plasma/Plasma = new/obj/item/tank/plasma(Rad)
-				Plasma.air_contents.gas["plasma"] = 70
+				var/obj/item/weapon/tank/phoron/Phoron = new/obj/item/weapon/tank/phoron(Rad)
+				Phoron.air_contents.gas["phoron"] = 70
 				Rad.drainratio = 0
-				Rad.P = Plasma
-				Plasma.loc = Rad
+				Rad.P = Phoron
+				Phoron.loc = Rad
 
 			if(!Rad.active)
 				Rad.toggle_power()
@@ -509,7 +491,7 @@ ADMIN_VERB_ADD(/client/proc/spawn_disciple, R_DEBUG, FALSE)
 		return
 
 	var/mob/living/carbon/human/H = new (get_turf(mob))
-	var/obj/item/implant/core_implant/cruciform/C = new /obj/item/implant/core_implant/cruciform(H)
+	var/obj/item/weapon/implant/core_implant/cruciform/C = new /obj/item/weapon/implant/core_implant/cruciform(H)
 
 	C.install(H)
 	C.activate()

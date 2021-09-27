@@ -28,7 +28,7 @@
 	hunger_enabled = FALSE
 	pass_flags = PASSTABLE
 	universal_understand = 1
-	//holder_type = /obj/item/holder/borer //Theres no inhand sprites for holding borers, it turns you into a pink square
+	//holder_type = /obj/item/weapon/holder/borer //Theres no inhand sprites for holding borers, it turns you into a pink square
 	var/borer_level = 0                           // Level of borer.
 	var/borer_exp = 0                             // Borer experience.
 	var/last_request
@@ -49,7 +49,8 @@
 		/mob/living/proc/ventcrawl,
 		/mob/living/proc/hide,
 		/mob/living/simple_animal/borer/proc/paralyze_victim,
-		/mob/living/simple_animal/borer/proc/infest
+		/mob/living/simple_animal/borer/proc/infest,
+
 		)
 
 	// Abilities borer can use when inside the host, but not in control
@@ -123,7 +124,7 @@
 
 	// Borer gets host abilities before actually getting inside the host
 	// Workaround for a BYOND bug: http://www.byond.com/forum/post/1833666
-	/*if(force_host)
+	if(force_host)
 		if(ishuman(host))
 			verbs += abilities_in_host
 			return
@@ -131,7 +132,7 @@
 			if(istype(ability, /mob/living/carbon/human))
 				continue
 			verbs += ability
-		return*/
+		return
 
 	// Re-grant some of the abilities, depending on the situation
 	if(!host)
@@ -141,7 +142,12 @@
 			verbs += abilities_in_host
 			Stat()
 			return
+		for(var/ability in abilities_in_host)
+			if(istype(ability, /mob/living/carbon/human))
+				continue
+			verbs += ability
 	else
+
 		host.verbs += abilities_in_control
 	Stat()
 
@@ -337,7 +343,7 @@
 
 	update_abilities()
 
-	to_chat(get_borer_control(), SPAN_NOTICE("Congratulations! You've reached Evolution Level [level], new synthesis reagents and new abilities are now available."))
+	to_chat(src, SPAN_NOTICE("Congratulations! You've reached Evolution Level [level], new synthesis reagents and new abilities are now available."))
 	max_chemicals += (borer_level * 10)
 	max_chemicals_inhost = max_chemicals * 5
 

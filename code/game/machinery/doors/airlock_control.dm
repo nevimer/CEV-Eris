@@ -8,6 +8,11 @@
 	var/datum/radio_frequency/radio_connection
 	var/cur_command = null	//the command the door is currently attempting to complete
 
+/obj/machinery/door/airlock/Process()
+	..()
+	if(arePowerSystemsOn())
+		execute_current_command()
+
 /obj/machinery/door/airlock/receive_signal(datum/signal/signal)
 	if(!arePowerSystemsOn()) return //no power
 
@@ -27,7 +32,8 @@
 		return
 
 	do_command(cur_command)
-	cur_command = null
+	if(command_completed(cur_command))
+		cur_command = null
 
 /obj/machinery/door/airlock/proc/do_command(var/command)
 	switch(command)
@@ -309,7 +315,7 @@
 
 /obj/machinery/access_button/attackby(obj/item/I as obj, mob/user as mob)
 	//Swiping ID on the access button
-	if (istype(I, /obj/item/card/id) || istype(I, /obj/item/modular_computer))
+	if (istype(I, /obj/item/weapon/card/id) || istype(I, /obj/item/modular_computer))
 		attack_hand(user)
 		return
 	..()

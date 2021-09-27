@@ -1,4 +1,4 @@
-/obj/item/gun/projectile/revolver/deckard
+/obj/item/weapon/gun/projectile/revolver/deckard
 	name = "FS REV .40 Magnum \"Deckard\""
 	desc = "A rare, custom-built revolver. Use when there is no time for Voight-Kampff test. Uses .40 Magnum rounds."
 	icon = 'icons/obj/guns/projectile/deckard.dmi'
@@ -11,5 +11,8 @@
 	price_tag = 3100 //one of most robust revolvers here
 	damage_multiplier = 1.45
 	penetration_multiplier = 1.65
+	rarity_value = 12
 	recoil_buildup = 6
+	//spawn_tags = SPAWN_TAG_FS_PROJECTILE
+
 	spawn_tags = SPAWN_TAG_FS_PROJECTILE

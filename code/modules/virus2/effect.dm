@@ -49,7 +49,7 @@
 	var/stage = 4
 	var/maxm = 1
 	var/badness = 1
-	var/data // For semi-procedural effects; this should be generated in generate() if used
+	var/data = null // For semi-procedural effects; this should be generated in generate() if used
 
 	proc/activate(var/mob/living/carbon/mob,var/multiplier)
 	proc/deactivate(var/mob/living/carbon/mob)
@@ -105,7 +105,7 @@
 	stage = 4
 	badness = 2
 	activate(var/mob/living/carbon/mob,var/multiplier)
-		mob.adjustEarDamage(0,20)
+		mob.ear_deaf += 20
 
 /datum/disease2/effect/killertoxins
 	name = "Toxification Syndrome"
@@ -333,7 +333,7 @@
 	activate(var/mob/living/carbon/mob,var/multiplier)
 		if(ishuman(mob))
 			var/mob/living/carbon/human/H = mob
-			if(H.species.name == SPECIES_HUMAN && !(H.h_style == "Bald") && !(H.h_style == "Balding Hair"))
+			if(H.species.name == "Human" && !(H.h_style == "Bald") && !(H.h_style == "Balding Hair"))
 				to_chat(H, SPAN_DANGER("Your hair starts to fall out in clumps..."))
 				spawn(50)
 					H.h_style = "Balding Hair"

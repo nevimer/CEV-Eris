@@ -1,7 +1,7 @@
 // NeoTheology
 
 // Foodstuffs, fertilizers, medical and cleaning utilities
-/obj/item/computer_hardware/hard_drive/portable/design/nt_bioprinter
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt_bioprinter
 	disk_name = "NeoTheology Bioprinter Products and Utilities"
 	icon_state = "neotheology"
 
@@ -29,24 +29,8 @@
 
 	)
 
-// Batteries that printed fully charged, at the cost of some biomatter or plasma being non-refundable
-/obj/item/computer_hardware/hard_drive/portable/design/nt/cells
-	disk_name = "NeoTheology Armory - Power Cells Pack"
-	icon_state = "neotheology"
-
-	license = -1
-	designs = list(
-		/datum/design/bioprinter/nt_cells/large,
-		/datum/design/bioprinter/nt_cells/large/plasma,
-		/datum/design/bioprinter/nt_cells/medium,
-		/datum/design/bioprinter/nt_cells/medium/plasma,
-		/datum/design/bioprinter/nt_cells/small,
-		/datum/design/bioprinter/nt_cells/small/plasma,
-
-	)
-
 // Clothes, armor and accesories
-/obj/item/computer_hardware/hard_drive/portable/design/nt_bioprinter_clothes
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt_bioprinter_clothes
 	disk_name = "NeoTheology Bio-Fabric Designs"
 	icon_state = "neotheology"
 
@@ -55,6 +39,7 @@
 		/datum/design/bioprinter/nt_clothes/acolyte_armor,
 		/datum/design/bioprinter/nt_clothes/agrolyte_armor,
 		/datum/design/bioprinter/nt_clothes/custodian_armor,
+		/datum/design/bioprinter/nt_clothes/NTvoid,
 
 		/datum/design/bioprinter/nt_clothes/acolyte_armor_head,
 		/datum/design/bioprinter/nt_clothes/agrolyte_armor_head,
@@ -68,19 +53,19 @@
 		/datum/design/bioprinter/nt_clothes/sports_uniform,
 		/datum/design/bioprinter/nt_clothes/church_uniform,
 
-		/datum/design/bioprinter/shoes,
-		/datum/design/bioprinter/jackboots,
-
-		/datum/design/bioprinter/belt/security,
-		/datum/design/bioprinter/belt/utility,
+		/datum/design/bioprinter/belt/security/neotheology,
+		/datum/design/bioprinter/belt/utility/neotheology,
 
 		/datum/design/bioprinter/satchel,
-		/datum/design/bioprinter/backpack,
+		/datum/design/bioprinter/leather_jacket,
 		/datum/design/bioprinter/wallet,
 		/datum/design/bioprinter/botanic_leather,
 
+		/datum/design/bioprinter/belt/utility,
 		/datum/design/bioprinter/belt/medical,
+		/datum/design/bioprinter/belt/security,
 		/datum/design/bioprinter/belt/medical/emt,
+		/datum/design/bioprinter/belt/misc/champion,
 
 		/datum/design/bioprinter/leather/holster,
 		/datum/design/bioprinter/leather/holster/armpit,
@@ -98,11 +83,12 @@
 		/datum/design/bioprinter/tubular/vial,
 		/datum/design/bioprinter/part,
 
-   		/datum/design/autolathe/device/headset_church
+   		/datum/design/autolathe/device/headset_church,
+		/datum/design/bioprinter/leather/cash_bag
 	)
 
 // Kinda like the regular product NT disk, minus the grenades, soap and the cleaner carbine. Should spawn in public access bioprinters if they get added by any chance.
-/obj/item/computer_hardware/hard_drive/portable/design/nt_bioprinter_public
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt_bioprinter_public
 	disk_name = "NeoTheology Bioprinter Pack"
 	icon_state = "neotheology"
 
@@ -118,11 +104,15 @@
 		/datum/design/bioprinter/wallet,
 		/datum/design/bioprinter/botanic_leather,
 		/datum/design/bioprinter/satchel,
-		/datum/design/bioprinter/backpack,
+		/datum/design/bioprinter/leather_jacket,
+		/datum/design/bioprinter/leather/cash_bag,
 		/datum/design/bioprinter/belt/utility,
+		/datum/design/bioprinter/belt/utility/neotheology,
 		/datum/design/bioprinter/belt/medical,
 		/datum/design/bioprinter/belt/security,
+		/datum/design/bioprinter/belt/security/neotheology,
 		/datum/design/bioprinter/belt/medical/emt,
+		/datum/design/bioprinter/belt/misc/champion,
 
 		/datum/design/bioprinter/leather/holster,
 		/datum/design/bioprinter/leather/holster/armpit,
@@ -132,64 +122,97 @@
 		/datum/design/autolathe/device/headset_church
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/nt/crusader
-	disk_name = "NeoTheology Armory - Neotheology Armor and Voidsuits"
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt/crusader
+	disk_name = "NeoTheology Armory - Crusader Armor"
 	icon_state = "neotheology"
 	designs = list(
-		/datum/design/autolathe/nt/helmet/crusader,
-		/datum/design/autolathe/nt/armor/crusader,
-		/datum/design/autolathe/clothing/NTvoid
+		/datum/design/autolathe/helmet/crusader,
+		/datum/design/autolathe/armor/crusader
 	)
-/obj/item/computer_hardware/hard_drive/portable/design/nt/excruciator
+
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt/excruciator
 	disk_name = "NeoTheology Armory - NT \"EXCRUCIATOR\" giga lens"
 	icon_state = "neotheology"
 	designs = list(
 		/datum/design/autolathe/excruciator
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/nt
-	disk_name = "NeoTheology Armory - NeoTheology Medkit"
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt
+	disk_name = "NeoTheology Armory - Blank"
+	rarity_value = 50
+	license = -1
+	spawn_blacklisted = TRUE
+	price_tag = 1000
+	bad_type = /obj/item/weapon/computer_hardware/hard_drive/portable/design/nt
+
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt/melee
+	disk_name = "NeoTheology Armory - Basic Melee Weapons"
+	icon_state = "neotheology"
+	designs = list(
+		/datum/design/autolathe/sword/nt_sword,
+		/datum/design/autolathe/sword/nt_dagger,
+		/datum/design/bioprinter/storage/sheath,
+		/datum/design/autolathe/tool_upgrade/sanctifier
+	)
+
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt/longsword
+	disk_name = "NeoTheology Armory - NT Longsword"
+	icon_state = "neotheology"
+	designs = list(
+		/datum/design/autolathe/sword/nt_longsword,
+		/datum/design/bioprinter/storage/sheath,
+		/datum/design/autolathe/tool_upgrade/sanctifier
+	)
+
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt/scourge
+	disk_name = "NeoTheology Armory - NT Scourge"
+	icon_state = "neotheology"
+	designs = list(
+		/datum/design/autolathe/sword/nt_scourge,
+		/datum/design/bioprinter/storage/sheath,
+		/datum/design/autolathe/tool_upgrade/sanctifier
+	)
+
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt/halberd
+	disk_name = "NeoTheology Armory - NT Halberd"
+	icon_state = "neotheology"
+	designs = list(
+		/datum/design/autolathe/sword/nt_halberd,
+		/datum/design/bioprinter/storage/sheath,
+		/datum/design/autolathe/tool_upgrade/sanctifier
+	)
+
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt/shield
+	disk_name = "NeoTheology Armory - NT Shield"
+	icon_state = "neotheology"
+	spawn_blacklisted = TRUE
+	designs = list(
+		/datum/design/autolathe/sword/nt_sword,
+		/datum/design/autolathe/sword/nt_dagger,
+		/datum/design/autolathe/shield/nt_shield,
+		/datum/design/bioprinter/storage/sheath,
+		/datum/design/autolathe/tool_upgrade/sanctifier
+	)
+
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt/firstaid
+	disk_name = "NeoTheology Armory - NeoTheologian Medkit"
 	icon_state = "neotheology"
 	designs = list(
 		/datum/design/autolathe/firstaid/nt
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/nt/melee
-	disk_name = "NeoTheology Armory - Basic Melee Weapons"
-	icon_state = "neotheology"
-	designs = list(
-		/datum/design/autolathe/nt/sword/nt_sword,
-		/datum/design/autolathe/nt/sword/nt_dagger,
-		/datum/design/bioprinter/storage/sheath,
-		/datum/design/autolathe/nt/tool_upgrade/sanctifier
-	)
-
-/obj/item/computer_hardware/hard_drive/portable/design/nt/advancedmelee
-	disk_name = "NeoTheology Armory - Advanced Melee Weapons"
-	icon_state = "neotheology"
-	designs = list(
-		/datum/design/bioprinter/storage/sheath,
-		/datum/design/autolathe/nt/tool_upgrade/sanctifier,
-		/datum/design/autolathe/nt/sword/nt_longsword,
-		/datum/design/autolathe/nt/sword/nt_scourge,
-		/datum/design/autolathe/nt/sword/nt_halberd,
-		/datum/design/autolathe/nt/shield/nt_shield,
-		/datum/design/autolathe/nt/sword/nt_spear
-	)
-
-/obj/item/computer_hardware/hard_drive/portable/design/nt/guns/nt_dominion
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_dominion
 	disk_name = "NeoTheology Armory - Dominion Plasma Rifle"
 	icon_state = "neotheology"
 	spawn_tags = SPAWN_TAG_DESIGN_ADVANCED
 	rarity_value = 50
 	license = 12
-	spawn_blacklisted = FALSE
 	designs = list(
 		/datum/design/autolathe/gun/plasma/dominion = 3, //"NT PR \"Dominion\""
 		/datum/design/autolathe/cell/medium/high,
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/guns/nt_purger
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_purger
 	disk_name = "NeoTheology Armory - Purger Plasma Rifle"
 	icon_state = "neotheology"
 	spawn_tags = SPAWN_TAG_DESIGN_ADVANCED
@@ -200,24 +223,17 @@
 		/datum/design/autolathe/cell/medium/high,
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/nt/grenades
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt/grenades
 	disk_name = "NeoTheology Armory - Grenades Pack"
 	icon_state = "neotheology"
 	designs = list(
-		/datum/design/autolathe/nt/grenade/nt_flashbang,
-		/datum/design/autolathe/nt/grenade/nt_frag,
-		/datum/design/autolathe/nt/grenade/nt_smokebomb
+		/datum/design/autolathe/grenade/nt_explosive,
+		/datum/design/autolathe/grenade/nt_flashbang,
+		/datum/design/autolathe/grenade/nt_frag,
+		/datum/design/autolathe/grenade/nt_smokebomb
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/nt/explosivegrenades
-	disk_name = "NeoTheology Armory - High Explosives Pack"
-	icon_state = "neotheology"
-	license = 2
-	designs = list(
-		/datum/design/autolathe/nt/grenade/nt_explosive
-	)
-
-/obj/item/computer_hardware/hard_drive/portable/design/guns/nt_nemesis
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_nemesis
 	disk_name = "NeoTheology Armory - Nemesis Energy Crossbow"
 	icon_state = "neotheology"
 	spawn_tags = SPAWN_TAG_DESIGN_ADVANCED
@@ -227,7 +243,7 @@
 		/datum/design/autolathe/gun/energy_crossbow = 3, // "NT EC \"Nemesis\"" - self charging, no cell needed
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/guns/nt_themis
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_themis
 	disk_name = "NeoTheology Armory - Themis Energy Crossbow"
 	icon_state = "neotheology"
 	spawn_tags = SPAWN_TAG_DESIGN_ADVANCED
@@ -236,7 +252,7 @@
 		/datum/design/autolathe/gun/large_energy_crossbow = 3, // "NT EC \"Themis\"" - self charging, no cell needed
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/guns/nt_lightfall
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_lightfall
 	disk_name = "NeoTheology Armory - Lightfall Laser Gun"
 	icon_state = "neotheology"
 	spawn_tags = SPAWN_TAG_DESIGN_ADVANCED
@@ -246,7 +262,7 @@
 		/datum/design/autolathe/cell/medium/high,
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/guns/nt_valkyrie
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_valkirye
 	disk_name = "NeoTheology Armory - Valkyrie Energy Rifle"
 	icon_state = "neotheology"
 	spawn_tags = SPAWN_TAG_DESIGN_ADVANCED
@@ -257,7 +273,7 @@
 		/datum/design/autolathe/cell/medium/high,
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/guns/nt_halicon
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_halicon
 	disk_name = "NeoTheology Armory - Halicon Ion Rifle"
 	icon_state = "neotheology"
 	spawn_tags = SPAWN_TAG_DESIGN_ADVANCED
@@ -268,19 +284,18 @@
 		/datum/design/autolathe/cell/medium/high,
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/guns/nt/nt_counselor
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_counselor
 	disk_name = "NeoTheology Armory - Councelor PDW E"
 	icon_state = "neotheology"
 	spawn_tags = SPAWN_TAG_DESIGN_ADVANCED
 	rarity_value = 17
 	license = 12
-	spawn_blacklisted = FALSE
 	designs = list(
 		/datum/design/autolathe/gun/taser = 3, // "NT SP \"Counselor\""
-		/datum/design/autolathe/cell/medium/high
+		/datum/design/autolathe/cell/medium/high,
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/guns/nt_svalinn
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_svalinn
 	disk_name = "NeoTheology Armory - NT LP \"Svalinn\""
 	icon_state = "neotheology"
 
@@ -290,7 +305,7 @@
 		/datum/design/autolathe/cell/small/high,
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/guns/nt_protector
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_protector
 	disk_name = "NeoTheology Armory - Protector Grenade Launcher"
 	icon_state = "neotheology"
 	spawn_tags = SPAWN_TAG_DESIGN_ADVANCED
@@ -300,7 +315,19 @@
 		/datum/design/autolathe/gun/grenade_launcher = 3, // "NT GL \"Protector\""
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/guns/nt_mk58
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_heavysniper
+	disk_name = "NeoTheology Armory - .60 Penetrator AMR"
+	icon_state = "neotheology"
+	spawn_tags = SPAWN_TAG_DESIGN_ADVANCED
+	rarity_value = 90
+	license = 12
+	designs = list(
+		/datum/design/autolathe/gun/heavysniper = 3, // "NT AMR .60 \"Penetrator\""
+		/datum/design/autolathe/ammo/antim,
+		/datum/design/autolathe/ammo/box_antim,
+	)
+
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_mk58
 	disk_name = "NeoTheology Armory - .35 MK58 Handgun Pack"
 	icon_state = "neotheology"
 	rarity_value = 9
@@ -314,7 +341,7 @@
 	)
 
 
-/obj/item/computer_hardware/hard_drive/portable/design/guns/nt_regulator
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/nt_regulator
 	disk_name = "NeoTheology Armory - .50 Regulator Shotgun"
 	icon_state = "neotheology"
 	rarity_value = 17
@@ -328,10 +355,10 @@
 		/datum/design/autolathe/ammo/shotgun_flash,
 		)
 
-/obj/item/computer_hardware/hard_drive/portable/design/nt/cruciform_upgrade
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt/cruciform_upgrade
 	disk_name = "NeoTheology Armory - Cruciform Upgrades"
 	icon_state = "neotheology"
 
-/obj/item/computer_hardware/hard_drive/portable/design/nt/cruciform_upgrade/New()
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/nt/cruciform_upgrade/New()
 	designs = subtypesof(/datum/design/autolathe/cruciform_upgrade)
 	..()

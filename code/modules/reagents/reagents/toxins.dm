@@ -97,10 +97,10 @@
 
 ///datum/reagent/toxin/blattedin is defined in blattedin.dm
 
-/datum/reagent/toxin/plasma
-	name = "Plasma"
-	id = "plasma"
-	description = "Plasma in its liquid form."
+/datum/reagent/toxin/phoron
+	name = "Phoron"
+	id = "phoron"
+	description = "Phoron in its liquid form."
 	taste_mult = 1.5
 	reagent_state = LIQUID
 	color = "#9D14DB"
@@ -119,7 +119,7 @@
 /datum/reagent/toxin/plasma/touch_turf(turf/simulated/T)
 	if(!istype(T))
 		return
-	T.assume_gas("plasma", volume, T20C)
+	T.assume_gas("phoron", volume, T20C)
 	remove_self(volume)
 	return TRUE
 
@@ -197,14 +197,13 @@
 	M.adjustOxyLoss(0.6 * effect_multiplier)
 	M.Weaken(10)
 	M.silent = max(M.silent, 10)
-	M.timeofdeath = world.time
+	M.tod = stationtime2text()
 	M.add_chemical_effect(CE_NOPULSE, 1)
 
 /datum/reagent/toxin/zombiepowder/Destroy()
 	if(holder && holder.my_atom && ismob(holder.my_atom))
 		var/mob/M = holder.my_atom
 		M.status_flags &= ~FAKEDEATH
-		M.timeofdeath = 0
 	. = ..()
 
 /datum/reagent/toxin/fertilizer //Reagents used for plant fertilizers.
@@ -439,7 +438,7 @@
 	M.cut_overlays()
 	M.invisibility = 101
 	for(var/obj/item/W in M)
-		if(istype(W, /obj/item/implant)) //TODO: Carn. give implants a dropped() or something
+		if(istype(W, /obj/item/weapon/implant)) //TODO: Carn. give implants a dropped() or something
 			qdel(W)
 			continue
 		W.layer = initial(W.layer)
@@ -621,7 +620,7 @@
 	M.stats.addTempStat(STAT_TGH, -STAT_LEVEL_BASIC, STIM_TIME, "fuhrerole_w")
 
 /datum/reagent/toxin/fuhrerole/overdose(mob/living/carbon/M, alien)
-	M.add_chemical_effect(CE_SPEECH_VOLUME, rand(3,4))
+	M.add_chemical_effect(CE_SPEECH_VOLUME, rand(1,2)) //Occulus Edit - Was originally rand(3,4).
 	M.adjustBrainLoss(0.5)
 
 /datum/reagent/toxin/biomatter
@@ -657,6 +656,15 @@
 			spill_biomass(T)
 		remove_self(volume)
 		return TRUE
+
+/datum/reagent/toxin/biomatter
+	name = "Biomatter"
+	id = "biomatter"
+	description = "A goo of unknown to you origin. Its better to stay that way."
+	taste_description = "vomit"
+	reagent_state = LIQUID
+	color = "#527f4f"
+	strength = 0.3
 
 /datum/reagent/toxin/chlorine
 	name = "Chlorine"

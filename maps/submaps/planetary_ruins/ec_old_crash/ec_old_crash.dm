@@ -47,35 +47,32 @@
 /turf/simulated/floor/tiled/white/lowpressure
 	initial_gas = list(GAS_CO2 = MOLES_O2STANDARD)
 
-/obj/item/disk/astrodata
+/obj/item/weapon/disk/astrodata
 	name = "astronomical data disk"
 	desc = "A disk with a wealth of astronomical data recorded. Astrophysicists at the EC Observatory would love to see this."
 	icon = 'icons/obj/cloning.dmi'
 	icon_state = "datadisk0"
 	item_state = "card-id"
 	w_class = ITEM_SIZE_SMALL
-	spawn_blacklisted = TRUE
 
-/obj/item/ecletters
+/obj/item/weapon/ecletters
 	name = "bundle of letters"
 	icon = 'icons/obj/bureaucracy.dmi'
 	icon_state = "paper_words"
-	spawn_blacklisted = TRUE
 
-/obj/item/ecletters/Initialize()
+/obj/item/weapon/ecletters/Initialize()
 	. = ..()
 	desc = "A bunch of letters from crewmembers to their family and loved ones, dated [game_year - 142]. They're not hopeful."
 
-/obj/item/paper/ecrashlog
+/obj/item/weapon/paper/ecrashlog
 	name = "handwritten note"
-	spawn_blacklisted = TRUE
 
-/obj/item/paper/ecrashlog/Initialize()
+/obj/item/weapon/paper/ecrashlog/Initialize()
 	. = ..()
-	var/shipname = "CEV [pick("Magellan", "Gagarin", "Drake", "Horizon", "Aurora")]"
-	var/datum/species/S = all_species[SPECIES_HUMAN]
+	var/shipname = "TEV [pick("Magellan", "Gagarin", "Drake", "Horizon", "Aurora")]"
+	//var/decl/cultural_info/S = SSculture.get_culture(CULTURE_HUMAN_EARTH) Occulus Edit
 	var/new_info = {"
-	I am Lieutenant Hao Ru, captain of [shipname], of the Hansa Trade Union.<br>
+	I am Lieutenant Hao Ru, captain of [shipname], of the Terran Commonwealth Expeditionary Corps.<br>
 	We are dying. The Ran Mission has failed.<br>
 	Our ship has suffered a catastrophic chain of failures whist crew was in cryotransit. It started with thruster controls going inoperable, and our auto-pilot was unable to adjust course away from an asteroid cluster. <br>
 	We've lost the navigational suite from impacts, and are flying blind. We have tried every option, and our engineers have ascertained that there is no way to repair it in the field.<br>
@@ -83,13 +80,13 @@
 	I've used this module as a strongbox, because it is only one rated for re-entry. I leave the astrodata I managed to salvage here. It has a few promising scans. I would not want it to be wasted.<br>
 	Some of the crew wrote letters to their kin, in case we are found. They deserve any consolation they get, so I've put the letters here, too.<br>
 	The crew for this mission is:<br>
-	Ensign [S.get_random_name(pick(MALE,FEMALE))]<br>
-	Ensign [S.get_random_name(pick(MALE,FEMALE))]<br>
-	Chief Explorer [S.get_random_name(pick(MALE,FEMALE))]<br>
-	Senior Explorer [S.get_random_name(pick(MALE,FEMALE))]<br>
-	Senior Explorer [S.get_random_name(pick(MALE,FEMALE))]<br>
-	Explorer [S.get_random_name(pick(MALE,FEMALE))]<br>
-	I am Lieutenant Hao Ru, captain of [shipname] of the Hansa Trade Union. I will be joining my crew in cryo now.<br>
+	Ensign Dora Webster <br>
+	Ensign Iosif Wilkins <br>
+	Chief Explorer Simona Robles <br>
+	Senior Explorer Dion Morrison <br>
+	Senior Explorer Seren Millar <br>
+	Explorer Alia Harrington <br>
+	I am Lieutenant Hao Ru, captain of [shipname] of the Terran Commonwealth Expeditionary Corps. I will be joining my crew in cryo now.<br>
 	<i>3rd December [game_year - 142]</i></tt>
 	"}
 	set_content(new_info)

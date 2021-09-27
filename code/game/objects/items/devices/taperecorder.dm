@@ -15,9 +15,9 @@
 	var/recording = 0
 	var/playing = 0
 	var/playsleepseconds = 0
-	var/obj/item/computer_hardware/hard_drive/portable/mydrive
+	var/obj/item/weapon/computer_hardware/hard_drive/portable/mydrive
 	var/datum/computer_file/data/audio/audio_file
-	var/starting_drive_type = /obj/item/computer_hardware/hard_drive/portable
+	var/starting_drive_type = /obj/item/weapon/computer_hardware/hard_drive/portable
 	var/datum/wires/taperecorder/wires // Wires datum
 	var/open_panel = 0
 
@@ -39,7 +39,7 @@
 		to_chat(usr, "The wire panel is open.")
 
 /obj/item/device/taperecorder/attackby(obj/item/I, mob/user, params)
-	if(!mydrive && istype(I, /obj/item/computer_hardware/hard_drive/portable))
+	if(!mydrive && istype(I, /obj/item/weapon/computer_hardware/hard_drive/portable))
 		if(insert_item(I, user))
 			mydrive = I
 			update_icon()
@@ -72,7 +72,8 @@
 
 /obj/item/device/taperecorder/hear_talk(mob/living/M as mob, msg, var/verb="says", datum/language/speaking=null, speech_volume)
 	if(speech_volume)
-		msg = "<FONT size='[speech_volume]'>[msg]</FONT>"
+		//Occulus Edit: Record text size correctly.
+		msg = "<span style='font-size:[speech_volume]em'>[msg]</span>"
 	if(audio_file && recording)
 		audio_file.timestamp += audio_file.used_capacity
 

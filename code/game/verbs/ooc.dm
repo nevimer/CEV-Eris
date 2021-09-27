@@ -12,6 +12,10 @@
 		to_chat(src, "Guests may not use OOC.")
 		return
 
+	if(!is_key_whitelisted(key))
+		to_chat(src, "Non-whitelisted users may not use OOC. Please contact an administrator with ahelp or on discord to become whitelisted!..") //occulus edit
+		return
+
 	msg = sanitize(msg)
 	if(!msg)	return
 

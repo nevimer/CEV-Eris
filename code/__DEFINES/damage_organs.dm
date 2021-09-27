@@ -7,7 +7,6 @@
 #define CLONE     "clone"
 #define HALLOSS   "halloss"
 #define BLAST	  "blast"
-#define PSY       "psy"
 
 #define CUT       "cut"
 #define BRUISE    "bruise"
@@ -17,6 +16,8 @@
 #define WEAKEN    "weaken"
 #define PARALYZE  "paralize"
 #define IRRADIATE "irradiate"
+#define AGONY     "agony"     // Added in PAIN!
+#define PSY       "sanity"	//Sanity damage - Occulus Edit
 #define SLUR      "slur"
 #define STUTTER   "stutter"
 #define EYE_BLUR  "eye_blur"
@@ -52,10 +53,6 @@
 #define OP_NERVE         "nerve"
 #define OP_BLOOD_VESSEL  "blood vessel"
 
-// Extra organs
-#define OP_KIDNEY_LEFT    "left kidney"
-#define OP_KIDNEY_RIGHT   "right kidney"
-
 // Carrion organ processes
 #define OP_MAW       "carrion maw"
 #define OP_SPINNERET "carrion spinneret"
@@ -70,11 +67,16 @@
 #define BP_B_HEAD   "skull"
 #define BP_B_L_ARM  "left humerus"
 #define BP_B_R_ARM  "right humerus"
+#define BP_B_R_HAND "right carpals"
+#define BP_B_L_HAND "left carpals"
 #define BP_B_L_LEG  "left femur"
 #define BP_B_R_LEG  "right femur"
+#define BP_B_L_FOOT "left tibia"
+#define BP_B_R_FOOT "right tibia"
 
 // Unique carrion Organs.
 #define BP_SPCORE   "spider core"
+#define BP_BRAIN_CULTIST "twisted mind"//Occultist brain object
 
 //Augmetations
 #define BP_AUGMENT_R_ARM         "right arm augment"
@@ -93,15 +95,20 @@
 // Limbs.
 #define BP_L_LEG  "l_leg"
 #define BP_R_LEG  "r_leg"
+#define BP_L_FOOT "l_foot"
+#define BP_R_FOOT "r_foot"
 #define BP_L_ARM  "l_arm"
 #define BP_R_ARM  "r_arm"
+#define BP_L_HAND "l_hand"
+#define BP_R_HAND "r_hand"
 #define BP_HEAD   "head"
-#define BP_CHEST  "chest"
+#define BP_CHEST  "torso"
 #define BP_GROIN  "groin"
 #define BP_LEGS list(BP_R_LEG, BP_L_LEG)
 #define BP_ARMS list(BP_R_ARM, BP_L_ARM)
-#define BP_ALL_LIMBS list(BP_CHEST, BP_GROIN, BP_HEAD, BP_L_ARM, BP_R_ARM, BP_L_LEG, BP_R_LEG)
+#define BP_ALL_LIMBS list(BP_CHEST, BP_GROIN, BP_HEAD, BP_L_ARM, BP_R_ARM, BP_L_LEG, BP_R_LEG, BP_L_FOOT, BP_R_FOOT, BP_R_HAND, BP_L_HAND)
 #define BP_BY_DEPTH list(BP_HEAD, BP_L_ARM, BP_R_ARM, BP_L_LEG, BP_R_LEG, BP_GROIN, BP_CHEST)
+#define BP_BASE_PARTS list(BP_CHEST, BP_GROIN)
 
 // Organs helpers.
 #define BP_IS_ORGANIC(org)  (org.nature == MODIFICATION_ORGANIC)

@@ -15,7 +15,7 @@ var/list/ship_scanners = list()
 	density = TRUE
 	anchored = FALSE
 
-	circuit = /obj/item/electronics/circuitboard/long_range_scanner
+	circuit = /obj/item/weapon/electronics/circuitboard/long_range_scanner
 
 
 
@@ -26,12 +26,12 @@ var/list/ship_scanners = list()
 	var/max_log_entries = 200			// A safety to prevent players generating endless logs and maybe endangering server memory
 
 	var/scanner_modes = 0				// Enabled scanner mode flags
-	var/scan_range = 2					// Scan range on the overmap
+	var/scan_range = 3					// Scan range on the overmap
 
 	var/max_energy = 0					// Maximal stored energy. In joules. Depends on the type of used SMES coil when constructing this scanner.
 	var/current_energy = 0				// Current stored energy.
 	var/running = SCANNER_OFF			// Whether the scanner is enabled or not.
-	var/input_cap = 1 MEGAWATTS			// Currently set input limit. Set to 0 to disable limits altogether. The shield will try to input this value per tick at most
+	var/input_cap = 70 KILOWATTS		// Currently set input limit. Set to 0 to disable limits altogether. The shield will try to input this value per tick at most
 	var/upkeep_power_usage = 0			// Upkeep power usage last tick.
 	var/power_usage = 0					// Total power usage last tick.
 	var/overloaded = 0					// Whether the field has overloaded and shut down to regenerate.
@@ -95,7 +95,8 @@ var/list/ship_scanners = list()
 		S.scanners |= src
 
 	// Link to Eris object on the overmap
-	linked_ship = (locate(/obj/effect/overmap/ship/eris) in GLOB.ships)
+	linked_ship = locate(/obj/effect/overmap/ship/eris)
+
 
 /obj/machinery/power/long_range_scanner/Destroy()
 	toggle_tendrils(FALSE)
@@ -109,7 +110,7 @@ var/list/ship_scanners = list()
 
 /obj/machinery/power/long_range_scanner/RefreshParts()
 	max_energy = 0
-	for(var/obj/item/stock_parts/smes_coil/S in component_parts)
+	for(var/obj/item/weapon/stock_parts/smes_coil/S in component_parts)
 		max_energy += (S.ChargeCapacity / CELLRATE)
 	current_energy = between(0, current_energy, max_energy)
 
@@ -138,7 +139,7 @@ var/list/ship_scanners = list()
 			offline_for += 30 //Another minute before it can be turned back on again
 		return
 
-	upkeep_power_usage = ENERGY_UPKEEP_SCANNER
+	upkeep_power_usage = ENERGY_UPKEEP_SCANNER * (max(1,scan_range-2) * max(1,scan_range-2)) //35kw
 
 	if(powernet && !input_cut && (running == SCANNER_RUNNING || running == SCANNER_OFF))
 		var/energy_buffer = 0
@@ -289,7 +290,16 @@ var/list/ship_scanners = list()
 		input_cap = max(0, new_cap) * 1000
 		log_event(EVENT_RECONFIGURED, src)
 		. = 1
-
+	//Occulus Edit Start
+	if(href_list["set_range"])
+		var/new_range = input(usr, "Enter new field range (1-8). Leave blank to cancel.", "Field Radius Control", scan_range) as num
+		if(!new_range)
+			return
+		scan_range = new_range
+		if(scan_range > 8)
+			scan_range = 8
+		log_event(EVENT_RECONFIGURED, src)
+		. = 1
 	ui_interact(usr)
 
 /obj/machinery/power/long_range_scanner/proc/charge_level()
@@ -332,9 +342,9 @@ var/list/ship_scanners = list()
 		if (EVENT_ENABLED to EVENT_RECONFIGURED)
 			switch (event_type)
 				if (EVENT_ENABLED)
-					logstring += "Shield powered up"
+					logstring += "Scanner powered up"//Occulus Edit
 				if (EVENT_DISABLED)
-					logstring += "Shield powered down"
+					logstring += "Scanner powered down"//Occulus Edit
 				if (EVENT_RECONFIGURED)
 					logstring += "Configuration altered"
 				else

@@ -19,7 +19,7 @@
 	var/last_use = 0
 
 /obj/item/clothing/head/mindreader/ui_action_click()
-	if(ismob(loc))
+	if(istype(loc, /mob))
 		if(world.time >= (last_use + self_cooldown))
 			last_use = world.time
 			var/mob/user = loc
@@ -48,5 +48,5 @@
 			output += "<br><b>[H.real_name]'s [A.role_text] objectives:</b>"
 		output += "[A.print_objectives(FALSE)]"
 
-	new /obj/item/paper(drop_location(), output, "[H.real_name]'s Memory")
+	new /obj/item/weapon/paper(drop_location(), output, "[H.real_name]'s Memory")
 	H.visible_message(SPAN_NOTICE("[src] printed a paper with writed [H] memory."))

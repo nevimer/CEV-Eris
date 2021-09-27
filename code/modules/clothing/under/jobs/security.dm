@@ -2,7 +2,7 @@
  * Contains:
  *		Security
  *		Detective
- *		Ironhammer Commander
+ *		Aegis Commander
  */
 
 /*
@@ -28,27 +28,27 @@
 	body_parts_covered = NONE
 
 /obj/item/clothing/under/rank/security
-	name = "Ironhammer Operative's jumpsuit"
+	name = "Cobalt Operative jumpsuit"
 	desc = "It's made of a slightly sturdier material than standard jumpsuits, to allow for robust protection."
 	icon_state = "security"
 	item_state = "ba_suit"
 	siemens_coefficient = 0.8
 
 /obj/item/clothing/under/rank/security/skirt
-	name = "Ironhammer Operative's jumpskirt"
+	name = "Cobalt Operative jumpskirt"
 	desc = "It's made of a slightly sturdier material than standard jumpskirts, to allow for robust protection."
 	icon_state = "security_skirt"
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|ARMS
 
 /obj/item/clothing/under/rank/medspec
-	name = "Medical Specialist's jumpsuit"
+	name = "Medical Specialist jumpsuit"
 	desc = "It's made of a slightly sturdier material than standard jumpsuits, to allow for robust protection. It has the words \"Medical Specialist\" written on the shoulders."
 	icon_state = "medspec"
 	item_state = "ba_suit"
 	siemens_coefficient = 0.8
 
 /obj/item/clothing/under/rank/medspec/skirt
-	name = "Medical Specialist's jumpskirt"
+	name = "Medical Specialist jumpskirt"
 	desc = "It's made of a slightly sturdier material than standard jumpskirts, to allow for robust protection. It has the words \"Medical Specialist\" written on the shoulders."
 	icon_state = "medspec_skirt"
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|ARMS
@@ -58,10 +58,11 @@
  */
 /obj/item/clothing/under/rank/inspector
 	name = "inspector's suit"
-	desc = "Casual turtleneck and jeans, civilian clothes of Ironhammer Inspector."
+	desc = "Casual turtleneck and jeans, civilian clothes of the Aegis Inspector."
 	icon_state = "insp_under"
 	item_state = "insp_under"
 	siemens_coefficient = 0.8
+	no_fibers = TRUE	// OCCULUS EDIT
 
 /obj/item/clothing/under/rank/det
 	name = "inspector's suit"
@@ -69,6 +70,7 @@
 	icon_state = "detective"
 	item_state = "det"
 	siemens_coefficient = 0.8
+	no_fibers = TRUE	// OCCULUS EDIT
 
 /obj/item/clothing/under/rank/det/black
 	icon_state = "detective3"
@@ -101,33 +103,34 @@
 
 
 /*
- * Ironhammer Commander
+ * Aegis Commander
  */
 /obj/item/clothing/under/rank/ih_commander
-	desc = "It's a jumpsuit worn by those few with the dedication to achieve the position of \"Ironhammer Commander\"."
-	name = "Ironhammer Commander's jumpsuit"
+	desc = "It's a jumpsuit worn by those few with the dedication to achieve the position of \"Aegis Commander\"."
+	name = "Aegis Cobalt Commander's jumpsuit"
 	icon_state = "hos"
 	item_state = "r_suit"
 	siemens_coefficient = 0.8
 
 /obj/item/clothing/under/rank/ih_commander/skirt
-	name = "Ironhammer Commander's jumpskirt"
-	desc = "It's a jumpskirt worn by those few with the dedication to achieve the position of \"Ironhammer Commander\"."
+	name = "Aegis Cobalt Commander's jumpskirt"
+	desc = "It's a jumpskirt worn by those few with the dedication to achieve the position of \"Aegis Commander\"."
 	icon_state = "hos_skirt"
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|ARMS
 
 /obj/item/clothing/head/HoS
-	name = "Ironhammer Commander Hat"
-	desc = "The hat of the Ironhammer Commander. For showing the officers who's in charge."
+	name = "Aegis Cobalt Commander Hat"
+	desc = "The hat of the Aegis Commander. For showing the officers who's in charge."
 	icon_state = "hoshat"
 	body_parts_covered = NONE
 	siemens_coefficient = 0.8
+	rarity_value = 50
 
 /*
  * Navy uniforms
  */
 /obj/item/clothing/under/rank/cadet
-	name = "Ironhammer Cadet's jumpskirt"
+	name = "Cobalt Cadet jumpskirt"
 	desc = "It's a sailor's uniform used for cadets in training, though more frequently in acts of hazing."
 	icon_state = "cadet"
 	item_state = "cadet"

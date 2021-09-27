@@ -1,6 +1,6 @@
 var/global/list/map_sectors = list()
 
-/area/overmap
+/area/overmap/
 	name = "System Map"
 	icon_state = "start"
 	requires_power = 0
@@ -72,7 +72,7 @@ var/global/list/map_sectors = list()
 	var/list/icons = list("bluedwarf", "reddwarf", "yellowgiant", "blackhole", "illusive", "clockwork")
 
 /obj/effect/star/New()
-	var/i = rand(1, descs.len)
+	var/i = rand(descs.len)
 	name = names[i]
 	desc = descs[i]
 	SetIconState(icons[i])

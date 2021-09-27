@@ -36,18 +36,18 @@
 
 /obj/structure/closet/crate/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(1.0)
 			for(var/obj/O in src.contents)
 				qdel(O)
 			qdel(src)
 			return
-		if(2)
+		if(2.0)
 			for(var/obj/O in src.contents)
 				if(prob(50))
 					qdel(O)
 			qdel(src)
 			return
-		if(3)
+		if(3.0)
 			if (prob(50))
 				qdel(src)
 			return
@@ -78,7 +78,7 @@
 	name = "plastic crate"
 	desc = "A rectangular plastic crate."
 	icon_state = "plasticcrate"
-	matter = list(MATERIAL_PLASIC = 10)
+	matter = list(MATERIAL_PLASTIC = 10)//Occulus Edit: Spelling error
 	price_tag = 10
 
 /obj/structure/closet/crate/internals
@@ -87,14 +87,14 @@
 	icon_state = "o2crate"
 
 /obj/structure/closet/crate/internals/populate_contents()
-	new /obj/item/tank/emergency_oxygen(src)
-	new /obj/item/tank/emergency_oxygen(src)
-	new /obj/item/tank/emergency_oxygen(src)
-	new /obj/item/tank/emergency_oxygen(src)
-	new /obj/item/tank/emergency_oxygen(src)
-	new /obj/item/tank/emergency_oxygen(src)
-	new /obj/item/tank/emergency_oxygen(src)
-	new /obj/item/tank/emergency_oxygen(src)
+	new /obj/item/weapon/tank/emergency_oxygen(src)
+	new /obj/item/weapon/tank/emergency_oxygen(src)
+	new /obj/item/weapon/tank/emergency_oxygen(src)
+	new /obj/item/weapon/tank/emergency_oxygen(src)
+	new /obj/item/weapon/tank/emergency_oxygen(src)
+	new /obj/item/weapon/tank/emergency_oxygen(src)
+	new /obj/item/weapon/tank/emergency_oxygen(src)
+	new /obj/item/weapon/tank/emergency_oxygen(src)
 	new /obj/item/clothing/mask/breath(src)
 	new /obj/item/clothing/mask/breath(src)
 	new /obj/item/clothing/mask/breath(src)
@@ -138,8 +138,10 @@
 	icon_state = "crate"
 
 /obj/structure/closet/crate/rcd/populate_contents()
-	new /obj/item/stack/material/compressed(src,30)
-	new /obj/item/rcd(src)
+	new /obj/item/weapon/rcd_ammo(src)
+	new /obj/item/weapon/rcd_ammo(src)
+	new /obj/item/weapon/rcd_ammo(src)
+	new /obj/item/weapon/rcd(src)
 
 /obj/structure/closet/crate/solar
 	name = "solar pack crate"
@@ -166,9 +168,9 @@
 	new /obj/item/solar_assembly(src)
 	new /obj/item/solar_assembly(src)
 	new /obj/item/solar_assembly(src)
-	new /obj/item/electronics/circuitboard/solar_control(src)
-	new /obj/item/electronics/tracker(src)
-	new /obj/item/paper/solar(src)
+	new /obj/item/weapon/electronics/circuitboard/solar_control(src)
+	new /obj/item/weapon/electronics/tracker(src)
+	new /obj/item/weapon/paper/solar(src)
 
 /obj/structure/closet/crate/freezer
 	name = "freezer"
@@ -181,10 +183,10 @@
 
 
 /obj/structure/closet/crate/freezer/rations/populate_contents()
-	new /obj/item/reagent_containers/food/snacks/liquidfood(src)
-	new /obj/item/reagent_containers/food/snacks/liquidfood(src)
-	new /obj/item/reagent_containers/food/snacks/liquidfood(src)
-	new /obj/item/reagent_containers/food/snacks/liquidfood(src)
+	new /obj/item/weapon/reagent_containers/food/snacks/liquidfood(src)
+	new /obj/item/weapon/reagent_containers/food/snacks/liquidfood(src)
+	new /obj/item/weapon/reagent_containers/food/snacks/liquidfood(src)
+	new /obj/item/weapon/reagent_containers/food/snacks/liquidfood(src)
 
 /obj/structure/closet/crate/bin
 	name = "large bin"
@@ -212,9 +214,9 @@
 	desc = "A secure weapons crate."
 	icon_state = "weaponcrate"
 
-/obj/structure/closet/crate/secure/plasma
-	name = "plasma crate"
-	desc = "A secure plasma crate."
+/obj/structure/closet/crate/secure/phoron
+	name = "phoron crate"
+	desc = "A secure phoron crate."
 	icon_state = "plasmacrate"
 
 /obj/structure/closet/crate/secure/gear

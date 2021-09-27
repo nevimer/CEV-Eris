@@ -4,14 +4,14 @@
 ///////////////////////////////
 /obj/machinery/power/port_gen/pacman
 	name = "\improper P.A.C.M.A.N.-type Portable Generator"
-	desc = "A power generator that runs on solid plasma sheets. Rated for 80 kW max safe output."
+	desc = "A power generator that runs on solid phoron sheets. Rated for 80 kW max safe output."
 
 	var/fuel_type = "fuel"
-	circuit = /obj/item/electronics/circuitboard/diesel
+	circuit = /obj/item/weapon/electronics/circuitboard/diesel
 
 	/*
 		These values were chosen so that the generator can run safely up to 80 kW
-		A full 50 plasma sheet stack should last 20 minutes at power_output = 4
+		A full 50 phoron sheet stack should last 20 minutes at power_output = 4
 		temperature_gain and max_temperature are set so that the max safe power level is 4.
 		Setting to 5 or higher can only be done temporarily before the generator overheats.
 	*/
@@ -39,10 +39,10 @@
 
 /obj/machinery/power/port_gen/pacman/RefreshParts()
 	var/temp_rating = 0
-	for(var/obj/item/stock_parts/SP in component_parts)
-		if(istype(SP, /obj/item/stock_parts/matter_bin))
+	for(var/obj/item/weapon/stock_parts/SP in component_parts)
+		if(istype(SP, /obj/item/weapon/stock_parts/matter_bin))
 			max_sheets = SP.rating * SP.rating * 50
-		else if(istype(SP, /obj/item/stock_parts/micro_laser) || istype(SP, /obj/item/stock_parts/capacitor))
+		else if(istype(SP, /obj/item/weapon/stock_parts/micro_laser) || istype(SP, /obj/item/weapon/stock_parts/capacitor))
 			temp_rating += SP.rating
 
 	power_gen = round(initial(power_gen) * (max(2, temp_rating) / 2))
@@ -142,13 +142,13 @@
 		explode()
 
 /obj/machinery/power/port_gen/pacman/explode()
-	//Vapourize all the plasma
-	//When ground up in a grinder, 1 sheet produces 20 u of plasma -- Chemistry-Machinery.dm
+	//Vapourize all the phoron
+	//When ground up in a grinder, 1 sheet produces 20 u of phoron -- Chemistry-Machinery.dm
 	//1 mol = 10 u? I dunno. 1 mol of carbon is definitely bigger than a pill
-	var/plasma = (sheets+sheet_left)*20
+	var/phoron = (sheets+sheet_left)*20
 	var/datum/gas_mixture/environment = loc.return_air()
 	if (environment)
-		environment.adjust_gas_temp("plasma", plasma/10, temperature + T0C)
+		environment.adjust_gas_temp("phoron", phoron/10, temperature + T0C)
 
 	sheets = 0
 	sheet_left = 0

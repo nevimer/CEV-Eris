@@ -1,39 +1,31 @@
-/obj/item/gun/projectile/colt
+/obj/item/weapon/gun/projectile/colt
 	name = "FS HG .35 Auto \"Colt M1911\""
 	desc = "A cheap knock-off of a Colt M1911. Uses standard .35 and high capacity magazines."
 	icon = 'icons/obj/guns/projectile/colt.dmi'
 	icon_state = "colt"
 	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2)
-	matter = list(MATERIAL_PLASTEEL = 12, MATERIAL_WOOD = 6)
-	price_tag = 900
+	matter = list(MATERIAL_PLASTEEL = 12, MATERIAL_PLASTIC = 6)
+	price_tag = 1200
 	fire_sound = 'sound/weapons/guns/fire/pistol_fire.ogg'
-	can_dual = TRUE
+	can_dual = 1
 	caliber = CAL_PISTOL
 	load_method = MAGAZINE
 	mag_well = MAG_WELL_PISTOL|MAG_WELL_H_PISTOL
 	magazine_type = /obj/item/ammo_magazine/pistol
 	damage_multiplier = 1.5
-	recoil_buildup = 4
-	gun_tags = list(GUN_GILDABLE)
+	recoil_buildup = 17
 	spawn_tags = SPAWN_TAG_FS_PROJECTILE
 
-
-/obj/item/gun/projectile/colt/on_update_icon()
+/obj/item/weapon/gun/projectile/colt/on_update_icon()
 	..()
 
 	var/iconstring = initial(icon_state)
-	var/itemstring
-
-	if(gilded)
-		iconstring += "_gold"
-		itemstring += "_gold"
 
 	if (!ammo_magazine || !length(ammo_magazine.stored_ammo))
 		iconstring += "_slide"
 
 	icon_state = iconstring
-	set_item_state(itemstring)
 
-/obj/item/gun/projectile/colt/Initialize()
+/obj/item/weapon/gun/projectile/colt/Initialize()
 	. = ..()
 	update_icon()

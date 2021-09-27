@@ -249,9 +249,11 @@ SUBSYSTEM_DEF(garbage)
 		time = TICK_DELTA_TO_MS(tick)/100
 	if (time > highest_del_time)
 		highest_del_time = time
-	if (time > 10)
-		log_game("Error: [type]([refID]) took longer than 1 second to delete (took [time/10] seconds to delete)")
-		message_admins("Error: [type]([refID]) took longer than 1 second to delete (took [time/10] seconds to delete).")
+	//OCCULUS EDIT START - Setting the 1 second hardcap to 2 seconds to see if it makes things hang less
+	if (time > 20)
+		log_game("Error: [type]([refID]) took longer than 2 seconds to delete (took [time/10] seconds to delete)")
+		message_admins("Error: [type]([refID]) took longer than 2 seconds to delete (took [time/10] seconds to delete).")
+	//OCCULUS EDIT END
 		postpone(time)
 
 /datum/controller/subsystem/garbage/proc/HardQueue(datum/D)
@@ -293,10 +295,12 @@ SUBSYSTEM_DEF(garbage)
 // Should be treated as a replacement for the 'del' keyword.
 // Datums passed to this will be given a chance to clean up references to allow the GC to collect them.
 /proc/qdel(datum/D, force=FALSE, ...)
+	if(!D)
+		return
 	if(!istype(D))
+		crash_with("qdel() can only handle /datum (sub)types, was passed: [log_info_line(D)]")
 		del(D)
 		return
-
 	var/datum/qdel_item/I = SSgarbage.items[D.type]
 	if (!I)
 		I = SSgarbage.items[D.type] = new /datum/qdel_item(D.type)

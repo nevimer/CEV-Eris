@@ -12,6 +12,8 @@
 	layer = LOW_OBJ_LAYER
 	var/dir_input = WEST
 	var/dir_output = NORTH
+	circuit = /obj/item/weapon/electronics/circuitboard/neotheology/bioreactor_loader
+
 
 /obj/machinery/multistructure/bioreactor_part/loader/Initialize()
 	. = ..()
@@ -31,24 +33,18 @@
 		return
 	use_power(2)
 	if(contents.len)
-		for(var/atom/movable/A in contents)
+		for(var/obj/object in contents)
 			var/obj/machinery/multistructure/bioreactor_part/platform/empty_platform = MS_bioreactor.get_unoccupied_platform()
 			if(empty_platform)
-				A.forceMove(get_step(src, dir_output))
+				object.forceMove(get_step(src, dir_output))
 	else
 		grab()
 
 
 /obj/machinery/multistructure/bioreactor_part/loader/proc/grab()
-	var/turf/T = get_step(src, dir_input)
-	for(var/atom/movable/A in T)
-		if(!A.anchored && contents.len <= 10)
-			if(isliving(A))
-				var/mob/living/L = A
-				if(L.stat != DEAD || ishuman(L))
-					continue
-			A.forceMove(loc)
-			spawn(1)
-				A.forceMove(src)
-				FLICK("loader_take", src)
-			break
+	var/obj/item/target = locate() in get_step(src, dir_input)
+	if(target && !target.anchored && contents.len <= 10)
+		target.forceMove(loc)
+		spawn(1)
+			target.forceMove(src)
+			FLICK("loader_take", src)

@@ -36,7 +36,7 @@ GLOBAL_DATUM(storyteller, /datum/storyteller)
 	EVENT_LEVEL_MUNDANE = 0, //Mundane
 	EVENT_LEVEL_MODERATE = 0, //Moderate
 	EVENT_LEVEL_MAJOR = 0, //Major
-	EVENT_LEVEL_ROLESET = 110 //Roleset
+	EVENT_LEVEL_ROLESET = 0 //Roleset
 	)
 
 	//Lists of events. These are built dynamically at runtime
@@ -78,8 +78,10 @@ GLOBAL_DATUM(storyteller, /datum/storyteller)
 
 	var/engineer = FALSE
 	var/command = FALSE
+	var/readyplayer = FALSE//SYZ edit, make sure that the round doesn't start if nobody is ready
 	for(var/mob/new_player/player in GLOB.player_list)
 		if(player.ready && player.mind)
+			readyplayer = TRUE //SYZ edit
 			if(player.mind.assigned_role in list(JOBS_COMMAND))
 				command = TRUE
 			if(player.mind.assigned_role in list(JOBS_ENGINEERING))
@@ -88,19 +90,21 @@ GLOBAL_DATUM(storyteller, /datum/storyteller)
 				return TRUE
 
 	var/tcol = "red"
-	if(GLOB.player_list.len <= 10)
+	if(GLOB.player_list.len <= config.sr_lowpop_threshold)		//Eclipse edit: Config-based lowpop thresholds
 		tcol = "black"
 
 	if(announce)
-		if(!engineer && !command)
-			to_chat(world, "<b><font color='[tcol]'>A command officer and technomancer are required to start round.</font></b>")
+		if(!readyplayer) //SYZ edit
+			to_chat(world, "<b><font color='[tcol]'>No players are ready to start the round.</font></b>")//SYZ edit
+		else if(!engineer && (!command && !config.sr_bypass_command_requirement))		//Eclipse edit: config-based command requirement
+			to_chat(world, "<b><font color='[tcol]'>A command officer and engineer are required to start round.</font></b>")
 		else if(!engineer)
-			to_chat(world, "<b><font color='[tcol]'>Technomancer is required to start round.</font></b>")
-		else if(!command)
+			to_chat(world, "<b><font color='[tcol]'>An engineer is required to start round.</font></b>")
+		else if(!command && !config.sr_bypass_command_requirement)		//Eclipse edit: Config-based command requirement
 			to_chat(world, "<b><font color='[tcol]'>A command officer is required to start round.</font></b>")
 
-	if(GLOB.player_list.len <= 10)
-		to_chat(world, "<i>But there's less than 10 players, so this requirement will be ignored.</i>")
+	if(GLOB.player_list.len <= config.sr_lowpop_threshold && readyplayer)		//Eclipse edit: Config-based lowpop thresholds. Also SYZ edit to add readyplayer check
+		to_chat(world, "<i>But there's less than [config.sr_lowpop_threshold] players, so this requirement will be ignored.</i>")
 		return TRUE
 
 	return FALSE
@@ -276,7 +280,7 @@ GLOBAL_DATUM(storyteller, /datum/storyteller)
 	//We pick an event from the pool at random, and check if it's allowed to run
 	while (choice == null)
 		choice = pickweight(temp_pool)
-		if (!choice.can_trigger(event_type))
+		if (!choice.can_trigger(event_type) || calculate_event_weight(choice) == 0)//Occulus Edit
 			//If its not, we'll remove it from the temp pool and then pick another
 			temp_pool -= choice
 			choice = null

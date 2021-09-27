@@ -5,7 +5,7 @@
 		buckled_mob.forceMove(get_turf(src))
 		buckled_mob.pixel_x = pixel_x
 
-/mob/living/carbon/superior_animal/roach/proc/try_tame(var/mob/living/carbon/user, var/obj/item/reagent_containers/food/snacks/grown/thefood)
+/mob/living/carbon/superior_animal/roach/proc/try_tame(var/mob/living/carbon/user, var/obj/item/weapon/reagent_containers/food/snacks/grown/thefood)
 	if(!istype(thefood))
 		return FALSE
 	if(prob(40))
@@ -21,7 +21,7 @@
 			can_buckle = FALSE
 			visible_message("[src] snaps out of its trance and rushes at [user]!")
 			return FALSE
-		visible_message("[src] bucks around wildly, trying to shake  [user] off!") //YEEEHAW
+		visible_message("[src] bucks around wildly, trying to shake [user] off!") //YEEEHAW
 		if(prob(40))
 			visible_message("[src] thrashes around and, throws [user] clean off!")
 			user.throw_at(get_edge_target_turf(src,pick(alldirs)),rand(1,3),30)

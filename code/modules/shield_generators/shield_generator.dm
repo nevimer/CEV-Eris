@@ -12,7 +12,7 @@
 	density = TRUE
 	anchored = FALSE
 
-	circuit = /obj/item/electronics/circuitboard/shield_generator
+	circuit = /obj/item/weapon/electronics/circuitboard/shield_generator
 
 	var/needs_update = FALSE //If true, will update in process
 
@@ -30,7 +30,7 @@
 	var/max_energy = 0					// Maximal stored energy. In joules. Depends on the type of used SMES coil when constructing this generator.
 	var/current_energy = 0				// Current stored energy.
 	var/field_radius = 200				// Current field radius. //200 is default for hull shield
-	var/running = SHIELD_OFF			// Whether the generator is enabled or not.
+	var/running = SHIELD_RUNNING		// Whether the generator is enabled or not.	OCCULUS EDIT: Start with shields on (originally SHIELD_OFF)
 	var/input_cap = 1 MEGAWATTS			// Currently set input limit. Set to 0 to disable limits altogether. The shield will try to input this value per tick at most
 	var/upkeep_power_usage = 0			// Upkeep power usage last tick.
 	var/upkeep_multiplier = 1			// Multiplier of upkeep values.
@@ -123,7 +123,7 @@
 		toggle_flag(DM)
 
 	// Link to Eris object on the overmap
-	linked_ship = (locate(/obj/effect/overmap/ship/eris) in GLOB.ships)
+	linked_ship = locate(/obj/effect/overmap/ship/eris)
 
 /obj/machinery/power/shield_generator/Destroy()
 	toggle_tendrils(FALSE)
@@ -137,17 +137,27 @@
 
 /obj/machinery/power/shield_generator/RefreshParts()
 	max_energy = 0
-	for(var/obj/item/stock_parts/smes_coil/S in component_parts)
-		max_energy += (S.ChargeCapacity / CELLRATE)
+	for(var/obj/item/weapon/stock_parts/smes_coil/S in component_parts)
+		max_energy += (S.ChargeCapacity / (CELLRATE * 5))//Occulus Edit
 	current_energy = between(0, current_energy, max_energy)
 
 	mitigation_max = MAX_MITIGATION_BASE
-	for(var/obj/item/stock_parts/capacitor/C in component_parts)
+	for(var/obj/item/weapon/stock_parts/capacitor/C in component_parts)
 		mitigation_max += MAX_MITIGATION_RESEARCH * C.rating
 	mitigation_em = between(0, mitigation_em, mitigation_max)
 	mitigation_physical = between(0, mitigation_physical, mitigation_max)
 	mitigation_heat = between(0, mitigation_heat, mitigation_max)
 
+///// OCCULUS EDIT START
+// A proc to boost the shield as part of a 'Power the Ship' vote.
+
+/obj/machinery/power/shield_generator/proc/boost_field()
+	max_energy = 0
+	for(var/obj/item/weapon/stock_parts/smes_coil/S in component_parts)
+		max_energy += (S.ChargeCapacity / (CELLRATE * 5))
+	current_energy = min(current_energy + (max_energy/3), max_energy)
+
+///// OCCULUS EDIT END
 
 // Shuts down the shield, removing all shield segments and unlocking generator settings.
 /obj/machinery/power/shield_generator/proc/shutdown_field()
@@ -223,7 +233,7 @@
 
 // Recalculates and updates the upkeep multiplier
 /obj/machinery/power/shield_generator/proc/update_upkeep_multiplier()
-	var/new_upkeep = 1
+	var/new_upkeep = 1.0
 	for(var/datum/shield_mode/SM in mode_list)
 		if(check_flag(SM.mode_flag))
 			new_upkeep *= SM.multiplier
@@ -316,7 +326,7 @@
 		wrench(user, O)
 		return
 
-	if(istool(O))
+	if(istype(O, /obj/item/weapon/tool))
 		return src.attack_hand(user)
 
 
@@ -600,7 +610,7 @@
 	var/list/base_turfs = get_base_turfs()
 
 	for(var/turf/gen_turf in base_turfs)
-		for(var/turf/T in RANGE_TURFS(field_radius, gen_turf))
+		for(var/turf/T in trange(field_radius, gen_turf))
 			if(istype(T, /turf/space))
 				continue
 

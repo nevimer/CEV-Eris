@@ -641,6 +641,7 @@ percentage is a value in the range 0..1 that determines what portion of this mob
 /obj/structure/burrow/proc/spread_plants()
 	reveal()
 	if(istype(plant, /datum/seed/wires))		//hivemind wireweeds handling
+		/*		Occulus Edit start
 		if(locate(/obj/effect/plant) in loc)
 			return
 
@@ -651,7 +652,9 @@ percentage is a value in the range 0..1 that determines what portion of this mob
 		var/obj/machinery/hivemind_machine/node/hivemind_node = pick(hive_mind_ai.hives)
 		var/obj/effect/plant/hivemind/wire = new(loc, plant)
 		hivemind_node.add_wireweed(wire)
-
+		Occulus edit end
+*/
+		return //Occulus edit: removed hivemind burrow
 	for (var/obj/effect/plant in loc)
 		return
 

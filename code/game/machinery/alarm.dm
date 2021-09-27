@@ -49,11 +49,15 @@
 	var/pressure_dangerlevel = 0
 	var/oxygen_dangerlevel = 0
 	var/co2_dangerlevel = 0
-	var/plasma_dangerlevel = 0
+	var/phoron_dangerlevel = 0
 	var/temperature_dangerlevel = 0
 	var/other_dangerlevel = 0
 
 	var/report_danger_level = 1
+
+	// Eclipse added vars
+	var/alarm_audible_cooldown = 1000		//Audible cooldown time, in ticks (1/10sec)
+	var/last_sound_time = 0			//When did the audible last fire?
 
 /obj/machinery/alarm/nobreach
 	breach_detection = 0
@@ -67,7 +71,7 @@
 	req_access = list(access_rd, access_atmospherics, access_engine_equip)
 	TLV["oxygen"] =			list(-1.0, -1.0,-1.0,-1.0) // Partial pressure, kpa
 	TLV["carbon dioxide"] = list(-1.0, -1.0,   5,  10) // Partial pressure, kpa
-	TLV["plasma"] =			list(-1.0, -1.0, 0.2, 0.5) // Partial pressure, kpa
+	TLV["phoron"] =			list(-1.0, -1.0, 0.2, 0.5) // Partial pressure, kpa
 	TLV["other"] =			list(-1.0, -1.0, 0.5, 1.0) // Partial pressure, kpa
 	TLV["pressure"] =		list(0, ONE_ATMOSPHERE * 0.10, ONE_ATMOSPHERE * 1.40, ONE_ATMOSPHERE * 1.60) /* kpa */
 	TLV["temperature"] =	list(20, 40, 140, 160) // K
@@ -112,7 +116,7 @@
 	// breathable air according to human/Life()
 	TLV["oxygen"] =			list(16, 19, 135, 140) // Partial pressure, kpa
 	TLV["carbon dioxide"] = list(-1.0, -1.0, 5, 10) // Partial pressure, kpa
-	TLV["plasma"] =			list(-1.0, -1.0, 0.2, 0.5) // Partial pressure, kpa
+	TLV["phoron"] =			list(-1.0, -1.0, 0.2, 0.5) // Partial pressure, kpa
 	TLV["other"] =			list(-1.0, -1.0, 0.5, 1.0) // Partial pressure, kpa
 	TLV["pressure"] =		list(ONE_ATMOSPHERE*0.80,ONE_ATMOSPHERE*0.90,ONE_ATMOSPHERE*1.10,ONE_ATMOSPHERE*1.20) /* kpa */
 	TLV["temperature"] =	list(T0C-26, T0C, T0C+40, T0C+66) // K
@@ -124,12 +128,12 @@
 	if(buildstage == 2 && !master_is_operating())
 		elect_master()
 
-/obj/machinery/alarm/fire_act()
-	return
-
 /obj/machinery/alarm/Process()
 	if((stat & (NOPOWER|BROKEN)) || shorted || buildstage != 2)
 		return
+
+	if ((alarm_area.atmosalm >= 2) && world.time > last_sound_time + alarm_audible_cooldown)		//eclipse addition
+		play_audible()
 
 	var/turf/simulated/location = loc
 	if(!istype(location))
@@ -172,7 +176,7 @@
 /obj/machinery/alarm/proc/handle_heating_cooling(var/datum/gas_mixture/environment)
 	if (!regulating_temperature)
 		//check for when we should start adjusting temperature
-		if(get_danger_level(environment.temperature, TLV["temperature"]) || abs(environment.temperature - target_temperature) > 2)
+		if(get_danger_level(environment.temperature, TLV["temperature"]) || abs(environment.temperature - target_temperature) > 2.0)
 			update_use_power(2)
 			regulating_temperature = 1
 			visible_message("\The [src] clicks as it starts up.",\
@@ -219,7 +223,7 @@
 	pressure_dangerlevel = get_danger_level(environment_pressure, TLV["pressure"])
 	oxygen_dangerlevel = get_danger_level(environment.gas["oxygen"]*partial_pressure, TLV["oxygen"])
 	co2_dangerlevel = get_danger_level(environment.gas["carbon_dioxide"]*partial_pressure, TLV["carbon dioxide"])
-	plasma_dangerlevel = get_danger_level(environment.gas["plasma"]*partial_pressure, TLV["plasma"])
+	phoron_dangerlevel = get_danger_level(environment.gas["phoron"]*partial_pressure, TLV["phoron"])
 	temperature_dangerlevel = get_danger_level(environment.temperature, TLV["temperature"])
 	other_dangerlevel = get_danger_level(other_moles*partial_pressure, TLV["other"])
 
@@ -227,7 +231,7 @@
 		pressure_dangerlevel,
 		oxygen_dangerlevel,
 		co2_dangerlevel,
-		plasma_dangerlevel,
+		phoron_dangerlevel,
 		other_dangerlevel,
 		temperature_dangerlevel
 		)
@@ -514,12 +518,12 @@
 		environment_data[++environment_data.len] = list("name" = "Pressure", "value" = pressure, "unit" = "kPa", "danger_level" = pressure_dangerlevel)
 		environment_data[++environment_data.len] = list("name" = "Oxygen", "value" = environment.gas["oxygen"] / total * 100, "unit" = "%", "danger_level" = oxygen_dangerlevel)
 		environment_data[++environment_data.len] = list("name" = "Carbon dioxide", "value" = environment.gas["carbon_dioxide"] / total * 100, "unit" = "%", "danger_level" = co2_dangerlevel)
-		environment_data[++environment_data.len] = list("name" = "Toxins", "value" = environment.gas["plasma"] / total * 100, "unit" = "%", "danger_level" = plasma_dangerlevel)
+		environment_data[++environment_data.len] = list("name" = "Toxins", "value" = environment.gas["phoron"] / total * 100, "unit" = "%", "danger_level" = phoron_dangerlevel)
 		environment_data[++environment_data.len] = list("name" = "Temperature", "value" = environment.temperature, "unit" = "K ([round(environment.temperature - T0C, 0.1)]C)", "danger_level" = temperature_dangerlevel)
 	data["total_danger"] = danger_level
 	data["environment"] = environment_data
 	data["atmos_alarm"] = alarm_area.atmosalm
-	data["fire_alarm"] = alarm_area.fire != null
+	data["fire_alarm"] = alarm_area.fire		//Eclipse edit: Fixes an issue where an air alarm would get stuck in fire-call mode
 	data["target_temperature"] = "[target_temperature - T0C]C"
 
 /obj/machinery/alarm/proc/populate_controls(var/list/data)
@@ -562,7 +566,7 @@
 				scrubbers[scrubbers.len]["filters"] += list(list("name" = "Oxygen",			"command" = "o2_scrub",	"val" = info["filter_o2"]))
 				scrubbers[scrubbers.len]["filters"] += list(list("name" = "Nitrogen",		"command" = "n2_scrub",	"val" = info["filter_n2"]))
 				scrubbers[scrubbers.len]["filters"] += list(list("name" = "Carbon Dioxide", "command" = "co2_scrub","val" = info["filter_co2"]))
-				scrubbers[scrubbers.len]["filters"] += list(list("name" = "Toxin"	, 		"command" = "tox_scrub","val" = info["filter_plasma"]))
+				scrubbers[scrubbers.len]["filters"] += list(list("name" = "Toxin"	, 		"command" = "tox_scrub","val" = info["filter_phoron"]))
 				scrubbers[scrubbers.len]["filters"] += list(list("name" = "Nitrous Oxide",	"command" = "n2o_scrub","val" = info["filter_n2o"]))
 			data["scrubbers"] = scrubbers
 		if(AALARM_SCREEN_MODE)
@@ -582,7 +586,7 @@
 			var/list/gas_names = list(
 				"oxygen"         = "O<sub>2</sub>",
 				"carbon dioxide" = "CO<sub>2</sub>",
-				"plasma"         = "Toxin",
+				"phoron"         = "Toxin",
 				"other"          = "Other")
 			for (var/g in gas_names)
 				thresholds[++thresholds.len] = list("name" = gas_names[g], "settings" = list())
@@ -708,7 +712,7 @@
 					if (isnull(newval))
 						return 1
 					if (newval<0)
-						selected[threshold] = -1
+						selected[threshold] = -1.0
 					else if (env=="temperature" && newval>5000)
 						selected[threshold] = 5000
 					else if (env=="pressure" && newval>50*ONE_ATMOSPHERE)
@@ -824,7 +828,7 @@
 			if(buildstage == 1)
 				if(I.use_tool(user, src, WORKTIME_NORMAL, tool_type, FAILCHANCE_VERY_EASY, required_stat = STAT_MEC))
 					to_chat(user, "You pry out the circuit!")
-					var/obj/item/electronics/airalarm/circuit = new /obj/item/electronics/airalarm()
+					var/obj/item/weapon/electronics/airalarm/circuit = new /obj/item/weapon/electronics/airalarm()
 					circuit.loc = user.loc
 					buildstage = 0
 					update_icon()
@@ -844,7 +848,7 @@
 
 	switch(buildstage)
 		if(2)
-			if (istype(I, /obj/item/card/id) || istype(I, /obj/item/modular_computer))// trying to unlock the interface with an ID card
+			if (istype(I, /obj/item/weapon/card/id) || istype(I, /obj/item/modular_computer))// trying to unlock the interface with an ID card
 				toggle_lock(user)
 			return
 
@@ -862,7 +866,7 @@
 					return
 
 		if(0)
-			if(istype(I, /obj/item/electronics/airalarm))
+			if(istype(I, /obj/item/weapon/electronics/airalarm))
 				to_chat(user, "You insert the circuit!")
 				qdel(I)
 				buildstage = 1
@@ -901,11 +905,19 @@
 	toggle_lock(user)
 
 
+
+// Eclipse proc - added to reduce impact to Process() call
+/obj/machinery/alarm/proc/play_audible()
+	last_sound_time = world.time
+	for(var/i in 1 to 3)		//plays 3 times always.
+		playsound(src.loc, 'sound/misc/airalarm.ogg', 40, 0, 5)
+		sleep(4 SECONDS)
+
 /*
 AIR ALARM CIRCUIT
 Just a object used in constructing air alarms
 */
-/obj/item/electronics/airalarm
+/obj/item/weapon/electronics/airalarm
 	name = "air alarm electronics"
 	icon = 'icons/obj/doors/door_assembly.dmi'
 	icon_state = "door_electronics"
@@ -921,10 +933,10 @@ FIRE ALARM
 	desc = "<i>\"Pull this in case of emergency\"</i>. Thus, keep pulling it forever."
 	icon = 'icons/obj/monitors.dmi'
 	icon_state = "fire0"
-	var/detecting = 1
-	var/working = 1
-	var/time = 10
-	var/timing = 0
+	var/detecting = 1.0
+	var/working = 1.0
+	var/time = 10.0
+	var/timing = 0.0
 	var/lockdownbyai = 0
 	anchored = TRUE
 	use_power = IDLE_POWER_USE
@@ -934,6 +946,8 @@ FIRE ALARM
 	var/last_process = 0
 	var/wiresexposed = 0
 	var/buildstage = 2 // 2 = complete, 1 = no wires,  0 = circuit gone
+	var/alarm_audible_cooldown = 1000		//Audible cooldown time, in ticks (1/10sec) Occulus Edit
+	var/last_sound_time = 0			//When did the audible last fire? Occulus Edit
 
 /obj/machinery/firealarm/on_update_icon()
 	cut_overlays()
@@ -1039,7 +1053,7 @@ FIRE ALARM
 			if(buildstage == 1)
 				if(I.use_tool(user, src, WORKTIME_NORMAL, tool_type, FAILCHANCE_VERY_EASY, required_stat = STAT_MEC))
 					to_chat(user, "You pry out the circuit!")
-					var/obj/item/electronics/airalarm/circuit = new /obj/item/electronics/airalarm()
+					var/obj/item/weapon/electronics/airalarm/circuit = new /obj/item/weapon/electronics/airalarm()
 					circuit.loc = user.loc
 					buildstage = 0
 					update_icon()
@@ -1072,7 +1086,7 @@ FIRE ALARM
 					return
 
 		if(0)
-			if(istype(I, /obj/item/electronics/firealarm))
+			if(istype(I, /obj/item/weapon/electronics/firealarm))
 				to_chat(user, "You insert the circuit!")
 				qdel(I)
 				buildstage = 1
@@ -1100,6 +1114,10 @@ FIRE ALARM
 	if(locate(/obj/fire) in loc)
 		alarm()
 
+	//Eclipse Edit: alarm loops now.
+	var/area/coverage_area = get_area(src)
+	if (coverage_area.fire && world.time > last_sound_time + alarm_audible_cooldown)
+		play_audible()
 	return
 
 /obj/machinery/firealarm/power_change()
@@ -1178,7 +1196,7 @@ FIRE ALARM
 	else
 		to_chat(usr, "Fire Alarm activated.")
 	update_icon()
-	//playsound(src.loc, 'sound/ambience/signal.ogg', 75, 0)
+	play_audible()			//Eclipse edit: beep beep beep. beep beep beep.
 	return
 
 
@@ -1204,11 +1222,22 @@ FIRE ALARM
 	GLOB.firealarm_list -= src
 	..()
 
+
+//Eclipse proc - added to reduce overhead on Process()
+/obj/machinery/firealarm/proc/play_audible()
+	last_sound_time = world.time		//at the stert to prevent overlap
+	var/area/coverage_area = get_area(src)
+	for(var/i in 1 to rand(4,6))		//plays 4 to 6 times.
+		if (!coverage_area.fire)
+			return
+		playsound(src.loc, 'sound/misc/firealarm.ogg', 40, 0, 5)
+		sleep(4 SECONDS)
+
 /*
 FIRE ALARM CIRCUIT
 Just a object used in constructing fire alarms
 */
-/obj/item/electronics/firealarm
+/obj/item/weapon/electronics/firealarm
 	name = "fire alarm electronics"
 	icon = 'icons/obj/doors/door_assembly.dmi'
 	icon_state = "door_electronics"

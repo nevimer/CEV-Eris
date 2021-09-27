@@ -1,6 +1,6 @@
 /obj/structure/dispenser
 	name = "tank storage unit"
-	desc = "A simple yet bulky storage device for gas tanks. Has room for up to ten oxygen tanks, and ten plasma tanks."
+	desc = "A simple yet bulky storage device for gas tanks. Has room for up to ten oxygen tanks, and ten phoron tanks."
 	icon = 'icons/obj/objects.dmi'
 	icon_state = "dispenser"
 	density = TRUE
@@ -10,16 +10,16 @@
 	spawn_tags = SPAWN_TAG_STRUCTURE_COMMON
 	rarity_value = 50
 	var/oxygentanks = 10
-	var/plasmatanks = 10
+	var/phorontanks = 10
 	var/list/oxytanks = list()	//sorry for the similar var names
 	var/list/platanks = list()
 
 
 /obj/structure/dispenser/oxygen
-	plasmatanks = 0
+	phorontanks = 0
 	rarity_value = 10
 
-/obj/structure/dispenser/plasma
+/obj/structure/dispenser/phoron
 	oxygentanks = 0
 	rarity_value = 25
 
@@ -34,9 +34,9 @@
 	switch(oxygentanks)
 		if(1 to 3)	add_overlays("oxygen-[oxygentanks]")
 		if(4 to INFINITY) overlays += "oxygen-4"
-	switch(plasmatanks)
-		if(1 to 4)	add_overlays("plasma-[plasmatanks]")
-		if(5 to INFINITY) overlays += "plasma-5"
+	switch(phorontanks)//Occulus Edit
+		if(1 to 4)	add_overlays("plasma-[phorontanks]")//Occulus Edit
+		if(5 to INFINITY) overlays += "plasma-5"//Occulus Edit
 
 /obj/structure/dispenser/attack_ai(mob/user)
 	if(user.Adjacent(src))
@@ -47,13 +47,13 @@
 	user.set_machine(src)
 	var/dat = "[src]<br><br>"
 	dat += "Oxygen tanks: [oxygentanks] - [oxygentanks ? "<A href='?src=\ref[src];oxygen=1'>Dispense</A>" : "empty"]<br>"
-	dat += "Plasma tanks: [plasmatanks] - [plasmatanks ? "<A href='?src=\ref[src];plasma=1'>Dispense</A>" : "empty"]"
+	dat += "Phoron tanks: [phorontanks] - [phorontanks ? "<A href='?src=\ref[src];phoron=1'>Dispense</A>" : "empty"]"
 	user << browse(dat, "window=dispenser")
 	onclose(user, "dispenser")
 
 
 /obj/structure/dispenser/attackby(obj/item/I, mob/user)
-	if(istype(I, /obj/item/tank/oxygen) || istype(I, /obj/item/tank/air) || istype(I, /obj/item/tank/anesthetic))
+	if(istype(I, /obj/item/weapon/tank/oxygen) || istype(I, /obj/item/weapon/tank/air) || istype(I, /obj/item/weapon/tank/anesthetic))
 		if(oxygentanks < 10)
 			user.drop_item()
 			I.forceMove(src)
@@ -66,14 +66,14 @@
 			to_chat(user, SPAN_NOTICE("[src] is full."))
 		updateUsrDialog()
 		return
-	if(istype(I, /obj/item/tank/plasma))
-		if(plasmatanks < 10)
+	if(istype(I, /obj/item/weapon/tank/phoron))
+		if(phorontanks < 10)
 			user.drop_item()
 			I.forceMove(src)
 			platanks.Add(I)
-			plasmatanks++
+			phorontanks++
 			to_chat(user, SPAN_NOTICE("You put [I] in [src]."))
-			if(plasmatanks < 6)
+			if(phorontanks < 6)
 				update_icon()
 		else
 			to_chat(user, SPAN_NOTICE("[src] is full."))
@@ -95,21 +95,21 @@
 
 	usr.set_machine(src)
 
-	var/obj/item/tank/tank
+	var/obj/item/weapon/tank/tank
 	if(href_list["oxygen"] && oxygentanks > 0)
 		if(oxytanks.len)
 			tank = oxytanks[oxytanks.len]	// Last stored tank is always the first one to be dispensed
 			oxytanks.Remove(tank)
 		else
-			tank = new /obj/item/tank/oxygen(loc)
+			tank = new /obj/item/weapon/tank/oxygen(loc)
 		oxygentanks--
-	if(href_list["plasma"] && plasmatanks > 0)
+	if(href_list["phoron"] && phorontanks > 0)
 		if(platanks.len)
 			tank = platanks[platanks.len]
 			platanks.Remove(tank)
 		else
-			tank = new /obj/item/tank/plasma(loc)
-		plasmatanks--
+			tank = new /obj/item/weapon/tank/phoron(loc)
+		phorontanks--
 
 	if(tank)
 		tank.forceMove(drop_location())

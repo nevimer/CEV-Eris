@@ -1,4 +1,4 @@
-/obj/item/beartrap
+/obj/item/weapon/beartrap
 	name = "mechanical trap"
 	throw_speed = 2
 	throw_range = 1
@@ -25,7 +25,7 @@
 	var/prob_catch = 100 //prob catch to mob
 
 
-/obj/item/beartrap/Initialize()
+/obj/item/weapon/beartrap/Initialize()
 	.=..()
 	update_icon()
 
@@ -42,13 +42,13 @@ Every failure causes the trap to dig deeper and hurt the victim more
 
 Freeing yourself is much harder than freeing someone else. Calling for help is advised if practical
 */
-/obj/item/beartrap/proc/attempt_release(mob/living/user, obj/item/I)
+/obj/item/weapon/beartrap/proc/attempt_release(mob/living/user, obj/item/I)
 	if (!buckled_mob || QDELETED(buckled_mob))
 		return //Nobody there to rescue?
 
 	if (!user)
 		return //No user, or too far away
-	
+
 	if(iscarbon(user)) //check if mob is carbon as handcuffed only applies to carbon mobs
 		var/mob/living/carbon/C = user //set carbon to user
 		if(C.handcuffed)
@@ -136,13 +136,22 @@ Freeing yourself is much harder than freeing someone else. Calling for help is a
 
 
 //Using a crowbar allows you to lever the trap open, better success rate
-/obj/item/beartrap/attackby(obj/item/C, mob/living/user)
-	if (C.has_quality(QUALITY_PRYING))
+/obj/item/weapon/beartrap/attackby(obj/item/C, mob/living/user)
+	if (C.has_quality(QUALITY_PRYING) && buckled_mob)
 		attempt_release(user, C)
 		return
+	if (deployed && C.w_class > ITEM_SIZE_SMALL)//Occulus Edit Start - Triggering traps with medium items!
+		user.visible_message(
+			SPAN_DANGER("[user] trips \the [src] with [C.name]!"),
+			SPAN_DANGER("You trip the \the [src] with [C.name]!")
+		)
+		deployed = FALSE
+		anchored = FALSE
+		update_icon()
+		playsound(src, 'sound/effects/impacts/beartrap_shut.ogg', 100, 1,10,10)//Occulus Edit End
 	.=..()
 
-/obj/item/beartrap/attack_hand(mob/user as mob)
+/obj/item/weapon/beartrap/attack_hand(mob/user as mob)
 	if (buckled_mob)
 		attempt_release(user)
 		return
@@ -163,22 +172,22 @@ Freeing yourself is much harder than freeing someone else. Calling for help is a
 		return
 	.=..()
 
-/obj/item/beartrap/attack_generic(mob/user, damage)
+/obj/item/weapon/beartrap/attack_generic(mob/user, damage)
 	if (buckled_mob)
 		attempt_release(user)
 		return
 	.=..()
 
-/obj/item/beartrap/attack_robot(mob/user)
+/obj/item/weapon/beartrap/attack_robot(mob/user)
 	if (buckled_mob)
 		attempt_release(user)
 		return
 	.=..()
 
-/obj/item/beartrap/proc/can_use(mob/user)
+/obj/item/weapon/beartrap/proc/can_use(mob/user)
 	return (user.IsAdvancedToolUser() && !user.stat && user.Adjacent(src))
 
-/obj/item/beartrap/proc/release_mob()
+/obj/item/weapon/beartrap/proc/release_mob()
 	unbuckle_mob()
 	anchored = FALSE
 	deployed = FALSE
@@ -187,7 +196,7 @@ Freeing yourself is much harder than freeing someone else. Calling for help is a
 	STOP_PROCESSING(SSobj, src)
 
 //Attempting to resist out of a beartrap will be counted as using your hand on the trap.
-/obj/item/beartrap/resist_buckle(mob/user)
+/obj/item/weapon/beartrap/resist_buckle(mob/user)
 	if (user == buckled_mob && !user.stunned)
 		//We check stunned here, and a failure stuns the victim. This prevents someone from just spam-resisting and instantly killing themselves
 		if (user.client)
@@ -201,7 +210,7 @@ Freeing yourself is much harder than freeing someone else. Calling for help is a
 	Deployment
 ***********************************/
 
-/obj/item/beartrap/attack_self(mob/user as mob)
+/obj/item/weapon/beartrap/attack_self(mob/user as mob)
 	..()
 	if(locate(/obj/structure/multiz/ladder) in get_turf(user))
 		to_chat(user, SPAN_NOTICE("You cannot place \the [src] here, there is a ladder."))
@@ -234,7 +243,7 @@ Freeing yourself is much harder than freeing someone else. Calling for help is a
 ***********************************/
 
 //If an attempt to release the mob fails, it digs in and deals more damage
-/obj/item/beartrap/proc/fail_attempt(user, difficulty)
+/obj/item/weapon/beartrap/proc/fail_attempt(user, difficulty)
 	if (!buckled_mob)
 		return
 
@@ -261,7 +270,7 @@ Freeing yourself is much harder than freeing someone else. Calling for help is a
 
 
 
-/obj/item/beartrap/proc/attack_mob(mob/living/L)
+/obj/item/weapon/beartrap/proc/attack_mob(mob/living/L)
 	//Small mobs won't trigger the trap
 	//Imagine a mouse running harmlessly over it
 	if (!L || L.mob_size < min_size)
@@ -275,14 +284,14 @@ Freeing yourself is much harder than freeing someone else. Calling for help is a
 	if(L.lying)
 		target_zone = ran_zone()
 	else
-		target_zone = pick(BP_L_LEG, BP_R_LEG)
+		target_zone = pick(BP_L_FOOT, BP_R_FOOT, BP_L_LEG , BP_R_LEG)
 
 	deployed = FALSE
 	can_buckle = initial(can_buckle)
 	playsound(src, 'sound/effects/impacts/beartrap_shut.ogg', 100, 1,10,10)//Really loud snapping sound
 
 	//armour
-	if( L.damage_through_armor(fail_damage, BRUTE, target_zone, ARMOR_MELEE, used_weapon = src) )
+	if( L.damage_through_armor(base_damage, BRUTE, target_zone, ARMOR_MELEE, used_weapon = src) )//Occulus Edit, this should have been base damage to begin with!
 	//No damage - no stun
 		L.Stun(4) //A short stun prevents spamming failure attempts
 		shake_camera(L, 2, 1)
@@ -305,7 +314,7 @@ Beartraps process when a clientless mob is trapped in them.
 Periodically the mob will attempt to struggle out. It will probably fail, take damage, and eventually die
 Very rarely it might escape
 */
-/obj/item/beartrap/Process()
+/obj/item/weapon/beartrap/Process()
 	var/mob/living/L = buckled_mob
 
 	//If its dead or gone, stop processing
@@ -324,7 +333,7 @@ Very rarely it might escape
 
 
 
-/obj/item/beartrap/Crossed(AM as mob|obj)
+/obj/item/weapon/beartrap/Crossed(AM as mob|obj)
 	if(deployed && isliving(AM))
 		if(locate(/obj/structure/multiz/ladder) in get_turf(loc))
 			visible_message(SPAN_DANGER("\The [src]'s triggering mechanism is disrupted by the ladder and does not go off."))
@@ -333,13 +342,11 @@ Very rarely it might escape
 			visible_message(SPAN_DANGER("\The [src]'s triggering mechanism is disrupted by the slope and does not go off."))
 			return ..()
 		var/mob/living/L = AM
-		var/true_prob_catch = prob_catch - L.skill_to_evade_traps()
-		if("\ref[L]" in aware_mobs)
-			if(MOVING_DELIBERATELY(L))
-				return ..()
-			else
-				true_prob_catch -= 30
-		if(!prob(true_prob_catch))
+		if(("\ref[L]" in aware_mobs) && MOVING_DELIBERATELY(L))
+			return ..()
+		prob_catch = initial(prob_catch)
+		prob_catch -= L.skill_to_evade_traps(prob_catch)
+		if(!prob(prob_catch))
 			return ..()
 		L.visible_message(
 			SPAN_DANGER("[L] steps on \the [src]."),
@@ -354,14 +361,14 @@ Very rarely it might escape
 		update_icon()
 	..()
 
-/obj/item/beartrap/examine(mob/user)
+/obj/item/weapon/beartrap/examine(mob/user)
 	..()
 	if(deployed && isliving(user) && !("\ref[user]" in aware_mobs))
 		to_chat(user, SPAN_NOTICE("You're aware of this trap, now. You won't set it off when walking carefully."))
 		aware_mobs |= "\ref[user]"
 
 
-/obj/item/beartrap/on_update_icon()
+/obj/item/weapon/beartrap/on_update_icon()
 	..()
 
 	if(!deployed)
@@ -379,7 +386,7 @@ Very rarely it might escape
 	Slightly worse stats all around
 	Has integrity that depletes and it will eventually break
 */
-/obj/item/beartrap/makeshift
+/obj/item/weapon/beartrap/makeshift
 	base_damage = 16
 	fail_damage = 4
 	base_difficulty = 80
@@ -391,31 +398,31 @@ Very rarely it might escape
 
 
 //It takes 5 damage whenever it snaps onto a mob
-/obj/item/beartrap/makeshift/attack_mob(mob/living/L)
+/obj/item/weapon/beartrap/makeshift/attack_mob(mob/living/L)
 	.=..()
 	integrity -= 4
 	spawn(5)
 		check_integrity()
 
 //Takes 1 damage every time they fail to open it
-/obj/item/beartrap/makeshift/fail_attempt(var/user, var/difficulty)
+/obj/item/weapon/beartrap/makeshift/fail_attempt(var/user, var/difficulty)
 	.=..()
 	integrity -= 0.8
 	spawn(5)
 		check_integrity()
 
-/obj/item/beartrap/makeshift/proc/check_integrity()
+/obj/item/weapon/beartrap/makeshift/proc/check_integrity()
 	if (prob(integrity))
 		return
 
 	break_apart()
 
 
-/obj/item/beartrap/makeshift/proc/break_apart()
+/obj/item/weapon/beartrap/makeshift/proc/break_apart()
 	visible_message(SPAN_DANGER("\the [src] shatters into fragments!"))
 	new /obj/item/stack/material/steel(loc, 10)
-	new /obj/item/material/shard/shrapnel(loc)
-	new /obj/item/material/shard/shrapnel(loc)
+	new /obj/item/weapon/material/shard/shrapnel(loc)
+	new /obj/item/weapon/material/shard/shrapnel(loc)
 	qdel(src)
 
 
@@ -427,14 +434,14 @@ Very rarely it might escape
 	These start already deployed and will entrap the first creature that steps on it
 */
 
-/obj/item/beartrap/armed
+/obj/item/weapon/beartrap/armed
 	deployed = TRUE
 	anchored = TRUE
 	rarity_value = 33.3
 	spawn_frequency = 10
 	spawn_tags = SPAWN_TAG_TRAP_ARMED
 
-/obj/item/beartrap/makeshift/armed
+/obj/item/weapon/beartrap/makeshift/armed
 	deployed = TRUE
 	anchored = TRUE
 	rarity_value = 22.2

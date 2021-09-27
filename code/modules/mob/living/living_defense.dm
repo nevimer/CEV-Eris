@@ -4,20 +4,8 @@
 //This calculation replaces old run_armor_check in favor of more complex and better system
 //If you need to do something else with armor - just use getarmor() proc and do with those numbers all you want
 //Random absorb system was a cancer, and was removed from all across the codebase. Don't recreate it. Clockrigger 2019
-#define ARMOR_MESSAGE_COOLDOWN 0.5 SECONDS
 
-/mob/living/var/last_armor_message
-
-/mob/living/proc/armor_message(msg1, msg2)
-	if(world.time < last_armor_message)
-		return FALSE
-	last_armor_message = world.time + ARMOR_MESSAGE_COOLDOWN
-	if(msg2)
-		visible_message(msg1, msg2)
-	else
-		show_message(msg1, 1)
-
-/mob/living/proc/damage_through_armor(var/damage = 0, var/damagetype = BRUTE, var/def_zone, var/attack_flag = ARMOR_MELEE, var/armour_pen = 0, var/used_weapon, var/sharp = FALSE, var/edge = FALSE)
+/mob/living/proc/damage_through_armor(var/damage = 0, var/damagetype = BRUTE, var/def_zone = null, var/attack_flag = ARMOR_MELEE, var/armour_pen = 0, var/used_weapon = null, var/sharp = FALSE, var/edge = FALSE)
 
 	if(damage == 0)
 		return FALSE
@@ -33,7 +21,7 @@
 		effective_damage = round(effective_damage * max(0.5, (get_specific_organ_efficiency(OP_NERVE, def_zone) / 100)))
 
 	if(effective_damage <= 0)
-		armor_message(SPAN_NOTICE("Your armor absorbs the blow!"))
+		show_message(SPAN_NOTICE("Your armor absorbs the blow!"))
 		return FALSE
 
 	//Here we can remove edge or sharpness from the blow
@@ -41,26 +29,26 @@
 		sharp = FALSE
 		edge = FALSE
 
-	//Check if sanctify aspect true
+/*	//Check if sanctify aspect true
 	if(ishuman(src) && isitem(used_weapon))
 		var/mob/living/carbon/human/H = src
 		var/obj/item/I = used_weapon
-		if((H.has_organ(BP_SPCORE) || mutations.len) && (SANCTIFIED in I.aspects))
-			sanctified_attack = TRUE
-	//Feedback
+		if((H.get_organ_efficiency(BP_SPCORE) || mutations.len) && (SANCTIFIED in I.aspects))
+			sanctified_attack = TRUE */
+	//Feedback UNCOMMENT THE ABOVE WHEN WE PORT ERISMED2. It's basically checking if someone is baseline human, and Smite Evil's them if they aren't.  - Bear
 	//In order to show both target and everyone around that armor is actually working, we are going to send message for both of them
 	//Goon/tg chat should take care of spam issue on this one
 
 	if(armor_effectiveness >= 74)
-		armor_message(SPAN_NOTICE("[src] armor easily absorbs the blow!"),
+		visible_message(SPAN_NOTICE("[src] armor easily absorbs the blow!"),
 						SPAN_NOTICE("Your armor reduced the impact greatly!"))
 
 	else if(armor_effectiveness >= 49)
-		armor_message(SPAN_NOTICE("[src] armor absorbs most of the damage!"),
+		visible_message(SPAN_NOTICE("[src] armor absorbs most of the damage!"),
 						SPAN_NOTICE("Your armor protects you from impact!"))
 
 	else if(armor_effectiveness >= 24)
-		armor_message(SPAN_NOTICE("Your armor reduced impact for a bit."))
+		show_message(SPAN_NOTICE("Your armor reduced impact for a bit."))
 
 	//No armor? Damage as usual
 	if(armor_effectiveness == 0)
@@ -95,7 +83,7 @@
 	shake_animation(damage)
 
 
-/mob/living/bullet_act(obj/item/projectile/P, var/def_zone)
+/mob/living/bullet_act(var/obj/item/projectile/P, var/def_zone)
 	var/hit_dir = get_dir(P, src)
 
 	if (P.is_hot() >= HEAT_MOBIGNITE_THRESHOLD)
@@ -135,7 +123,7 @@
 	return TRUE
 
 //Handles the effects of "stun" weapons
-/mob/living/proc/stun_effect_act(var/stun_amount, var/agony_amount, var/def_zone, var/used_weapon)
+/mob/living/proc/stun_effect_act(var/stun_amount, var/agony_amount, var/def_zone, var/used_weapon=null)
 	flash_pain()
 
 	//For not bloating damage_through_armor here is simple armor calculation for stun time
@@ -156,7 +144,7 @@
 		apply_effect(STUTTER, agony_amount * armor_coefficient)
 		apply_effect(EYE_BLUR, agony_amount * armor_coefficient)
 
-/mob/living/proc/electrocute_act(var/shock_damage, obj/source, var/siemens_coeff = 1)
+/mob/living/proc/electrocute_act(var/shock_damage, var/obj/source, var/siemens_coeff = 1.0)
 	  return 0 //only carbon liveforms have this proc
 
 /mob/living/emp_act(severity)
@@ -197,7 +185,7 @@
 
 //this proc handles being hit by a thrown atom
 /mob/living/hitby(atom/movable/AM as mob|obj,var/speed = THROWFORCE_SPEED_DIVISOR)//Standardization and logging -Sieve
-	if(istype(AM,/obj))
+	if(istype(AM,/obj/))
 		var/obj/O = AM
 		var/dtype = O.damtype
 		var/throw_damage = O.throwforce*(speed/THROWFORCE_SPEED_DIVISOR)
@@ -257,16 +245,14 @@
 					src.anchored = TRUE
 					src.pinned += O
 
-/mob/living/proc/embed(obj/item/O, var/def_zone)
-	if(O.wielded)
-		return
+/mob/living/proc/embed(var/obj/item/O, var/def_zone=null)
 	if(ismob(O.loc))
 		var/mob/living/L = O.loc
 		if(!L.unEquip(O, src))
 			return
 	O.forceMove(src)
 	src.embedded += O
-	src.visible_message(SPAN_DANGER("\The [O] embeds in the [src]!"))
+	src.visible_message("<span class='danger'>\The [O] embeds in the [src]!</span>")
 	src.verbs += /mob/proc/yank_out_object
 	O.on_embed(src)
 
@@ -290,7 +276,7 @@
 
 // End BS12 momentum-transfer code.
 
-/mob/living/attack_generic(mob/user, var/damage, var/attack_message)
+/mob/living/attack_generic(var/mob/user, var/damage, var/attack_message)
 
 	if(!damage || !istype(user))
 		return
@@ -306,7 +292,7 @@
 /mob/living/proc/IgniteMob()
 	if(fire_stacks > 0 && !on_fire)
 		on_fire = 1
-		set_light(light_range + 3, l_color = COLOR_RED)
+		set_light(light_range + 3)
 		update_fire()
 
 /mob/living/proc/ExtinguishMob()

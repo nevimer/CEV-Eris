@@ -27,9 +27,8 @@
 	new /obj/spawner/pack/tech_loot/low_chance(src)
 	new /obj/spawner/pack/cloth/low_chance(src)
 	new /obj/spawner/pack/cloth/low_chance(src)
-	new /obj/spawner/pack/gun_adjacent_loot/low_chance(src)
-	new /obj/spawner/pack/gun_adjacent_loot/low_chance(src)
-	new /obj/spawner/pack/gun_adjacent_loot/low_chance(src)
+	new /obj/spawner/pack/gun_loot/low_chance(src)
+	new /obj/spawner/pack/gun_loot/low_chance(src)
 
 
 /obj/structure/closet/random/tech
@@ -57,11 +56,11 @@
 	name = "\improper spare parts closet"
 	desc = "Somewhat old closet with spare parts in it."
 	icon_state = "eng"
-	icon_door = "eng_secure"
+	icon_door = "eng_tool" //OCCULUS EDIT. FUCKING ERIS!
 	old_chance = 10
 	rarity_value = 50
 
-/obj/structure/closet/random/spareparts/populate_contents()
+/obj/structure/closet/random/spareparts/populate_contents() //OCCULUS EDIT. FUCKING ERIS
 	new /obj/spawner/lowkeyrandom/low_chance(src)
 	new /obj/spawner/lowkeyrandom/low_chance(src)
 	new /obj/spawner/lowkeyrandom/low_chance(src)

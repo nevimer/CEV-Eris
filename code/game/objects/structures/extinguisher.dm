@@ -5,18 +5,18 @@
 	icon_state = "extinguisher_closed"
 	anchored = TRUE
 	density = FALSE
-	var/obj/item/extinguisher/has_extinguisher
+	var/obj/item/weapon/extinguisher/has_extinguisher
 	var/opened = 0
 
 /obj/structure/extinguisher_cabinet/New()
 	..()
-	has_extinguisher = new/obj/item/extinguisher(src)
+	has_extinguisher = new/obj/item/weapon/extinguisher(src)
 	update_icon()
 
 /obj/structure/extinguisher_cabinet/attackby(obj/item/O, mob/user)
 	if(isrobot(user))
 		return
-	if(istype(O, /obj/item/extinguisher))
+	if(istype(O, /obj/item/weapon/extinguisher))
 		if(!has_extinguisher && opened)
 			user.remove_from_mob(O)
 			contents += O
@@ -35,9 +35,9 @@
 		return
 	if (ishuman(user))
 		var/mob/living/carbon/human/H = user
-		var/obj/item/organ/external/temp = H.organs_by_name[BP_R_ARM]
+		var/obj/item/organ/external/temp = H.organs_by_name[BP_R_HAND]
 		if (user.hand)
-			temp = H.organs_by_name[BP_L_ARM]
+			temp = H.organs_by_name[BP_L_HAND]
 		if(temp && !temp.is_usable())
 			to_chat(user, SPAN_NOTICE("You try to move your [temp.name], but cannot!"))
 			return
@@ -51,28 +51,6 @@
 		opened = !opened
 	update_icon()
 
-/obj/structure/extinguisher_cabinet/proc/toggle_open(mob/user)
-	if(isrobot(user))
-		return
-	if(user.incapacitated())
-		to_chat(user, SPAN_WARNING("You can't do that right now!"))
-		return
-	if(!in_range(src, user))
-		return
-	else
-		playsound(src.loc, 'sound/machines/Custom_extin.ogg', 50, 0)
-		opened = !opened
-		update_icon()
-
-/obj/structure/extinguisher_cabinet/AltClick(mob/living/user)
-	src.toggle_open(user)
-
-/obj/structure/extinguisher_cabinet/verb/toggle(mob/living/usr)
-	set name = "Open/Close"
-	set category = "Object"
-	set src in oview(1)
-	src.toggle_open(usr)
-
 /obj/structure/extinguisher_cabinet/attack_tk(mob/user)
 	if(has_extinguisher)
 		has_extinguisher.loc = loc
@@ -85,15 +63,15 @@
 
 /obj/structure/extinguisher_cabinet/on_update_icon()
 	if(!opened)
-		if(istype(has_extinguisher, /obj/item/extinguisher/mini))
+		if(istype(has_extinguisher, /obj/item/weapon/extinguisher/mini))
 			icon_state = "extinguisher_closed_mini"
-		else if(istype(has_extinguisher, /obj/item/extinguisher))
+		else if(istype(has_extinguisher, /obj/item/weapon/extinguisher))
 			icon_state = "extinguisher_closed_full"
 		else
 			icon_state = "extinguisher_closed"
 		return
 	if(has_extinguisher)
-		if(istype(has_extinguisher, /obj/item/extinguisher/mini))
+		if(istype(has_extinguisher, /obj/item/weapon/extinguisher/mini))
 			icon_state = "extinguisher_mini"
 		else
 			icon_state = "extinguisher_full"

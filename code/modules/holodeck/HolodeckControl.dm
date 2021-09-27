@@ -7,7 +7,7 @@
 	use_power = IDLE_POWER_USE
 	active_power_usage = 8000 //8kW for the scenery + 500W per holoitem
 
-	circuit = /obj/item/electronics/circuitboard/holodeckcontrol
+	circuit = /obj/item/weapon/electronics/circuitboard/holodeckcontrol
 
 	var/item_power_usage = 500
 
@@ -141,11 +141,11 @@
 /obj/machinery/computer/HolodeckControl/proc/update_projections()
 	if (safety_disabled)
 		item_power_usage = 2500
-		for(var/obj/item/holo/esword/H in linkedholodeck)
+		for(var/obj/item/weapon/holo/esword/H in linkedholodeck)
 			H.damtype = BRUTE
 	else
 		item_power_usage = initial(item_power_usage)
-		for(var/obj/item/holo/esword/H in linkedholodeck)
+		for(var/obj/item/weapon/holo/esword/H in linkedholodeck)
 			H.damtype = initial(H.damtype)
 
 	for(var/mob/living/simple_animal/hostile/carp/holodeck/C in holographic_mobs)
@@ -275,7 +275,6 @@
 	holographic_objs = A.copy_contents_to(linkedholodeck , 1)
 	for(var/obj/holo_obj in holographic_objs)
 		holo_obj.alpha *= 0.8 //give holodeck objs a slight transparency
-		holo_obj.plane = 95 //This makes all objects load on the plane that Eris's 4th z-level uses for objects. This is not dynamic.
 
 	if(HP.ambience)
 		linkedholodeck.forced_ambience = HP.ambience

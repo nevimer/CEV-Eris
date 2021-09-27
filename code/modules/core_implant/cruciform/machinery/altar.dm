@@ -1,11 +1,11 @@
 /obj/machinery/optable/altar
-	name = "NeoTheology's altar"
+	name = "Mekhane altar"
 	desc = "The altar."
 	icon = 'icons/obj/neotheology_machinery.dmi'
 	icon_state = "optable-idle"
 	y_offset = 10
 
-	var/list/acceptable_items = list(/obj/item/implant/core_implant/cruciform, /obj/item/cruciform_upgrade)
+	var/list/acceptable_items = list(/obj/item/weapon/implant/core_implant/cruciform, /obj/item/weapon/cruciform_upgrade)
 	var/list/available_slots = list()
 
 /obj/machinery/optable/altar/New()

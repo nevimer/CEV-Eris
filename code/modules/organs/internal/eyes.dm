@@ -27,15 +27,18 @@
 /obj/item/organ/internal/eyes/replaced_mob(mob/living/carbon/human/target)
 	..()
 	// Apply our eye colour to the target.
-	if(eyes_color)
-		owner.eyes_color = eyes_color
-		owner.update_eyes()
-	owner.update_client_colour()
+	if(istype(target) && eyes_color)
+		var/list/eyecolors = ReadRGB(eyes_color)
+		target.r_eyes = eyecolors[1]
+		target.g_eyes = eyecolors[2]
+		target.b_eyes = eyecolors[3]
+		target.update_eyes()
+	..()
 
 /obj/item/organ/internal/eyes/proc/update_colour()
 	if(!owner)
 		return
-	eyes_color = owner.eyes_color
+	eyes_color = rgb(owner.r_eyes, owner.g_eyes, owner.b_eyes)
 
 /obj/item/organ/internal/eyes/take_damage(amount, silent=0)
 	var/oldbroken = is_broken()
@@ -43,10 +46,14 @@
 	if(is_broken() && !oldbroken && owner && !owner.stat)
 		to_chat(owner, SPAN_DANGER("You go blind!"))
 
-/obj/item/organ/internal/eyes/proc/get_colourmatrix() //Returns a special colour matrix if the mob is colourblind, otherwise it uses the current one.
-	if(owner.stats.getPerk(PERK_OBORIN_SYNDROME) && !owner.is_dead())
-		return colourblind_matrix
-	else
+/obj/item/organ/internal/eyes/proc/get_colourmatrix() //Returns a special colour matrix if the eyes are organic and the mob is colourblind, otherwise it uses the current one.
+	//OCCULUS EDIT START - Kludge time! Due to an absurd, everyone spawns with a pair of eyes outside of their bodies, and they will switch between the two. The outside eyes will runtime without this.
+	if(owner)	// Are we inside someone? Proceed as usual if we are.
+		if(!(BP_IS_ROBOTIC(src)) && owner.stats.getPerk(PERK_OBORIN_SYNDROME) && !owner.is_dead())
+			return colourblind_matrix
+		else
+			return colourmatrix
+	else	// We are not. Whatever, let's just do this.
 		return colourmatrix
 
 //Subtypes

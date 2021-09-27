@@ -38,6 +38,11 @@
 		CRASH("Gender datum was null; key was '[(skipjumpsuit && skipface) ? PLURAL : gender]'")
 
 	msg += "<EM>[src.name]</EM>"
+//	if(species.name != "Human") Occulus Edit, Show human species too!
+	if(custom_species)
+		msg += ", a <b><font color='[species.flesh_color]'>[custom_species]</font></b>"
+	else
+		msg += ", a <b><font color='[species.flesh_color]'>[species.name]</font></b>"
 	msg += "!\n"
 
 	//uniform
@@ -109,7 +114,7 @@
 
 	//handcuffed?
 	if(handcuffed)
-		if(istype(handcuffed, /obj/item/handcuffs/cable))
+		if(istype(handcuffed, /obj/item/weapon/handcuffs/cable))
 			msg += "<span class='warning'>[T.He] [T.is] \icon[handcuffed] restrained with cable!</span>\n"
 		else
 			msg += "<span class='warning'>[T.He] [T.is] \icon[handcuffed] handcuffed!</span>\n"
@@ -137,7 +142,7 @@
 	//mask
 	if(wear_mask && !skipmask)
 		var/descriptor = "on [T.his] face"
-		if(istype(wear_mask, /obj/item/grenade))
+		if(istype(wear_mask, /obj/item/weapon/grenade))
 			descriptor = "in [T.his] mouth"
 		if(wear_mask.blood_DNA)
 			msg += "<span class='warning'>[T.He] [T.has] \icon[wear_mask] [wear_mask.gender==PLURAL?"some":"a"] [(wear_mask.blood_color != "#030303") ? "blood" : "oil"]-stained [wear_mask.name] [descriptor]!</span>\n"
@@ -173,27 +178,27 @@
 			msg += "<span class='warning'>[T.He] [T.is] twitching ever so slightly.</span>\n"
 
 	//splints
-	for(var/organ in list(BP_R_ARM, BP_L_ARM, BP_R_LEG, BP_L_LEG, BP_GROIN, BP_HEAD, BP_CHEST))
+	for(var/organ in list(BP_L_LEG ,BP_R_LEG,BP_L_ARM,BP_R_ARM))
 		var/obj/item/organ/external/o = get_organ(organ)
 		if(o && o.status & ORGAN_SPLINTED)
 			msg += "<span class='warning'>[T.He] [T.has] a splint on [T.his] [o.name]!</span>\n"
 
 	if(!wear_suit && !w_uniform && !(T == src))
-		if(locate(/obj/item/implant/carrion_spider) in src)
+		if(locate(/obj/item/weapon/implant/carrion_spider) in src)
 			msg += SPAN_DANGER("[T.He] [T.has] a strange growth on [T.his] chest!") + "\n"
 
 	if(mSmallsize in mutations)
 		msg += "[T.He] [T.is] small halfling!\n"
 
 	var/distance = get_dist(usr,src)
-	if(isghost(usr) || usr?.stat == DEAD) // ghosts can see anything
+	if(isghost(usr) || usr.stat == DEAD) // ghosts can see anything
 		distance = 1
 	if(src.stat || (status_flags & FAKEDEATH))
 		msg += "<span class='warning'>[T.He] [T.is]n't responding to anything around [T.him] and seems to be asleep.</span>\n"
 		if((stat == DEAD || src.losebreath || (status_flags & FAKEDEATH)) && distance <= 3)
 			msg += "<span class='warning'>[T.He] [T.does] not appear to be breathing.</span>\n"
-		if(ishuman(usr) && !usr?.stat && Adjacent(usr))
-			usr?.visible_message("<b>[usr]</b> checks [src]'s pulse.", "You check [src]'s pulse.")
+		if(ishuman(usr) && !usr.stat && Adjacent(usr))
+			usr.visible_message("<b>[usr]</b> checks [src]'s pulse.", "You check [src]'s pulse.")
 		if(distance<=1 && do_mob(usr,src,15,progress=0))
 			if(status_flags & FAKEDEATH)
 				to_chat(usr, "<span class='deadsay'>[T.He] [T.has] no pulse and [T.his] soul has departed...</span>")
@@ -232,10 +237,10 @@
 	for(var/obj/item/organ/external/temp in organs)
 		if(BP_IS_SILICON(temp))
 			var/part_display_name
-			if(copytext(temp.name, 1, 6) == "robot")
+			if(copytext(temp.name, 1, 6) == "robotic")
 				part_display_name = "\a [temp]"
 			else
-				part_display_name = "a robot [temp.name]"
+				part_display_name = "a robotic [temp.name]"
 
 			if(!(temp.brute_dam + temp.burn_dam))
 				wound_flavor_text["[temp.name]"] = "<span class='warning'>[T.He] [T.has] [part_display_name]!</span>\n"
@@ -244,9 +249,15 @@
 			continue
 		else if(temp.wounds.len > 0 || temp.open)
 			if(temp.is_stump() && temp.parent)
-				wound_flavor_text["[temp.name]"] = "<span class='warning'>[T.He] [T.has] [temp.get_wounds_desc()] on [T.his] [temp.parent.name].</span><br>"
+				// OCCULUS EDIT START: Better clarity for injuries.
+				// OLD: 'He has a pair of tiny bruises, a massive salved burn, and a large bruise on his right arm'
+				// NEW: 'His right arm has a pair of tiny buises, a massive salved burn, and a large bruise.'
+				// old code: wound_flavor_text["[temp.name]"] = "<span class='warning'>[T.He] [T.has] [temp.get_wounds_desc()] on [T.his] [temp.parent.name].</span><br>"
+				wound_flavor_text["[temp.name]"] = "<span class='warning'>[T.His] <b>[temp.parent.name]</b> [T.has] [temp.get_wounds_desc()].</span><br>"
 			else
-				wound_flavor_text["[temp.name]"] = "<span class='warning'>[T.He] [T.has] [temp.get_wounds_desc()] on [T.his] [temp.name].</span><br>"
+				// old code: wound_flavor_text["[temp.name]"] = "<span class='warning'>[T.He] [T.has] [temp.get_wounds_desc()] on [T.his] [temp.name].</span><br>"
+				wound_flavor_text["[temp.name]"] = "<span class='warning'>[T.His] <b>[temp.name]</b> [T.has] [temp.get_wounds_desc()].</span><br>"
+				// OCCULUS EDIT END
 			if(temp.status & ORGAN_BLEEDING)
 				is_bleeding["[temp.name]"] = "<span class='danger'>[T.His] [temp.name] is bleeding!</span><br>"
 		else
@@ -308,10 +319,18 @@
 	else if(is_bleeding["left leg"])
 		display_chest = 1
 
+	if(wound_flavor_text["left foot"]&& (is_destroyed["left foot"] || (!shoes && !skipshoes)))
+		msg += wound_flavor_text["left foot"]
+	else if(is_bleeding["left foot"])
+		display_shoes = 1
 	if(wound_flavor_text["right leg"] && (is_destroyed["right leg"] || (!w_uniform && !skipjumpsuit)))
 		msg += wound_flavor_text["right leg"]
 	else if(is_bleeding["right leg"])
 		display_chest = 1
+	if(wound_flavor_text["right foot"]&& (is_destroyed["right foot"] || (!shoes  && !skipshoes)))
+		msg += wound_flavor_text["right foot"]
+	else if(is_bleeding["right foot"])
+		display_shoes = 1
 
 	if(display_chest)
 		msg += "<span class='danger'>[src] [T.has] blood soaking through from under [T.his] clothing!</span>\n"
@@ -347,7 +366,7 @@
 		var/medical = "None"
 
 		if(wear_id)
-			var/obj/item/card/id/id_card = wear_id.GetIdCard()
+			var/obj/item/weapon/card/id/id_card = wear_id.GetIdCard()
 			if(id_card)
 				perpname = id_card.registered_name
 		else
@@ -374,7 +393,6 @@
 		msg += "\n[T.He] [T.is] [pose]"
 
 	to_chat(user, msg)
-	. = msg
 
 //Helper procedure. Called by /mob/living/carbon/human/examine() and /mob/living/carbon/human/Topic() to determine HUD access to security and medical records.
 /proc/hasHUD(mob/M as mob, hudtype)

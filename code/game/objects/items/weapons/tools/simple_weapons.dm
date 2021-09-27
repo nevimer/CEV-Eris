@@ -1,6 +1,6 @@
 //Those are all weapons that don't had tool modding at some point, but should have it for balance purposes.
 
-/obj/item/tool/broken_bottle
+/obj/item/weapon/tool/broken_bottle
 	name = "broken bottle"
 	desc = "A bottle with a sharp broken bottom."
 	icon = 'icons/obj/drinks.dmi'
@@ -18,7 +18,7 @@
 	var/icon/broken_outline = icon('icons/obj/drinks.dmi', "broken")
 	spawn_tags = SPAWN_TAG_JUNKTOOL
 
-/obj/item/tool/nailstick
+/obj/item/weapon/tool/nailstick
 	name = "nailed stick"
 	desc = "Stick with some nails in it. Looks sharp enough."
 	icon = 'icons/obj/weapons.dmi'
@@ -34,7 +34,7 @@
 	tool_qualities = list(QUALITY_HAMMERING = 10)
 	spawn_tags = SPAWN_TAG_JUNKTOOL
 
-/obj/item/tool/hatchet
+/obj/item/weapon/tool/hatchet
 	name = "hatchet"
 	desc = "A very sharp axe blade upon a short fibremetal handle. It has a long history of chopping things, but now it is used for chopping wood."
 	icon = 'icons/obj/weapons.dmi'
@@ -51,7 +51,7 @@
 	attack_verb = list("chopped", "torn", "cut")
 	tool_qualities = list(QUALITY_CUTTING = 20)
 
-/obj/item/tool/fireaxe
+/obj/item/weapon/tool/fireaxe
 	name = "fire axe"
 	desc = "Truly, the weapon of a madman. Who would think to fight fire with an axe?"
 	icon = 'icons/obj/weapons.dmi'
@@ -63,14 +63,14 @@
 	tool_qualities = list(QUALITY_CUTTING = 10, QUALITY_PRYING = 20)
 	w_class = ITEM_SIZE_HUGE
 	slot_flags = SLOT_BACK
-	force = WEAPON_FORCE_NORMAL
-	force_wielded_multiplier = 3.3
+	force_unwielded = WEAPON_FORCE_NORMAL
+	force_wielded = WEAPON_FORCE_BRUTAL
 	attack_verb = list("attacked", "chopped", "cleaved", "torn", "cut")
 	structure_damage_factor = STRUCTURE_DAMAGE_BREACHING
 	embed_mult = 1 //Axes cut deep, and their hooked shape catches on things
 	rarity_value = 48
 
-/obj/item/tool/fireaxe/afterattack(atom/A as mob|obj|turf|area, mob/user, proximity)
+/obj/item/weapon/tool/fireaxe/afterattack(atom/A as mob|obj|turf|area, mob/user, proximity)
 	if(!proximity) return
 	..()
 	if(A && wielded)
@@ -78,7 +78,7 @@
 			var/obj/effect/plant/P = A
 			P.die_off()
 
-/obj/item/tool/minihoe
+/obj/item/weapon/tool/minihoe
 	name = "mini hoe"
 	desc = "It's used for removing weeds or scratching your back."
 	icon = 'icons/obj/weapons.dmi'
@@ -92,7 +92,7 @@
 	w_class = ITEM_SIZE_SMALL
 	attack_verb = list("slashed", "sliced", "cut", "clawed")
 
-/obj/item/tool/scythe
+/obj/item/weapon/tool/scythe
 	name = "scythe"
 	desc = "A sharp and curved blade on a long fibremetal handle, this tool makes it easy to reap what you sow."
 	icon = 'icons/obj/weapons.dmi'
@@ -111,7 +111,7 @@
 	rarity_value = 30
 
 //Swords
-/obj/item/tool/sword
+/obj/item/weapon/tool/sword
 	name = "claymore"
 	desc = "What are you standing around staring at this for? Get to killing!"
 	icon = 'icons/obj/weapons.dmi'
@@ -135,19 +135,7 @@
 	spawn_tags = SPAWN_TAG_SWORD
 	rarity_value = 25
 
-/obj/item/tool/sword/saber
-	name = "officer's saber"
-	desc = "A saber with golden grip, for the real heads of this ship."
-	icon_state = "saber"
-	item_state = "saber"
-	matter = list(MATERIAL_PLASTEEL = 15, MATERIAL_WOOD = 10, MATERIAL_GOLD = 10, MATERIAL_DIAMOND = 1)
-	slot_flags = SLOT_BELT
-	force = WEAPON_FORCE_BRUTAL
-	armor_penetration = ARMOR_PEN_MODERATE
-	spawn_blacklisted = TRUE
-	price_tag = 10000
-
-/obj/item/tool/sword/improvised
+/obj/item/weapon/tool/sword/improvised
 	name = "junkblade"
 	desc = "Hack and slash!"
 	icon_state = "msword"
@@ -159,7 +147,19 @@
 	rarity_value = 60
 	spawn_tags = SPAWN_TAG_JUNKTOOL
 
-/obj/item/tool/sword/katana //slightly less penetration, slightly more damage
+/obj/item/weapon/tool/sword/saber
+	name = "officer's saber"
+	desc = "A saber with golden grip, for the real heads of this ship."
+	icon_state = "saber"
+	item_state = "saber"
+	matter = list(MATERIAL_PLASTEEL = 15, MATERIAL_WOOD = 10, MATERIAL_GOLD = 10, MATERIAL_DIAMOND = 1)
+	slot_flags = SLOT_BELT
+	force = WEAPON_FORCE_BRUTAL
+	armor_penetration = ARMOR_PEN_MODERATE
+	spawn_blacklisted = TRUE
+	price_tag = 10000
+
+/obj/item/weapon/tool/sword/katana //slightly less penetration, slightly more damage
 	name = "katana"
 	desc = "Modern japanese-style blade that has no curve to it. This one looks pretty sharp."
 	icon_state = "katana"
@@ -169,7 +169,7 @@
 	armor_penetration = ARMOR_PEN_MODERATE
 	rarity_value = 35
 
-/obj/item/tool/sword/katana/nano
+/obj/item/weapon/tool/sword/katana/nano
 	name = "\improper Moebius \"Muramasa\" katana"
 	desc = "After an extensive binge of ancient animated recordings, a scientist decided to upgrade a recovered katana."
 	icon_state = "eutactic_katana"
@@ -177,7 +177,7 @@
 	toggleable = TRUE
 	max_upgrades = 1
 
-	suitable_cell = /obj/item/cell/small
+	suitable_cell = /obj/item/weapon/cell/small
 
 	use_power_cost = 0.4
 	passive_power_cost = 0.4
@@ -185,21 +185,22 @@
 	switched_on_qualities = list(QUALITY_CUTTING = 25)
 	origin_tech = list(TECH_COMBAT = 5, TECH_MATERIAL = 6)
 	switched_on_force = WEAPON_FORCE_BRUTAL
+	switched_off_force = WEAPON_FORCE_DANGEROUS * 1.5
 	rarity_value = 60
 	spawn_blacklisted = TRUE
 
-/obj/item/tool/sword/katana/nano/turn_on(mob/user)
+/obj/item/weapon/tool/sword/katana/nano/turn_on(mob/user)
 	.=..()
 	if(.)
 		embed_mult = 0
 		playsound(user, 'sound/weapons/saberon.ogg', 50, 1)
 
-/obj/item/tool/sword/katana/nano/turn_off(mob/user)
+/obj/item/weapon/tool/sword/katana/nano/turn_off(mob/user)
 	..()
 	embed_mult = initial(embed_mult)
 	playsound(user, 'sound/weapons/saberoff.ogg', 50, 1)
 
-/obj/item/tool/sword/katana/nano/on_update_icon()
+/obj/item/weapon/tool/sword/katana/nano/on_update_icon()
 	..()
 	if(cell)
 		add_overlays("[icon_state]_cell")
@@ -209,7 +210,7 @@
 		add_overlays("[icon_state]_power_off")
 
 //Flails
-/obj/item/tool/chainofcommand
+/obj/item/weapon/tool/chainofcommand
 	name = "chain of command"
 	desc = "A tool used by great men to placate the frothing masses."
 	icon = 'icons/obj/weapons.dmi'

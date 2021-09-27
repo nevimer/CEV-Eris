@@ -171,16 +171,16 @@
 		var/obj/O
 
 		//shards
-		O = new /obj/item/material/shard(src.loc)
+		O = new /obj/item/weapon/material/shard(src.loc)
 		step_to(O, get_turf(pick(view(7, src))))
 		if(prob(75))
-			O = new /obj/item/material/shard(src.loc)
+			O = new /obj/item/weapon/material/shard(src.loc)
 			step_to(O, get_turf(pick(view(7, src))))
 		if(prob(50))
-			O = new /obj/item/material/shard(src.loc)
+			O = new /obj/item/weapon/material/shard(src.loc)
 			step_to(O, get_turf(pick(view(7, src))))
 		if(prob(25))
-			O = new /obj/item/material/shard(src.loc)
+			O = new /obj/item/weapon/material/shard(src.loc)
 			step_to(O, get_turf(pick(view(7, src))))
 
 		//rods
@@ -210,7 +210,7 @@
 			step_to(O, get_turf(pick(view(7, src))))
 
 		//also drop dummy circuit boards deconstructable for research (loot)
-		var/obj/item/electronics/circuitboard/C
+		var/obj/item/weapon/electronics/circuitboard/C
 
 		//spawn 1-4 boards of a random type
 		var/spawnees = 0
@@ -258,8 +258,8 @@
 
 		if(spawnees & 128)
 			C = new(src.loc)
-			C.name = "Drone plasma overcharge counter"
-			C.origin_tech = list(TECH_PLASMA = rand(3,6))
+			C.name = "Drone phoron overcharge counter"
+			C.origin_tech = list(TECH_PHORON = rand(3,6))
 
 		if(spawnees & 256)
 			C = new(src.loc)

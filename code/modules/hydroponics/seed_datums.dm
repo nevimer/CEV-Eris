@@ -640,6 +640,8 @@
 	if (chem)
 		set_trait(TRAIT_PLANT_COLOUR,color)
 		set_trait(TRAIT_PRODUCT_COLOUR,color)
+	taste_tag += pick(MEAT_FOOD, COCO_FOOD, CHEESE_FOOD, SALTY_FOOD, SPICY_FOOD, FLOURY_FOOD) //Occulus Edit: Maintshroom flavors
+
 
 //Flowers/varieties
 /datum/seed/flower
@@ -1281,7 +1283,7 @@
 	seed_name = "alien weed"
 	display_name = "alien weeds"
 	force_layer = 3
-	chems = list("plasma" = list(1,3))
+	chems = list("phoron" = list(1,3))
 
 /datum/seed/xenomorph/New()
 	..()

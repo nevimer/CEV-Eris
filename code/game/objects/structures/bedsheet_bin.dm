@@ -4,13 +4,13 @@ BEDSHEETS
 LINEN BINS
 */
 
-/obj/item/bedsheet
+/obj/item/weapon/bedsheet
 	name = "bedsheet"
 	desc = "A surprisingly soft linen bedsheet."
 	icon = 'icons/obj/bedsheets.dmi'
 	icon_state = "sheet"
 	item_state = "bedsheet"
-	layer = 4
+	layer = 4.0
 	throwforce = WEAPON_FORCE_HARMLESS
 	throw_speed = 1
 	throw_range = 2
@@ -19,13 +19,13 @@ LINEN BINS
 	var/folded = FALSE
 	var/inuse = FALSE
 
-/obj/item/bedsheet/Initialize(mapload, nfolded=FALSE)
+/obj/item/weapon/bedsheet/Initialize(mapload, nfolded=FALSE)
 	.=..()
 	folded = nfolded
 	update_icon()
 
-/obj/item/bedsheet/afterattack(atom/A, mob/user)
-	if(!user || user.incapacitated() || !user.Adjacent(A) || istype(A, /obj/structure/bedsheetbin) || istype(A, /obj/item/storage/))
+/obj/item/weapon/bedsheet/afterattack(atom/A, mob/user)
+	if(!user || user.incapacitated() || !user.Adjacent(A) || istype(A, /obj/structure/bedsheetbin) || istype(A, /obj/item/weapon/storage/))
 		return
 	if(toggle_fold(user))
 		user.drop_item()
@@ -33,7 +33,7 @@ LINEN BINS
 		add_fingerprint(user)
 		return
 
-/obj/item/bedsheet/proc/toggle_roll(mob/living/user, no_message = FALSE)
+/obj/item/weapon/bedsheet/proc/toggle_roll(mob/living/user, no_message = FALSE)
 	if(!user)
 		return FALSE
 	if(inuse)
@@ -61,7 +61,7 @@ LINEN BINS
 	inuse = FALSE
 	return FALSE
 
-/obj/item/bedsheet/proc/toggle_fold(mob/user, no_message=FALSE)
+/obj/item/weapon/bedsheet/proc/toggle_fold(mob/user, no_message=FALSE)
 	if(!user)
 		return FALSE
 	if(inuse)
@@ -91,29 +91,29 @@ LINEN BINS
 	inuse = FALSE
 	return FALSE
 
-/obj/item/bedsheet/verb/fold_verb()
+/obj/item/weapon/bedsheet/verb/fold_verb()
 	set name = "Fold bedsheet"
 	set category = "Object"
 	set src in view(1)
 
-	if(ismob(loc))
+	if(istype(loc,/mob))
 		to_chat(usr, "Drop \the [src] first.")
 	else if(ishuman(usr))
 		toggle_fold(usr)
 
-/obj/item/bedsheet/verb/roll_verb()
+/obj/item/weapon/bedsheet/verb/roll_verb()
 	set name = "Roll bedsheet"
 	set category = "Object"
 	set src in view(1)
 
 	if(folded)
 		to_chat(usr, "Unfold \the [src] first.")
-	else if(ismob(loc))
+	else if(istype(loc,/mob))
 		to_chat(usr, "Drop \the [src] first.")
 	else if(ishuman(usr))
 		toggle_roll(usr)
 
-/obj/item/bedsheet/attackby(obj/item/I, mob/user)
+/obj/item/weapon/bedsheet/attackby(obj/item/I, mob/user)
 	if(is_sharp(I))
 		user.visible_message(
 			SPAN_NOTICE("\The [user] begins cutting up \the [src] with \a [I]."),
@@ -122,12 +122,12 @@ LINEN BINS
 		if(do_after(user, 50, src))
 			to_chat(user, SPAN_NOTICE("You cut \the [src] into pieces!"))
 			for(var/i in 1 to rand(2,5))
-				new /obj/item/reagent_containers/glass/rag(get_turf(src))
+				new /obj/item/weapon/reagent_containers/glass/rag(get_turf(src))
 			qdel(src)
 		return
 	..()
 
-/obj/item/bedsheet/attack_hand(mob/user)
+/obj/item/weapon/bedsheet/attack_hand(mob/user)
 	if(!user || user.incapacitated(INCAPACITATION_UNCONSCIOUS))
 		return
 	if(!folded)
@@ -136,7 +136,7 @@ LINEN BINS
 		.=..()
 	add_fingerprint(user)
 
-/obj/item/bedsheet/MouseDrop(over_object, src_location, over_location)
+/obj/item/weapon/bedsheet/MouseDrop(over_object, src_location, over_location)
 	..()
 	if(over_object == usr || istype(over_object, /obj/screen/inventory/hand))
 		if(!ishuman(over_object))
@@ -146,7 +146,7 @@ LINEN BINS
 		if(folded)
 			pickup(usr)
 
-/obj/item/bedsheet/on_update_icon()
+/obj/item/weapon/bedsheet/on_update_icon()
 	if (folded)
 		icon_state = "sheet-folded"
 	else if (rolled)
@@ -154,52 +154,52 @@ LINEN BINS
 	else
 		icon_state = initial(icon_state)
 
-/obj/item/bedsheet/blue
+/obj/item/weapon/bedsheet/blue
 	icon_state = "sheetblue"
 
-/obj/item/bedsheet/green
+/obj/item/weapon/bedsheet/green
 	icon_state = "sheetgreen"
 
-/obj/item/bedsheet/orange
+/obj/item/weapon/bedsheet/orange
 	icon_state = "sheetorange"
 
-/obj/item/bedsheet/purple
+/obj/item/weapon/bedsheet/purple
 	icon_state = "sheetpurple"
 
-/obj/item/bedsheet/rainbow
+/obj/item/weapon/bedsheet/rainbow
 	icon_state = "sheetrainbow"
 
-/obj/item/bedsheet/red
+/obj/item/weapon/bedsheet/red
 	icon_state = "sheetred"
 
-/obj/item/bedsheet/yellow
+/obj/item/weapon/bedsheet/yellow
 	icon_state = "sheetyellow"
 
-/obj/item/bedsheet/mime
+/obj/item/weapon/bedsheet/mime
 	icon_state = "sheetmime"
 
-/obj/item/bedsheet/clown
+/obj/item/weapon/bedsheet/clown
 	icon_state = "sheetclown"
 
-/obj/item/bedsheet/captain
+/obj/item/weapon/bedsheet/captain
 	icon_state = "sheetcaptain"
 
-/obj/item/bedsheet/rd
+/obj/item/weapon/bedsheet/rd
 	icon_state = "sheetrd"
 
-/obj/item/bedsheet/medical
+/obj/item/weapon/bedsheet/medical
 	icon_state = "sheetmedical"
 
-/obj/item/bedsheet/hos
+/obj/item/weapon/bedsheet/hos
 	icon_state = "sheethos"
 
-/obj/item/bedsheet/hop
+/obj/item/weapon/bedsheet/hop
 	icon_state = "sheethop"
 
-/obj/item/bedsheet/ce
+/obj/item/weapon/bedsheet/ce
 	icon_state = "sheetce"
 
-/obj/item/bedsheet/brown
+/obj/item/weapon/bedsheet/brown
 	icon_state = "sheetbrown"
 
 
@@ -234,7 +234,7 @@ LINEN BINS
 
 
 /obj/structure/bedsheetbin/attackby(obj/item/I, mob/user)
-	if(istype(I, /obj/item/bedsheet))
+	if(istype(I, /obj/item/weapon/bedsheet))
 		user.drop_item()
 		I.loc = src
 		sheets.Add(I)
@@ -251,13 +251,13 @@ LINEN BINS
 	if(amount >= 1)
 		amount--
 
-		var/obj/item/bedsheet/B
+		var/obj/item/weapon/bedsheet/B
 		if(sheets.len > 0)
 			B = sheets[sheets.len]
 			sheets.Remove(B)
 
 		else
-			B = new /obj/item/bedsheet(loc, TRUE)
+			B = new /obj/item/weapon/bedsheet(loc, TRUE)
 		B.loc = user.loc
 
 		user.put_in_hands(B)
@@ -275,13 +275,13 @@ LINEN BINS
 	if(amount >= 1)
 		amount--
 
-		var/obj/item/bedsheet/B
+		var/obj/item/weapon/bedsheet/B
 		if(sheets.len > 0)
 			B = sheets[sheets.len]
 			sheets.Remove(B)
 
 		else
-			B = new /obj/item/bedsheet(loc, TRUE)
+			B = new /obj/item/weapon/bedsheet(loc, TRUE)
 
 		B.loc = loc
 		to_chat(user, SPAN_NOTICE("You telekinetically remove [B] from [src]."))

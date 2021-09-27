@@ -74,12 +74,12 @@
 	item_cost = 1
 	antag_roles = list(ROLE_MARSHAL)
 	path = /obj/item/clothing/accessory/badge/marshal
-	desc = "A leather-backed gold badge displaying the crest of the Ironhammer Marshals."
+	desc = "A leather-backed gold badge displaying the crest of the Aegis Marshals."
 
 /datum/uplink_item/item/badassery/donut_case
 	name = "Special Donut Delivery Case"
-	item_cost = 18
-	path = /obj/item/storage/case/donut
+	item_cost = 20
+	path = /obj/item/weapon/storage/case/donut
 	desc = "A rare donut case, that can only be purchased on the black market. Contains masterfully made donuts, with unique effects for those who eat them."
 
 /datum/uplink_item/item/badassery/contract

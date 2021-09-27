@@ -29,10 +29,8 @@
 
 /datum/computer_file/program/trade/proc/reset_shoplist()
 	RecursiveCut(shoppinglist)
-	if(station)
-		for(var/i in station.assortiment)
-			shoppinglist[i] = list()
-
+	for(var/i in station.assortiment)
+		shoppinglist[i] = list()
 /datum/computer_file/program/trade/proc/get_price_of_cart()
 	. = 0
 	for(var/i in shoppinglist)
@@ -55,6 +53,14 @@
 		trade_screen = !trade_screen
 		return 1
 
+	if(href_list["PRG_send"])
+		SStrade.sell(sending, account)
+		return 1
+
+	if(href_list["PRG_receive"])
+		SStrade.buy(receiving, account, shoppinglist, station)
+		return 1
+
 	if(href_list["PRG_account"])
 		var/acc_num = input("Enter account number", "Account linking", computer?.card_slot?.stored_card?.associated_account_number) as num|null
 		if(!acc_num)
@@ -71,6 +77,10 @@
 			return
 
 		account = A
+		return 1
+
+	if(href_list["PRG_account_unlink"])
+		account = null
 		return 1
 
 	if(href_list["PRG_station"])
@@ -94,25 +104,18 @@
 		reset_shoplist()
 		return 1
 
-	if(href_list["PRG_cart_add"] || href_list["PRG_cart_add_input"])
-		var/ind
-		var/count2buy = 1
-		if(href_list["PRG_cart_add_input"])
-			count2buy = input(usr, "Input how many you want to add", "Trade", 2) as num
-			ind = text2num(href_list["PRG_cart_add_input"])
-		else
-			ind = text2num(href_list["PRG_cart_add"])
+	if(href_list["PRG_cart_add"])
 		var/list/category = station.assortiment[choosed_category]
 		if(!islist(category))
 			return
-		var/path = LAZYACCESS(category, ind)
+		var/path = LAZYACCESS(category, text2num(href_list["PRG_cart_add"]))
 		if(!path)
 			return
-		var/good_amount = station.get_good_amount(choosed_category, ind)
+		var/good_amount = station.get_good_amount(choosed_category, text2num(href_list["PRG_cart_add"]))
 		if(!good_amount)
 			return
-		
-		set_2d_matrix_cell(shoppinglist, choosed_category, path, clamp(get_2d_matrix_cell(shoppinglist, choosed_category, path) + count2buy, 0, good_amount))
+
+		set_2d_matrix_cell(shoppinglist, choosed_category, path, clamp(get_2d_matrix_cell(shoppinglist, choosed_category, path) + 1, 0, good_amount))
 		return 1
 
 	if(href_list["PRG_cart_remove"])
@@ -127,27 +130,12 @@
 		set_2d_matrix_cell(shoppinglist, choosed_category, path, clamp(get_2d_matrix_cell(shoppinglist, choosed_category, path) - 1, 0, good_amount))
 		return 1
 
-	if(account)
-		if(href_list["PRG_receive"])
-			SStrade.buy(receiving, account, shoppinglist, station)
-			reset_shoplist()
-			return 1
-		if(href_list["PRG_account_unlink"])
-			account = null
-			return 1
-
-		if(href_list["PRG_offer_fulfill"])
-			var/datum/trade_station/S = LAZYACCESS(SStrade.discovered_stations, text2num(href_list["PRG_offer_fulfill"]))
-			if(!S)
-				return
-			SStrade.fulfill_offer(sending, account, station)
-			return 1
-
-		var/t2n = text2num(href_list["PRG_sell"])
-		if(isnum(t2n) && station)
-			var/path = get_2d_matrix_cell(station.assortiment, choosed_category, t2n)
-			SStrade.sell_thing(sending, account, locate(path) in SStrade.assess_offer(sending, station, path), station)
-			return 1
+	if(href_list["PRG_offer_fulfill"])
+		var/datum/trade_station/S = LAZYACCESS(SStrade.discovered_stations, text2num(href_list["PRG_offer_fulfill"]))
+		if(!S)
+			return
+		SStrade.fulfill_offer(sending, account, station)
+		return 1
 
 /datum/nano_module/program/trade
 	name = "Trading Program"
@@ -201,7 +189,6 @@
 	if(PRG.station)
 		if(!PRG.choosed_category || !(PRG.choosed_category in PRG.station.assortiment))
 			PRG.set_choosed_category()
-		.["commision"] = PRG.station.commision
 		.["current_category"] = PRG.choosed_category ? PRG.station.assortiment.Find(PRG.choosed_category) : null
 		.["goods"] = list()
 		.["categories"] = list()
@@ -221,9 +208,6 @@
 
 					var/amount = PRG.station.get_good_amount(PRG.choosed_category, index)
 
-					var/amount2sell = 0
-					if(PRG.station && PRG.sending)
-						amount2sell = length(SStrade.assess_offer(PRG.sending, PRG.station, path))
 					var/pathname = initial(AM.name)
 					var/list/good_packet = assort[path]
 					if(islist(good_packet))
@@ -237,7 +221,6 @@
 						"price" = price,
 						"count" = count ? count : 0,
 						"amount_available" = amount,
-						"amount_available_around" = amount2sell,
 						"index" = index
 					))
 		if(!recursiveLen(.["goods"]))
@@ -252,7 +235,7 @@
 		.["offers"] += list(offer)
 	if(!recursiveLen(.["offers"]))
 		.["offers"] = null
-	
+
 
 #undef GOODS_SCREEN
 #undef OFFER_SCREEN

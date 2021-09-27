@@ -35,7 +35,7 @@
 	user.set_machine(src)
 
 	var/dat = "<h1>Ore processor console</h1>"
-	dat += "Currently processing <A href='?src=\ref[src];change_sheetspertick=1'>[machine.sheets_per_tick]</a> sheets per processing cycle."
+
 	dat += "<hr><table>"
 
 	for(var/ore in machine.ores_processing)
@@ -70,15 +70,6 @@
 		return 1
 	usr.set_machine(src)
 
-	if(href_list["change_sheetspertick"])
-		var/spt_value = input(usr, "How many sheets do you want to process per cycle? (max 60, default 10)", "Material Processing Rate", 10) as null|num
-		if(!isnum(spt_value))
-			return
-		spt_value = clamp(spt_value, 1, 60)
-		var/area/refinery_area = get_area(src)
-		for(var/obj/machinery/mineral/unloading_machine/unloader in refinery_area.contents)
-			unloader.unload_amt = spt_value
-		machine.sheets_per_tick = spt_value
 	if(href_list["toggle_smelting"])
 		var/choice = input("What setting do you wish to use for processing [href_list["toggle_smelting"]]?") as null|anything in list("Smelting","Compressing","Alloying","Nothing")
 		if(!choice) return
@@ -105,7 +96,7 @@
 
 
 /obj/machinery/mineral/processing_unit
-	name = "material processor" //This isn't actually a goddamn furnace, we're in space and it's processing platinum and flammable plasma...
+	name = "material processor" //This isn't actually a goddamn furnace, we're in space and it's processing platinum and flammable phoron...
 	icon = 'icons/obj/machines/mining_machines.dmi'
 	icon_state = "furnace"
 	density = TRUE
@@ -157,7 +148,7 @@
 	var/list/tick_alloys = list()
 
 	//Grab some more ore to process this tick.
-	for(var/obj/item/ore/O in get_step(src, input_dir))
+	for(var/obj/item/weapon/ore/O in get_step(src, input_dir))
 		if(!isnull(ores_stored[O.material]))
 			ores_stored[O.material]++
 		qdel(O)
@@ -167,6 +158,7 @@
 
 	//Process our stored ores and spit out sheets.
 	var/sheets = 0
+	var/currently_alloying = FALSE
 	for(var/metal in ores_stored)
 
 		if(sheets >= sheets_per_tick) break
@@ -183,7 +175,8 @@
 
 					if(A.metaltag in tick_alloys)
 						continue
-
+					if(currently_alloying) //Occulus Edit
+						break //Occulus Edit
 					tick_alloys += A.metaltag
 					var/enough_metal
 
@@ -204,11 +197,12 @@
 						for(var/needs_metal in A.requires)
 							ores_stored[needs_metal] -= A.requires[needs_metal]
 							total += A.requires[needs_metal]
-							total = max(1,round(total*A.product_mod)) //Always get at least one sheet.
-							sheets += total-1
+						total = max(1,round(total*A.product_mod)) //Always get at least one sheet.
+						sheets += total //Occulus edit: For some reason alloys were counting as one less sheet per tick? Dumb
 
 						for(var/i=0,i<total,i++)
 							new A.product(get_step(src, output_dir))
+						currently_alloying = TRUE//Occulus Edit
 
 			else if(ores_processing[metal] == 2 && O.compresses_to) //Compressing.
 
@@ -240,7 +234,8 @@
 			else
 				ores_stored[metal]--
 				sheets++
-				new /obj/item/ore/slag(get_step(src, output_dir))
+				new /obj/item/weapon/ore/slag(get_step(src, output_dir))
 		else
 			continue
+
 	console.updateUsrDialog()

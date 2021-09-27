@@ -1,7 +1,7 @@
 
 #define NITROGEN_RETARDATION_FACTOR 0.15	//Higher == N2 slows reaction more
 #define THERMAL_RELEASE_MODIFIER 10000		//Higher == more heat released during reaction
-#define PLASMA_RELEASE_MODIFIER 1500		//Higher == less plasma released by reaction
+#define PHORON_RELEASE_MODIFIER 1500		//Higher == less phoron released by reaction
 #define OXYGEN_RELEASE_MODIFIER 15000		//Higher == less oxygen released at high temperature/power
 #define REACTION_POWER_MODIFIER 1.1			//Higher == more overall power
 
@@ -16,7 +16,7 @@
 */
 
 //This is the main parameter for tweaking SM balance, as it basically controls how the power variable relates to the rest of the game.
-#define POWER_FACTOR 1
+#define POWER_FACTOR 1.0
 #define DECAY_FACTOR 700			//Affects how fast the supermatter power decays
 #define CRITICAL_TEMPERATURE 5000	//K
 #define CHARGING_FACTOR 0.05
@@ -38,7 +38,7 @@
 	icon = 'icons/obj/engine.dmi'
 	icon_state = "darkmatter"
 	density = TRUE
-	anchored = FALSE
+	anchored = 0
 	light_range = 4
 
 	var/gasefficency = 0.25
@@ -251,7 +251,7 @@
 
 		//Release reaction gasses
 		var/heat_capacity = removed.heat_capacity()
-		removed.adjust_multi("plasma", max(device_energy / PLASMA_RELEASE_MODIFIER, 0), \
+		removed.adjust_multi("phoron", max(device_energy / PHORON_RELEASE_MODIFIER, 0), \
 		                     "oxygen", max((device_energy + removed.temperature - T0C) / OXYGEN_RELEASE_MODIFIER, 0))
 
 		var/thermal_power = THERMAL_RELEASE_MODIFIER * device_energy
@@ -267,7 +267,7 @@
 
 	for(var/mob/living/carbon/human/H in view(src, min(7, round(sqrt(power/6))))) // If they can see it without mesons on.  Bad on them.
 		if(!istype(H.glasses, /obj/item/clothing/glasses/powered/meson))
-			if (!(istype(H.wearing_rig, /obj/item/rig) && istype(H.wearing_rig.getCurrentGlasses(), /obj/item/clothing/glasses/powered/meson)))
+			if (!(istype(H.wearing_rig, /obj/item/weapon/rig) && istype(H.wearing_rig.getCurrentGlasses(), /obj/item/clothing/glasses/powered/meson)))
 				var/effect = max(0, min(200, power * config_hallucination_power * sqrt( 1 / max(1,get_dist(H, src)))) )
 				H.adjust_hallucination(effect, 0.25*effect)
 				H.add_side_effect("Headache", 11)
@@ -351,7 +351,7 @@
 			R.receive_pulse(transfer_energy * (min(3/(distance != 0 ? distance : 1), 1))**2)
 
 
-/obj/machinery/power/supermatter/attackby(obj/item/W as obj, mob/living/user as mob)
+/obj/machinery/power/supermatter/attackby(obj/item/weapon/W as obj, mob/living/user as mob)
 
 	/*
 		Repairing the supermatter with duct tape, for meme value

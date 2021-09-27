@@ -8,7 +8,7 @@
 	anchored = TRUE
 	layer = BELOW_OBJ_LAYER
 	// req_access = list(access_kitchen,access_morgue)
-	circuit = /obj/item/electronics/circuitboard/mindswapper
+	circuit = /obj/item/weapon/electronics/circuitboard/mindswapper
 
 	var/operating = FALSE  // Is it on?
 	var/swap_time = 200  // Time from starting until minds are swapped
@@ -16,7 +16,7 @@
 	var/list/swap_blacklist = list(/mob/living/simple_animal/hostile/megafauna,
 	                               /mob/living/simple_animal/cat/runtime)
 
-	use_power = IDLE_POWER_USE
+	use_power = 1
 	idle_power_usage = 2
 	active_power_usage = 500
 

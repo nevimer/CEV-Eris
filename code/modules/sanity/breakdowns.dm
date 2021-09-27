@@ -165,7 +165,7 @@
 	if(!.)
 		return
 	if(init_update())
-		var/datum/gender/G = gender_datums[holder.owner.gender]
+		var/datum/gender/G = gender_datums[holder.owner.identifying_gender] // OCCULUS EDIT - adjusting for gender rework
 		if(prob(50))
 			var/emote = pick(list(
 				"screams incoherently!",
@@ -203,11 +203,11 @@
 
 /datum/breakdown/negative/selfharm/occur()
 	spawn(delay)
-		++holder.owner.suppress_communication
+		holder.owner.suppress_communication = TRUE	// OCCULUS EDIT: was ++holder.owner.suppress_communication
 	return ..()
 
 /datum/breakdown/negative/selfharm/conclude()
-	--holder.owner.suppress_communication
+	holder.owner.suppress_communication = FALSE	// OCCULUS EDIT: was --holder.owner.suppress_communication
 	..()
 
 
@@ -215,7 +215,7 @@
 /datum/breakdown/negative/hysteric
 	name = "Hysteric"
 	duration = 1.5 MINUTES
-	delay = 60 SECONDS
+	delay = 30 SECONDS
 	restore_sanity_post = 50
 
 	start_messages = list(
@@ -226,7 +226,7 @@
 		"It's too much! You freak out and lose control!"
 	)
 	end_messages = list(
-		"You calm down as your feelings subside. You feel horribly embarrassed!"
+		"You calm down as your feelings subside. You feel horribly embarassed!"
 	)
 
 /datum/breakdown/negative/hysteric/update()
@@ -335,7 +335,7 @@
 
 	start_messages = list(
 		"You feel like there is no point in any of this!",
-		"Your brain refuses to comprehend any of this!",
+		"You brain refuses to comprehend any of this!",
 		"You feel like you don't want to continue whatever you're doing!",
 		"You feel like your best days are gone forever!",
 		"You feel it. You know it. There is no turning back!"
@@ -393,11 +393,11 @@
 
 /datum/breakdown/negative/glassification
 	name = "Glassification"
-	duration = 2 MINUTES
+	duration = 5 MINUTES
 	restore_sanity_post = 40
 	var/time
-	var/cooldown = 20 SECONDS
-	var/time_view = 1 SECONDS
+	var/cooldown = 15 SECONDS
+	var/time_view = 5 SECONDS
 	var/active_view = FALSE
 	var/mob/living/carbon/human/target
 	start_messages = list("You start to see through everything. Your mind expands.")
@@ -448,11 +448,11 @@
 	name = "Herald"
 	restore_sanity_pre = 5
 	restore_sanity_post = 45
-	duration = 5 MINUTES
+	duration = 3 MINUTES	// SYZYGY EDIT - Nerfs its duration from 5 to 3 minutes
 	start_messages = list("You've seen the abyss too long, and now forbidden knowledge haunts you.")
 	end_messages = list("You feel like you've forgotten something important. But this comforts you.")
 	var/message_time = 0
-	var/cooldown_message = 10 SECONDS
+	var/cooldown_message = 15 SECONDS	// SYZYGY EDIT - Nerfs its cooldown to 15 seconds from 10
 
 
 /datum/breakdown/common/herald/update()
@@ -462,7 +462,7 @@
 	if(world.time >= message_time)
 		message_time = world.time + cooldown_message
 		var/chance = rand(1, 100)
-		holder.owner.say(chance <= 50 ? "[holder.pick_quote_20()]" : "[holder.pick_quote_40()]")
+		holder.owner.whisper_say(chance <= 50 ? "[holder.pick_quote_20()]" : "[holder.pick_quote_40()]") //Occulus edit, so you mutter to yourself
 
 /datum/breakdown/common/desire_for_chrome
 	name = "Desire for Chrome"
@@ -559,7 +559,7 @@
 	restore_sanity_post = 70
 	var/mob/living/carbon/human/target
 	var/message_time = 0
-	var/obsession_time = 3 MINUTES
+	var/obsession_time = 5 SECONDS //Occulus edit, so other breakdowns aren't so common but it's not 3 minutes of spam
 	var/last_time
 	var/delta_time
 

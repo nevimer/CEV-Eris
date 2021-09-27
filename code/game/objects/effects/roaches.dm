@@ -14,7 +14,7 @@
 	else
 		visible_message(SPAN_WARNING("\The [src] have been attacked with \the [I][(user ? " by [user]." : ".")]"))
 
-	health -= (I.force / 2)
+	health -= (I.force / 2.0)
 	healthcheck()
 
 /obj/item/roach_egg/bullet_act(var/obj/item/projectile/Proj)

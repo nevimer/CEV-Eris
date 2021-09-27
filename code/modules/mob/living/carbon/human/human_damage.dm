@@ -1,5 +1,6 @@
 //Updates the mob's health from organs and mob damage variables
 /mob/living/carbon/human/updatehealth()
+
 	if(status_flags & GODMODE)
 		health = maxHealth
 		stat = CONSCIOUS
@@ -16,14 +17,15 @@
 	var/clone_l = getCloneLoss()
 
 	health = maxHealth - oxy_l - tox_l - clone_l - total_burn - total_brute
-	SEND_SIGNAL(src, COMSIG_HUMAN_HEALTH, health)
+
 	//TODO: fix husking
 	if( ((maxHealth - total_burn) < HEALTH_THRESHOLD_DEAD) && stat == DEAD)
 		ChangeToHusk()
 	return
 
 /mob/living/carbon/human/adjustBrainLoss(var/amount)
-	if(status_flags & GODMODE)	return FALSE	//godmode
+
+	if(status_flags & GODMODE)	return 0	//godmode
 
 	if(species && species.has_process[BP_BRAIN])
 		var/obj/item/organ/internal/brain/sponge = random_organ_by_process(BP_BRAIN)
@@ -31,12 +33,13 @@
 			sponge.take_damage(amount)
 			brainloss = sponge.damage
 		else
-			setBrainLoss(200)
+			brainloss = 200
 	else
-		setBrainLoss(0)
+		brainloss = 0
 
-/mob/living/carbon/human/setBrainLoss(amount)
-	if(status_flags & GODMODE)	return FALSE	//godmode
+/mob/living/carbon/human/setBrainLoss(var/amount)
+
+	if(status_flags & GODMODE)	return 0	//godmode
 
 	if(species && species.has_process[BP_BRAIN])
 		var/obj/item/organ/internal/brain/sponge = random_organ_by_process(BP_BRAIN)
@@ -50,7 +53,7 @@
 
 /mob/living/carbon/human/getBrainLoss()
 
-	if(status_flags & GODMODE)	return FALSE	//godmode
+	if(status_flags & GODMODE)	return 0	//godmode
 
 	if(species && species.has_process[BP_BRAIN])
 		var/obj/item/organ/internal/brain/sponge = random_organ_by_process(BP_BRAIN)
@@ -92,7 +95,7 @@
 		heal_overall_damage(0, -amount)
 	BITSET(hud_updateflag, HEALTH_HUD)
 
-/mob/living/carbon/human/proc/adjustBruteLossByPart(amount, organ_name, obj/damage_source)
+/mob/living/carbon/human/proc/adjustBruteLossByPart(amount, organ_name, obj/damage_source = null)
 	amount = amount*species.brute_mod
 	if (organ_name in organs_by_name)
 		var/obj/item/organ/external/O = get_organ(organ_name)
@@ -101,11 +104,11 @@
 			O.take_damage(amount, 0, sharp=is_sharp(damage_source), edge=has_edge(damage_source), used_weapon=damage_source)
 		else
 			//if you don't want to heal robot organs, they you will have to check that yourself before using this proc.
-			O.heal_damage(-amount, 0, robo_repair=(BP_IS_ROBOTIC(O)))
+			O.heal_damage(-amount, 0, internal=0, robo_repair=(BP_IS_ROBOTIC(O)))
 
 	BITSET(hud_updateflag, HEALTH_HUD)
 
-/mob/living/carbon/human/proc/adjustFireLossByPart(var/amount, var/organ_name, var/obj/damage_source)
+/mob/living/carbon/human/proc/adjustFireLossByPart(var/amount, var/organ_name, var/obj/damage_source = null)
 	amount = amount*species.burn_mod
 	if (organ_name in organs_by_name)
 		var/obj/item/organ/external/O = get_organ(organ_name)
@@ -114,7 +117,7 @@
 			O.take_damage(0, amount, sharp=is_sharp(damage_source), edge=has_edge(damage_source), used_weapon=damage_source)
 		else
 			//if you don't want to heal robot organs, they you will have to check that yourself before using this proc.
-			O.heal_damage(0, -amount, robo_repair=(BP_IS_ROBOTIC(O)))
+			O.heal_damage(0, -amount, internal=0, robo_repair=(BP_IS_ROBOTIC(O)))
 
 	BITSET(hud_updateflag, HEALTH_HUD)
 
@@ -138,13 +141,13 @@
 		cloneloss = 0
 	return ..()
 
-/mob/living/carbon/human/setCloneLoss(amount)
+/mob/living/carbon/human/setCloneLoss(var/amount)
 	if(species.flags & (NO_SCAN))
 		cloneloss = 0
 	else
 		..()
 
-/mob/living/carbon/human/adjustCloneLoss(amount)
+/mob/living/carbon/human/adjustCloneLoss(var/amount)
 	..()
 
 	if(species.flags & (NO_SCAN))
@@ -289,7 +292,7 @@ In most cases it makes more sense to use apply_damage() instead! And make sure t
 	if(update)	UpdateDamageIcon()
 
 // damage MANY external organs, in random order
-/mob/living/carbon/human/take_overall_damage(var/brute, var/burn, var/sharp = FALSE, var/edge = FALSE, var/used_weapon)
+/mob/living/carbon/human/take_overall_damage(var/brute, var/burn, var/sharp = FALSE, var/edge = FALSE, var/used_weapon = null)
 	if(status_flags & GODMODE)	return	//godmode
 	var/list/obj/item/organ/external/parts = get_damageable_organs()
 	var/update = 0
@@ -346,16 +349,13 @@ This function restores all organs.
 		zone = BP_HEAD
 	return organs_by_name[zone]
 
-/mob/living/carbon/human/apply_damage(damage = 0, damagetype = BRUTE, def_zone, sharp = FALSE, edge = FALSE, obj/used_weapon)
+/mob/living/carbon/human/apply_damage(damage = 0, damagetype = BRUTE, def_zone = null, sharp = FALSE, edge = FALSE, obj/used_weapon = null)
 
 	//visible_message("Hit debug. [damage] | [damagetype] | [def_zone] | [blocked] | [sharp] | [used_weapon]")
 
-	//Handle PSY damage
-	if(damagetype == PSY)
-		sanity.onPsyDamage(damage)
-		return 1
-
 	//Handle other types of damage
+	if(damagetype == PSY) //Occulus Edit
+		sanity.onPsyDamage(damage)//Occulus Edit
 	if(damagetype != BRUTE && damagetype != BURN)
 		if(damagetype == HALLOSS && !(species && (species.flags & NO_PAIN)))
 			if (!stat && (damage > 25 && prob(20)) || (damage > 50 && prob(60)))
@@ -368,7 +368,7 @@ This function restores all organs.
 	//Handle BRUTE and BURN damage
 	handle_suit_punctures(damagetype, damage, def_zone)
 
-	var/obj/item/organ/external/organ
+	var/obj/item/organ/external/organ = null
 	if(isorgan(def_zone))
 		organ = def_zone
 	else

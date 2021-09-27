@@ -352,7 +352,7 @@
 					log_world("Failed to update players table for user with id [src.id]. Error message: [query_update.ErrorMsg()].")
 
 		//Panic bunker - player not in DB, so they get kicked
-		else if(config.panic_bunker && !holder && !deadmin_holder && !(ckey in GLOB.PB_bypass))
+		else if(config.panic_bunker && !holder && !deadmin_holder)
 			log_adminwarn("Failed Login: [key] - New account attempting to connect during panic bunker")
 			message_admins("<span class='adminnotice'>Failed Login: [key] - New account attempting to connect during panic bunker</span>")
 			to_chat(src, "<span class='warning'>Sorry but the server is currently not accepting connections from never before seen players.</span>")
@@ -479,12 +479,11 @@
 	set category = "OOC"
 	if(prefs)
 		prefs.ShowChoices(usr)
-/*
-/client/proc/apply_fps(var/client_fps)
-	if(world.byond_version >= 511 && byond_version >= 511 && client_fps >= CLIENT_MIN_FPS && client_fps <= CLIENT_MAX_FPS)
-		vars["fps"] = prefs.clientfps
 
-*/
+// OCCULUS EDIT - Enabling Client FPS
+/client/proc/apply_fps(var/client_fps)
+	if(world.byond_version >= 511 && byond_version >= 511 && client_fps >= 0 && client_fps <= 1000)
+		vars["fps"] = prefs.clientfps
 
 // Byond seemingly calls stat, each tick.
 // Calling things each tick can get expensive real quick.
@@ -627,7 +626,7 @@
 	else
 		score = response["fraud_score"]
 
-	return score/100 //To normalize with the 0 to 1 scores.
+	return score/100 //To normalize with the 0.0 to 1.0 scores.
 
 /client/proc/colour_transition(list/colour_to = null, time = 10) //Call this with no parameters to reset to default.
 	animate(src, color = colour_to, time = time, easing = SINE_EASING)

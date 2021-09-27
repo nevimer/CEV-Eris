@@ -30,7 +30,7 @@
 	var/next_rock = 0
 	var/archaeo_overlay = ""
 	var/excav_overlay = ""
-	var/obj/item/last_find
+	var/obj/item/weapon/last_find
 	var/datum/artifact_find/artifact_find
 
 	has_resources = 1
@@ -49,11 +49,11 @@
 
 /turf/simulated/mineral/ex_act(severity)
 	switch(severity)
-		if(2)
+		if(2.0)
 			if (prob(70))
 				mined_ore = 1 //some of the stuff gets blown up
 				GetDrilled()
-		if(1)
+		if(1.0)
 			mined_ore = 2 //some of the stuff gets blown up
 			GetDrilled()
 
@@ -193,7 +193,7 @@
 					next_rock += excavation_amount * 10
 					while(next_rock > 100)
 						next_rock -= 100
-						var/obj/item/ore/O = new(src)
+						var/obj/item/weapon/ore/O = new(src)
 						geologic_data.UpdateNearbyArtifactInfo(src)
 						O.geologic_data = geologic_data
 				return
@@ -268,7 +268,7 @@
 		return
 
 	clear_ore_effects()
-	var/obj/item/ore/O = new mineral.ore (src)
+	var/obj/item/weapon/ore/O = new mineral.ore (src)
 	if(istype(O) && geologic_data)
 		geologic_data.UpdateNearbyArtifactInfo(src)
 		O.geologic_data = geologic_data
@@ -313,15 +313,15 @@
 /turf/simulated/mineral/proc/excavate_find(var/prob_clean = 0, var/datum/find/F)
 	//with skill and luck, players can cleanly extract finds
 	//otherwise, they come out inside a chunk of rock
-	var/obj/item/X
+	var/obj/item/weapon/X
 	if(prob_clean)
-		X = new /obj/item/archaeological_find(src, F.find_type)
+		X = new /obj/item/weapon/archaeological_find(src, F.find_type)
 	else
-		X = new /obj/item/ore/strangerock(src, inside_item_type = F.find_type)
+		X = new /obj/item/weapon/ore/strangerock(src, inside_item_type = F.find_type)
 		geologic_data.UpdateNearbyArtifactInfo(src)
 		X:geologic_data = geologic_data
 
-	//some find types delete the /obj/item/archaeological_find and replace it with something else, this handles when that happens
+	//some find types delete the /obj/item/weapon/archaeological_find and replace it with something else, this handles when that happens
 	//yuck
 	var/display_name = "something"
 	if(!X)
@@ -366,12 +366,12 @@
 			if(5)
 				var/quantity = rand(1,3)
 				for(var/i=0, i<quantity, i++)
-					new /obj/item/material/shard(src)
+					new /obj/item/weapon/material/shard(src)
 
 			if(6)
 				var/quantity = rand(1,3)
 				for(var/i=0, i<quantity, i++)
-					new /obj/item/material/shard/plasma(src)
+					new /obj/item/weapon/material/shard/phoron(src)
 
 			if(7)
 				var/obj/item/stack/material/uranium/R = new(src)
@@ -379,7 +379,7 @@
 
 /turf/simulated/mineral/random
 	name = "Mineral deposit"
-	var/mineralSpawnChanceList = list("Uranium" = 5, "Platinum" = 5, "Hematite" = 35, "Carbon" = 34, "Diamond" = 1, "Gold" = 5, "Silver" = 5, "Plasma" = 10, "MHydrogen" = 1)
+	var/mineralSpawnChanceList = list("Uranium" = 5, "Platinum" = 5, "Hematite" = 35, "Carbon" = 35, "Diamond" = 1, "Gold" = 5, "Silver" = 5, "Phoron" = 10) //Syzygy Edit: Fixes calls for hemetite and coal?
 	var/mineralChance = 100 //10 //means 10% chance of this plot changing to a mineral deposit
 
 /turf/simulated/mineral/random/New()
@@ -397,7 +397,7 @@
 
 /turf/simulated/mineral/random/high_chance
 	mineralChance = 100 //25
-	mineralSpawnChanceList = list("Uranium" = 10, "Platinum" = 10, "Hematite" = 20, "Carbon" = 19, "Diamond" = 2, "Gold" = 10, "Silver" = 10, "Plasma" = 20, "MHydrogen" = 1)
+	mineralSpawnChanceList = list("Uranium" = 10, "Platinum" = 10, "Iron" = 20, "Coal" = 20, "Diamond" = 2, "Gold" = 10, "Silver" = 10, "Phoron" = 20)
 
 
 /**********************Asteroid**************************/
@@ -426,12 +426,12 @@
 
 /turf/simulated/floor/asteroid/ex_act(severity)
 	switch(severity)
-		if(3)
+		if(3.0)
 			return
-		if(2)
+		if(2.0)
 			if (prob(70))
 				gets_dug()
-		if(1)
+		if(1.0)
 			gets_dug()
 	return
 
@@ -457,7 +457,7 @@
 		return
 
 	for(var/i=0;i<(rand(3)+2);i++)
-		new/obj/item/ore/glass(src)
+		new/obj/item/weapon/ore/glass(src)
 
 	dug = 1
 	SetIconState("asteroid_dug")
@@ -489,11 +489,11 @@
 	if(isrobot(M))
 		var/mob/living/silicon/robot/R = M
 		if(R.module)
-			if(istype(R.module_state_1,/obj/item/storage/bag/ore))
+			if(istype(R.module_state_1,/obj/item/weapon/storage/bag/ore))
 				attackby(R.module_state_1,R)
-			else if(istype(R.module_state_2,/obj/item/storage/bag/ore))
+			else if(istype(R.module_state_2,/obj/item/weapon/storage/bag/ore))
 				attackby(R.module_state_2,R)
-			else if(istype(R.module_state_3,/obj/item/storage/bag/ore))
+			else if(istype(R.module_state_3,/obj/item/weapon/storage/bag/ore))
 				attackby(R.module_state_3,R)
 			else
 				return

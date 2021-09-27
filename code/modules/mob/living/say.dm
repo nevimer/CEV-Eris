@@ -14,7 +14,7 @@ var/list/department_radio_keys = list(
 	"u" = "Supply",      "U" = "Supply",
 	"v" = "Service",     "V" = "Service",
 	"p" = "AI Private",  "P" = "AI Private",
-	"t" = "NT Voice",    "T" = "NT Voice",
+	"t" = "MeK Voice",    "T" = "MeK Voice", //Occulus change
 
 	"к" = "right ear",   "К" = "right ear",
 	"д" = "left ear",    "Д" = "left ear",
@@ -30,7 +30,7 @@ var/list/department_radio_keys = list(
 	"г" = "Supply",      "Г" = "Supply",
 	"м" = "Service",     "М" = "Service",
 	"з" = "AI Private",  "З" = "AI Private",
-	"е" = "NT Voice",    "Е" = "NT Voice",
+	"е" = "MeK Voice",    "Е" = "MeK Voice",
 )
 
 
@@ -112,18 +112,18 @@ var/list/channel_to_radio_key = new
 /mob/living/proc/get_speech_ending(verb, var/ending)
 	if(ending=="!")
 		return pick("exclaims", "shouts", "yells")
-	else if(ending=="?")
+	if(ending=="?")
 		return "asks"
-	else if(ending=="@")
-		verb="reports"
 	return verb
 
 // returns message
 /mob/living/proc/getSpeechVolume(var/message)
-	var/volume = chem_effects[CE_SPEECH_VOLUME] ? round(chem_effects[CE_SPEECH_VOLUME]) : 2	// 2 is default text size in byond chat
+	//Occulus Edit - Make volume scale correctly.
+	var/volume = chem_effects[CE_SPEECH_VOLUME] ? round(chem_effects[CE_SPEECH_VOLUME]) : 1	// 2 is default text size in byond chat
 	var/ending = copytext(message, length(message))
 	if(ending == "!")
-		volume ++
+		//occulus Edit - Can't just ++ anymore because 2em is fooking huge.
+		volume = volume * 1.5
 	return volume
 
 /mob/living/say(var/message, var/datum/language/speaking = null, var/verb="says", var/alt_name="")
@@ -133,34 +133,9 @@ var/list/channel_to_radio_key = new
 			return
 
 	if(stat)
-		var/last_symbol = copytext(message, length(message))
 		if(stat == DEAD)
 			return say_dead(message)
-		else if(last_symbol=="@")
-			if(src.stats.getPerk(/datum/perk/codespeak))
-				return
-			else
-				to_chat(src, "You don't know the codes, pal.")
 		return
-
-	if(GLOB.in_character_filter.len)
-		if(findtext(message, config.ic_filter_regex))
-			// let's try to be a bit more informative!
-			var/warning_message = "A splitting spike of headache prevents you from saying whatever vile words you planned to say! You think better of saying such nonsense again. The following terms break the atmosphere and are not allowed: &quot;"
-			var/list/words = splittext(message, " ")
-			var/cringe = ""
-			for (var/word in words)
-				if (findtext(word, config.ic_filter_regex))
-					warning_message = "[warning_message]<b>[word]</b> "
-					cringe += "/<b>[word]</b>"
-				else
-					warning_message = "[warning_message][word] "
-
-
-			warning_message = trim(warning_message)
-			to_chat(src, SPAN_WARNING("[warning_message]&quot;"))
-			//log_and_message_admins("[src] just tried to say cringe: [cringe]", src) //Uncomment this if you want to keep tabs on who's saying cringe words.
-			return
 
 	if(HUSK in mutations)
 		return
@@ -310,7 +285,7 @@ var/list/channel_to_radio_key = new
 		M.hear_say(message, verb, speaking, alt_name, italics, src, speech_sound, sound_vol, 1)
 
 	INVOKE_ASYNC(GLOBAL_PROC, .proc/animate_speechbubble, speech_bubble, speech_bubble_recipients, 30)
-	INVOKE_ASYNC(src, /atom/movable/proc/animate_chat, message, speaking, italics, speech_bubble_recipients, 40, verb)
+	INVOKE_ASYNC(src, /atom/movable/proc/animate_chat, message, speaking, italics, speech_bubble_recipients, 40)
 
 	for(var/obj/O in listening_obj)
 		spawn(0)
@@ -354,7 +329,7 @@ var/list/channel_to_radio_key = new
 
 	if(sdisabilities&DEAF || ear_deaf)
 		// INNATE is the flag for audible-emote-language, so we don't want to show an "x talks but you cannot hear them" message if it's set
-		if(!language || !(language.flags & INNATE))
+		if(!language || !language.flags&INNATE)
 			if(speaker == src)
 				to_chat(src, SPAN_WARNING("You cannot hear yourself speak!"))
 			else
@@ -383,12 +358,12 @@ var/list/channel_to_radio_key = new
 		return
 
 	//non-verbal languages are garbled if you can't see the speaker. Yes, this includes if they are inside a closet.
-	if(language && !(verb == "reports"))
+	if(language)
 		if(language.flags&NONVERBAL)
 			if(!speaker || (src.sdisabilities&BLIND || src.blinded) || !(speaker in view(src)))
 				message = stars(message)
 
-	if(!(language && language.flags&INNATE) && !(verb == "reports")) // skip understanding checks for INNATE languages
+	if(!(language && language.flags&INNATE)) // skip understanding checks for INNATE languages
 		if(!say_understands(speaker, language))
 			if(isanimal(speaker))
 				var/mob/living/simple_animal/S = speaker
@@ -401,6 +376,7 @@ var/list/channel_to_radio_key = new
 					message = stars(message)
 
 	..()
+
 
 /mob/living/hear_radio(message, verb="says", datum/language/language=null, part_a, part_b, speaker = null, hard_to_hear = 0, voice_name ="")
 	if(!client)
@@ -416,28 +392,27 @@ var/list/channel_to_radio_key = new
 		return
 
 	//non-verbal languages are garbled if you can't see the speaker. Yes, this includes if they are inside a closet.
-	if(language && !(verb == "reports"))
-		if(language.flags&NONVERBAL)
-			if(!speaker || (src.sdisabilities&BLIND || src.blinded) || !(speaker in view(src)))
-				message = stars(message)
+	if(language && language.flags&NONVERBAL)
+		if(!speaker || (src.sdisabilities&BLIND || src.blinded) || !(speaker in view(src)))
+			message = stars(message)
 
-		// skip understanding checks for INNATE languages
-		if(!(language.flags&INNATE))
-			if(!say_understands(speaker, language))
-				if(isanimal(speaker))
-					var/mob/living/simple_animal/S = speaker
-					if(S.speak && S.speak.len)
-						message = pick(S.speak)
-					else
-						return
+	// skip understanding checks for INNATE languages
+	if(!(language && language.flags&INNATE))
+		if(!say_understands(speaker, language))
+			if(isanimal(speaker))
+				var/mob/living/simple_animal/S = speaker
+				if(S.speak && S.speak.len)
+					message = pick(S.speak)
 				else
-					if(language)
-						message = language.scramble(message)
-					else
-						message = stars(message)
+					return
+			else
+				if(language)
+					message = language.scramble(message)
+				else
+					message = stars(message)
 
-			if(hard_to_hear)
-				message = stars(message)
+		if(hard_to_hear)
+			message = stars(message)
 
 	..()
 

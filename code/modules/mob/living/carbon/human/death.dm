@@ -80,11 +80,11 @@
 			mob_playsound(loc, species.death_sound, 80, 1, 1)
 	handle_hud_list()
 
-	var/obj/item/implant/core_implant/cruciform/C = get_core_implant(/obj/item/implant/core_implant/cruciform)
+/*	var/obj/item/weapon/implant/core_implant/cruciform/C = get_core_implant(/obj/item/weapon/implant/core_implant/cruciform) Occulus Edit Start - No suicide bombing
 	if(C && C.active)
-		var/obj/item/cruciform_upgrade/upgrade = C.upgrade
-		if(upgrade && upgrade.active && istype(upgrade, CUPGRADE_MARTYR_GIFT))
-			var/obj/item/cruciform_upgrade/martyr_gift/martyr = upgrade
+		var/obj/item/weapon/cruciform_upgrade/upgrade = C.upgrade
+	if(upgrade && upgrade.active && istype(upgrade, CUPGRADE_MARTYR_GIFT))
+			var/obj/item/weapon/cruciform_upgrade/martyr_gift/martyr = upgrade
 			visible_message(SPAN_DANGER("The [C] emit a massive light!"))
 			var/burn_damage_done
 			for(var/mob/living/L in oviewers(6, src))
@@ -104,8 +104,8 @@
 					L.damage_through_armor(burn_damage_done, BURN)
 
 			qdel(martyr)
-			C.upgrade = null
-
+			C.upgrade = null Occulus Edit End
+*/
 
 /mob/living/carbon/human/proc/ChangeToHusk()
 	if(HUSK in mutations)	return
@@ -139,3 +139,19 @@
 	status_flags |= DISFIGURED
 	update_body(0)
 	return
+
+/mob/living/carbon/human/proc/UnHusk()
+	if(!(HUSK in mutations))	return FALSE
+
+	if(f_style)
+		f_style = client.prefs.f_style	//we only change the icon_state of the hair datum, so it doesn't mess up their UI/UE
+	if(h_style)
+		h_style = client.prefs.h_style
+	update_hair(0)
+
+	mutations.Remove(HUSK)
+	status_flags &= ~DISFIGURED
+	var/obj/item/organ/external/head = get_organ(BP_HEAD)
+	head.disfigured = FALSE
+	update_body(1)
+	return TRUE

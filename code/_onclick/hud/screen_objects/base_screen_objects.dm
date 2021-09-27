@@ -76,8 +76,8 @@
 
 /obj/screen/close/Click()
 	if(master)
-		if(istype(master, /obj/item/storage))
-			var/obj/item/storage/S = master
+		if(istype(master, /obj/item/weapon/storage))
+			var/obj/item/weapon/storage/S = master
 			S.close(usr)
 	return TRUE
 //--------------------------------------------------close end---------------------------------------------------------
@@ -89,7 +89,7 @@
 
 /obj/screen/grab/Click()
 	if(master)
-		var/obj/item/grab/G = master
+		var/obj/item/weapon/grab/G = master
 		G.s_click(src)
 		return TRUE
 
@@ -185,49 +185,60 @@
 	var/list/PL = params2list(params)
 	var/icon_x = text2num(PL["icon-x"])
 	var/icon_y = text2num(PL["icon-y"])
-	var/selecting
+	var/new_selecting
 
 	switch(icon_y)
-		if(1 to 9) //Legs
+		if(1 to 3) //Feet
 			switch(icon_x)
 				if(10 to 15)
-					selecting = BP_R_LEG
+					new_selecting = BP_R_FOOT
 				if(17 to 22)
-					selecting = BP_L_LEG
+					new_selecting = BP_L_FOOT
 				else
-					return TRUE
-		if(10 to 13) //Arms and groin
+					return 1
+		if(4 to 9) //Legs
+			switch(icon_x)
+				if(10 to 15)
+					new_selecting = BP_R_LEG
+				if(17 to 22)
+					new_selecting = BP_L_LEG
+				else
+					return 1
+		if(10 to 13) //Hands and groin
 			switch(icon_x)
 				if(8 to 11)
-					selecting = BP_R_ARM
+					new_selecting = BP_R_HAND
 				if(12 to 20)
-					selecting = BP_GROIN
+					new_selecting = BP_GROIN
 				if(21 to 24)
-					selecting = BP_L_ARM
+					new_selecting = BP_L_HAND
 				else
-					return TRUE
+					return 1
 		if(14 to 22) //Chest and arms to shoulders
 			switch(icon_x)
 				if(8 to 11)
-					selecting = BP_R_ARM
+					new_selecting = BP_R_ARM
 				if(12 to 20)
-					selecting = BP_CHEST
+					new_selecting = BP_CHEST
 				if(21 to 24)
-					selecting = BP_L_ARM
+					new_selecting = BP_L_ARM
 				else
-					return TRUE
+					return 1
 		if(23 to 30) //Head, but we need to check for eye or mouth
 			if(icon_x in 12 to 20)
-				selecting = BP_HEAD
+				new_selecting = BP_HEAD
 				switch(icon_y)
 					if(23 to 24)
 						if(icon_x in 15 to 17)
-							selecting = BP_MOUTH
-					if(25 to 27)
+							new_selecting = BP_MOUTH
+					if(26) //Eyeline, eyes are on 15 and 17
 						if(icon_x in 14 to 18)
-							selecting = BP_EYES
+							new_selecting = BP_EYES
+					if(25 to 27)
+						if(icon_x in 15 to 17)
+							new_selecting = BP_EYES
 
-	set_selected_zone(selecting)
+	set_selected_zone(new_selecting)
 	return TRUE
 
 /obj/screen/zone_sel/New()
@@ -240,6 +251,8 @@
 
 /obj/screen/zone_sel/proc/set_selected_zone(bodypart)
 	var/old_selecting = parentmob.targeted_organ
+	//testing("[bodypart] - - [old_selecting]") Occulus edit, commenting out log spam
+
 	if(old_selecting != bodypart)
 		parentmob.targeted_organ = bodypart
 		update_icon()
@@ -650,7 +663,7 @@
 /obj/screen/toxin/on_update_icon()
 	var/mob/living/carbon/human/H = parentmob
 	cut_overlays()
-	if(H.plasma_alert)
+	if(H.phoron_alert)
 		add_overlays(ovrls["tox1"])
 //		icon_state = "tox1"
 //	else
@@ -776,16 +789,16 @@ obj/screen/fire/DEADelize()
 						tankcheck = list(C.r_hand, C.l_hand, C.back)
 
 					// Rigs are a fucking pain since they keep an air tank in nullspace.
-					if(istype(C.back,/obj/item/rig))
-						var/obj/item/rig/rig = C.back
+					if(istype(C.back,/obj/item/weapon/rig))
+						var/obj/item/weapon/rig/rig = C.back
 						if(rig.air_supply)
 							from = "in"
 							nicename |= "hardsuit"
 							tankcheck |= rig.air_supply
 
 					for(var/i=1, i<tankcheck.len+1, ++i)
-						if(istype(tankcheck[i], /obj/item/tank))
-							var/obj/item/tank/t = tankcheck[i]
+						if(istype(tankcheck[i], /obj/item/weapon/tank))
+							var/obj/item/weapon/tank/t = tankcheck[i]
 							if (!isnull(t.manipulated_by) && t.manipulated_by != C.real_name && findtext(t.desc, breathes))
 								contents.Add(t.air_contents.total_moles)	//Someone messed with the tank and put unknown gasses
 								continue					//in it, so we're going to believe the tank is what it says it is
@@ -799,16 +812,16 @@ obj/screen/fire/DEADelize()
 										contents.Add(0)
 
 								if ("oxygen")
-									if(t.air_contents.gas["oxygen"] && !t.air_contents.gas["plasma"])
+									if(t.air_contents.gas["oxygen"] && !t.air_contents.gas["phoron"])
 										contents.Add(t.air_contents.gas["oxygen"])
-									else if(istype(t, /obj/item/tank/onestar_regenerator))
+									else if(istype(t, /obj/item/weapon/tank/onestar_regenerator))
 										contents.Add(BREATH_MOLES*2)
 									else
 										contents.Add(0)
 
 								// No races breath this, but never know about downstream servers.
 								if ("carbon dioxide")
-									if(t.air_contents.gas["carbon_dioxide"] && !t.air_contents.gas["plasma"])
+									if(t.air_contents.gas["carbon_dioxide"] && !t.air_contents.gas["phoron"])
 										contents.Add(t.air_contents.gas["carbon_dioxide"])
 									else
 										contents.Add(0)
@@ -1310,7 +1323,7 @@ obj/screen/fire/DEADelize()
 		if (G.active && G.overlay)//check here need if someone want call this func directly
 			associate_with_overlays(G.overlay)
 
-	if(istype(H.wearing_rig,/obj/item/rig))
+	if(istype(H.wearing_rig,/obj/item/weapon/rig))
 		var/obj/item/clothing/glasses/G = H.wearing_rig.getCurrentGlasses()
 		if (G && H.wearing_rig.visor.active)
 			associate_with_overlays(G.overlay)
@@ -1319,7 +1332,7 @@ obj/screen/fire/DEADelize()
 /obj/screen/toggle_invetory
 	icon = 'icons/mob/screen/ErisStyle.dmi'
 	icon_state = "b-open"
-	name = "toggle inventory"
+	name = "toggle invetory"
 	screen_loc = "1,0"
 
 /obj/screen/toggle_invetory/proc/hideobjects()

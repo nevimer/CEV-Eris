@@ -69,9 +69,9 @@
 	allowed_roles = list(JOBS_SCIENCE)
 
 /datum/gear/accessory/holster
-	display_name = "holster"
+	display_name = "holster, armpit"
 	path = /obj/item/clothing/accessory/holster/armpit
-	cost = 3
+	allowed_roles = list("Captain", "Head of Personnel", JOBS_SECURITY)
 
 /datum/gear/accessory/holster/New()
 	..()
@@ -96,7 +96,7 @@
 
 /datum/gear/accessory/wallet
 	display_name = "wallet, colour select"
-	path = /obj/item/storage/wallet
+	path = /obj/item/weapon/storage/wallet
 	flags = GEAR_HAS_COLOR_SELECTION
 
 /datum/gear/accessory/scarf

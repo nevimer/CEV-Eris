@@ -1,7 +1,7 @@
 /datum/antagonist/inquisitor
 	id = ROLE_INQUISITOR
-	role_text = "NeoTheology Inquisitor"
-	role_text_plural = "NeoTheology Inquisitors"
+	role_text = "Mekhane Inquisitor"
+	role_text_plural = "Mekhane Inquisitors"
 	bantype = ROLE_BANTYPE_INQUISITOR
 	welcome_text = ""
 	antaghud_indicator = "hudcyberchristian"
@@ -26,7 +26,7 @@
 		if (report)
 			to_chat(report, SPAN_NOTICE("Failure: Parent can_become_antag returned false"))
 		return FALSE
-	if(!M.current.get_core_implant(/obj/item/implant/core_implant/cruciform))
+	if(!M.current.get_core_implant(/obj/item/weapon/implant/core_implant/cruciform))
 		if (report)
 			to_chat(report, SPAN_NOTICE("Failure: [M] does not have a cruciform and this antag requires it"))
 		return FALSE
@@ -41,12 +41,12 @@
 	if(!owner.current)
 		return FALSE
 
-	var/obj/item/implant/core_implant/cruciform/C = owner.current.get_core_implant(/obj/item/implant/core_implant/cruciform)
+	var/obj/item/weapon/implant/core_implant/cruciform/C = owner.current.get_core_implant(/obj/item/weapon/implant/core_implant/cruciform)
 
 	if(!C)
 		return FALSE
 
-	if (is_preacher(owner.current))
+	if (ispriest(owner.current))
 		was_priest = TRUE
 
 	C.make_inquisitor()
@@ -65,9 +65,9 @@
 	// Basic intro text.
 	to_chat(player, "<span class='danger'><font size=3>You are a [role_text]!</font></span>")
 
-	to_chat(player, "Inquisitor is a higher ranking officer in the Church of NeoTheology.<br>\
+	to_chat(player, "The Inquisitor is a higher ranking officer in the Church of Mekhane.<br>\
 	You are here to promote the Church's interests and protect disciples, but more importantly, you are also here to \
-	track down criminals, spies and saboteurs within the church's ranks. Interrogate NT followers, and deal with those \
+	track down criminals, spies and saboteurs within the church's ranks. Interrogate Chidlren of Mekhane followers, and deal with those \
 	who would tarnish the public image of the Church or betray its principles.<br>\
 	<br>\
 	Any local Church staff are your subordinates and should obey your commands. With other disciples, things are less clear, \
@@ -87,3 +87,19 @@
 
 	return TRUE
 
+
+//Returns true if the mob in question is an NT preacher
+/proc/ispriest(var/mob/living/carbon/human/H)
+	if (!istype(H))
+		return FALSE
+
+	//We will get their cruciform implant, assuming they have one
+	var/obj/item/weapon/implant/core_implant/cruciform/C = H.get_core_implant(/obj/item/weapon/implant/core_implant/cruciform)
+	if (!C)
+		return FALSE
+
+	//Check them for a priest module
+	if(C.get_module(CRUCIFORM_PRIEST))
+		return TRUE
+
+	return FALSE

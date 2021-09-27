@@ -9,13 +9,16 @@
 #define ANIM_CLOSE -1
 
 /obj/machinery/neotheology/cloner
-	name = "NeoTheology's clonepod"
-	desc = "The newest design and God's gift from NeoTheology, this automatic machine will return the flesh to the spirit in no time."
+	name = "SLT-73 Clonepod Prototype"
+	desc = "One of the more fruitful results of NT's investment in Lazarus, this baby puts a person back together from organic slurry just in a few minutes. Now with clear biomass fluids for all your gross anatomy viewing needs."
 	icon = 'icons/obj/neotheology_pod.dmi'
 	icon_state = "preview"
 	density = TRUE
 	anchored = TRUE
 	layer = 2.8
+	circuit = /obj/item/weapon/electronics/circuitboard/neotheology/cloner
+
+	frame_type = FRAME_VERTICAL
 
 	var/obj/machinery/neotheology/reader/reader
 	var/reader_loc
@@ -29,7 +32,7 @@
 
 	var/progress = 0
 
-	var/cloning_speed = 1	//Try to avoid use of non integer values
+	var/time_multiplier = 1	//Try to avoid use of non integer values
 
 	var/biomass_consumption = 2
 
@@ -49,6 +52,18 @@
 	if(occupant)
 		qdel(occupant)
 	return ..()
+
+
+/obj/machinery/neotheology/cloner/RefreshParts()
+	var/mn_rating = 0
+	var/mn_ammount = 0
+	for(var/obj/item/weapon/stock_parts/manipulator/M in component_parts)
+		mn_rating += M.rating
+		mn_ammount++
+	if (mn_ammount != 0) // Fail-check so we wont divide by 0 in future and get runtimes
+		time_multiplier = round(initial(time_multiplier)*(mn_rating/mn_ammount))
+	else
+		time_multiplier = 0 // ... so it wont work without manipulators
 
 /obj/machinery/neotheology/cloner/proc/find_container()
 	for(var/obj/machinery/neotheology/biomass_container/BC in orange(1,src))
@@ -108,7 +123,7 @@
 		occupant = null
 	else
 		if(progress >= CLONING_MEAT)
-			new /obj/item/reagent_containers/food/snacks/meat(loc)
+			new /obj/item/weapon/reagent_containers/food/snacks/meat(loc)
 
 	update_icon()
 
@@ -164,10 +179,27 @@
 	occupant.updatehealth()
 	stop()
 
+/obj/machinery/neotheology/cloner/attack_hand(mob/user)
+	src.add_fingerprint(user)
+	reader = find_reader()
+	if(!reader)
+		visible_message("[src]'s control panel flashes \"NO READER\" light.")
+		return
+	if(!reader.implant)
+		visible_message("[src]'s control panel flashes \"NO IMPLANT\" light.")
+		return
+	if(cloning)
+		visible_message("[src]'s control panel flashes \"OCCUPIED\" light.")
+		return
+	start()
+
 ///////////////
 
 /obj/machinery/neotheology/cloner/Process()
 	if(stat & NOPOWER)
+		return
+
+	if(time_multiplier == 0) // We dont want to start if we wont have manipulators
 		return
 
 	if(cloning)
@@ -177,7 +209,7 @@
 			update_icon()
 			return
 
-		progress += cloning_speed
+		progress += time_multiplier // Occulus Edit? I.e. 3 manipulators of tier 1 will increase progress by 1, 3 manipulators of tier 2 by 2 and so on
 
 		if(progress <= CLONING_DONE)
 			if(container)
@@ -197,7 +229,7 @@
 
 
 		if(progress >= CLONING_MEAT && !occupant)
-			var/datum/core_module/cruciform/cloning/R = reader.implant.get_module(CRUCIFORM_CLONING)
+			var/obj/item/weapon/implant/core_implant/soulcrypt/R = reader.implant
 			if(!R)
 				open_anim()
 				stop()
@@ -205,14 +237,15 @@
 				return
 
 			occupant = new/mob/living/carbon/human(src)
-			occupant.dna = R.dna.Clone()
+			occupant.dna = R.host_dna.Clone()
 			occupant.set_species()
-			occupant.real_name = R.dna.real_name
-			occupant.age = R.age
+			occupant.real_name = R.host_dna.real_name
+			occupant.age = R.host_age
 			occupant.UpdateAppearance()
 			occupant.sync_organ_dna()
-			occupant.flavor_text = R.flavor
-			R.stats.copyTo(occupant.stats)
+			occupant.flavor_text = R.host_flavor_text
+			occupant.stats = R.host_stats // Syzygy edit to copy stats from old mob to other
+			// occupant.stats = R.stats // commented out because it's a variable used by the cruciform, uncomment when we're back to using cruciforms
 
 		if(progress == CLONING_BODY || progress <= CLONING_BODY && progress > CLONING_BODY-10)
 			var/datum/effect/effect/system/spark_spread/s = new
@@ -229,6 +262,15 @@
 		update_icon()
 
 	use_power(power_cost)
+
+
+/obj/machinery/neotheology/cloner/attackby(obj/item/I, mob/user as mob)
+
+	if(default_deconstruction(I, user))
+		return
+
+	if(default_part_replacement(I, user))
+		return
 
 /obj/machinery/neotheology/cloner/on_update_icon()
 	icon_state = "pod_base0"
@@ -331,11 +373,12 @@
 /////////////////////
 
 /obj/machinery/neotheology/biomass_container
-	name = "NeoTheology's biomass container"
-	desc = "Making strange noises barrel, filled with a substance which at any time may become someone else's body."
+	name = "Lazarus' biomass container"
+	desc = "A barrel that makes strange noises, filled with a substance which at any time may become someone else's body."
 	icon_state = "biocan"
 	density = TRUE
 	anchored = TRUE
+	circuit = /obj/item/weapon/electronics/circuitboard/neotheology/biocan
 
 	var/biomass_capacity = 600
 
@@ -363,6 +406,12 @@
 		P.dir = dir
 		. += P
 
+/obj/machinery/neotheology/biomass_container/RefreshParts()
+	var/T = 0
+	for(var/obj/item/weapon/stock_parts/matter_bin/M in component_parts)
+		T += M.rating * 200
+	biomass_capacity = T
+
 /obj/machinery/neotheology/biomass_container/examine(mob/user)
 	if(!..(user, 2))
 		return
@@ -373,32 +422,39 @@
 		to_chat(user, SPAN_NOTICE("Filled to [reagents.total_volume]/[biomass_capacity]."))
 
 /obj/machinery/neotheology/biomass_container/attackby(obj/item/I, mob/user)
+
+	if(default_deconstruction(I, user))
+		return
+
+	if(default_part_replacement(I, user))
+		return
+
 	if (istype(I, /obj/item/stack/material/biomatter))
 		var/obj/item/stack/material/biomatter/B = I
 		if (B.biomatter_in_sheet && B.amount)
-			var/sheets_amount_to_transfer = input(user, "How many sheets you want to load?", "Biomatter melting", 1) as num
-			if(sheets_amount_to_transfer > 0)
-				if(sheets_amount_to_transfer > B.amount)
-					sheets_amount_to_transfer = B.amount
-				var/total_transfer_from_stack = 0
-				for(var/i=1;(i <= sheets_amount_to_transfer && i <= B.amount);i++)
+			var/sheets_amount_to_transphere = input(user, "How many sheets you want to load?", "Biomatter melting", 1) as num
+			if(sheets_amount_to_transphere)
+				var/total_transphere_from_stack = 0
+				var/i = 1
+				while(i <= sheets_amount_to_transphere && i <= B.amount)
 					reagents.add_reagent("biomatter", B.biomatter_in_sheet)
-					total_transfer_from_stack += B.biomatter_in_sheet
-				B.use(sheets_amount_to_transfer)
+					total_transphere_from_stack += B.biomatter_in_sheet
+					i++
+				B.use(sheets_amount_to_transphere)
 				user.visible_message(
 									"[user.name] inserted \the [B.name]'s sheets in \the [name].",
-									"You inserted \the [B.name] in  (in amount: [sheets_amount_to_transfer]) \the [name].\
-									And after that you see how the counter on \the [name] is incremented by [total_transfer_from_stack]."
+									"You inserted \the [B.name] in  (in amount: [sheets_amount_to_transphere]) \the [name].\
+									And after that you see how the counter on \the [name] is incremented by [total_transphere_from_stack]."
 									)
 				ping()
 			else
-				to_chat(user, SPAN_WARNING("You can't insert [sheets_amount_to_transfer] in [name][sheets_amount_to_transfer < 0 ? " because it is literally impossible" :""]."))
+				to_chat(user, SPAN_WARNING("You can't insert [sheets_amount_to_transphere] in [name]"))
 			return
 		else
 			to_chat(user, SPAN_WARNING("\The [B.name] is exhausted and can't be melted to biomatter. "))
 
-	if(istype(I, /obj/item/reagent_containers) && I.is_open_container())
-		var/obj/item/reagent_containers/container = I
+	if(istype(I, /obj/item/weapon/reagent_containers) && I.is_open_container())
+		var/obj/item/weapon/reagent_containers/container = I
 		if(container.reagents.get_reagent_amount("biomatter") == container.reagents.total_volume)
 			container.reagents.trans_to_holder(reagents, container.amount_per_transfer_from_this)
 			to_chat(user, SPAN_NOTICE("You transfer some of biomatter from \the [container] to \the [name]."))
@@ -412,22 +468,31 @@
 /////////////////////
 
 /obj/machinery/neotheology/reader
-	name = "NeoTheology's cruciform reader"
-	desc = "The altar for scanning genetic information from medium of soul - the cruciform."
+	name = "SLT-73-B Core Implant Reader"
+	desc = "A neat-looking device capable of extracting DNA and conciousness imprints from a core implant."
 	icon_state = "reader_off"
 	density = TRUE
 	anchored = TRUE
+	circuit = /obj/item/weapon/electronics/circuitboard/neotheology/reader
 
-	var/obj/item/implant/core_implant/cruciform/implant
+	var/obj/item/weapon/implant/core_implant/soulcrypt/implant
 	var/reading = FALSE
 
 
 /obj/machinery/neotheology/reader/attackby(obj/item/I, mob/user as mob)
-	if(istype(I, /obj/item/implant/core_implant/cruciform))
-		var/obj/item/implant/core_implant/cruciform/C = I
+
+	if(default_deconstruction(I, user))
+		return
+
+	if(default_part_replacement(I, user))
+		return
+
+	if(istype(I, /obj/item/weapon/implant/core_implant/soulcrypt))
+		var/obj/item/weapon/implant/core_implant/soulcrypt/C = I
 		user.drop_item()
 		C.forceMove(src)
 		implant = C
+		visible_message("[I] slides smoothly into the slot.")
 
 	src.add_fingerprint(user)
 	update_icon()
@@ -463,7 +528,8 @@
 	icon_state = "reader_off"
 
 	if(reading)
-		icon_state = "reader_on"
+		var/image/S = image(icon, "screen")
+		overlays.Add(S)
 
 	if(implant)
 		var/image/I = image(icon, "reader_c_green")

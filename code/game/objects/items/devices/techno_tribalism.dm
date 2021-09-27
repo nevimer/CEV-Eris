@@ -14,21 +14,9 @@
 	var/max_count = 5
 	var/cooldown = 30 MINUTES
 
-/obj/item/device/techno_tribalism/New()
-	..()
-	GLOB.all_faction_items[src] = GLOB.department_engineering
-
-/obj/item/device/techno_tribalism/Destroy()
-	for(var/mob/living/carbon/human/H in viewers(get_turf(src)))
-		SEND_SIGNAL(H, COMSIG_OBJ_FACTION_ITEM_DESTROY, src)
-	GLOB.all_faction_items -= src
-	GLOB.technomancer_faction_item_loss++
-	..()
-
-/obj/item/device/techno_tribalism/attackby(obj/item/W, mob/user, params)
-	if(nt_sword_attack(W, user))
-		return FALSE
+/obj/item/device/techno_tribalism/attackby(obj/item/weapon/W as obj, mob/user as mob)
 	if(items_count < max_count)
+	/* Occulus edit - No individual objectives here
 		if(W in GLOB.all_faction_items)
 			if(GLOB.all_faction_items[W] == GLOB.department_moebius)
 				oddity_stats[STAT_COG] += 3
@@ -66,15 +54,16 @@
 				oddity_stats[STAT_COG] += 2
 			else
 				crash_with("[W], incompatible department")
+		*/
 
-		else if(istool(W))
+		if(istool(W))	// Occulus edit - No individual objectives here, removed the else from this if statement
 			var/useful = FALSE
 			if(W.tool_qualities)
 
 				for(var/quality in W.tool_qualities)
 
-					if(W.tool_qualities[quality] >= 35)
-						var/stat_cost = round(W.tool_qualities[quality] / 15)
+					if(W.tool_qualities[quality] >= 30)//Occulus Edit
+						var/stat_cost = round(W.tool_qualities[quality] / 25)//Occulus Edit
 						if(quality == QUALITY_BOLT_TURNING || quality == QUALITY_SCREW_DRIVING || quality == QUALITY_CUTTING)
 							oddity_stats[STAT_COG] += stat_cost
 							useful = TRUE
@@ -107,37 +96,37 @@
 				return
 
 
-		else if(istype(W, /obj/item/tool_upgrade))
+		else if(istype(W, /obj/item/weapon/tool_upgrade))
 
-			var/obj/item/tool_upgrade/T = W
+			var/obj/item/weapon/tool_upgrade/T = W
 
-			if(istype(T, /obj/item/tool_upgrade/reinforcement))
+			if(istype(T, /obj/item/weapon/tool_upgrade/reinforcement))
 				oddity_stats[STAT_TGH] += 3
 
-			else if(istype(T, /obj/item/tool_upgrade/productivity))
+			else if(istype(T, /obj/item/weapon/tool_upgrade/productivity))
 				oddity_stats[STAT_COG] += 3
 
-			else if(istype(T, /obj/item/tool_upgrade/refinement))
+			else if(istype(T, /obj/item/weapon/tool_upgrade/refinement))
 				oddity_stats[STAT_VIG] += 3
 
-			else if(istype(T, /obj/item/tool_upgrade/augment))
+			else if(istype(T, /obj/item/weapon/tool_upgrade/augment))
 				oddity_stats[STAT_BIO] += 3
 
 
-		else if(istype(W, /obj/item/cell))
-			if(istype(W, /obj/item/cell/small/moebius/nuclear))
+		else if(istype(W, /obj/item/weapon/cell))
+			if(istype(W, /obj/item/weapon/cell/small/moebius/nuclear))
 				oddity_stats[STAT_ROB] += 2
 
-			else if(istype(W, /obj/item/cell/medium/moebius/nuclear))
+			else if(istype(W, /obj/item/weapon/cell/medium/moebius/nuclear))
 				oddity_stats[STAT_ROB] += 3
 
-			else if(istype(W, /obj/item/cell/large/moebius/nuclear))
+			else if(istype(W, /obj/item/weapon/cell/large/moebius/nuclear))
 				oddity_stats[STAT_ROB] += 4
 
 			else
 				oddity_stats[STAT_ROB] += 1
 
-		else if(isgun(W))
+		else if(istype(W, /obj/item/weapon/gun))
 			oddity_stats[STAT_ROB] += 2
 			oddity_stats[STAT_VIG] += 2
 
@@ -146,7 +135,6 @@
 			return
 
 		to_chat(user, SPAN_NOTICE("You feed [W] to [src]."))
-		SEND_SIGNAL(user, COMSIG_OBJ_TECHNO_TRIBALISM, W)
 		items_count += 1
 		qdel(W)
 
@@ -157,9 +145,9 @@
 /obj/item/device/techno_tribalism/attack_self()
 	if(world.time >= (last_produce + cooldown))
 		if(items_count >= max_count)
-			if(ishuman(src.loc))
+			if(istype(src.loc, /mob/living/carbon/human))
 				var/mob/living/carbon/human/user = src.loc
-				var/obj/item/oddity/techno/T = new /obj/item/oddity/techno(src)
+				var/obj/item/weapon/oddity/techno/T = new /obj/item/weapon/oddity/techno(src)
 				T.oddity_stats = src.oddity_stats
 				T.AddComponent(/datum/component/inspiration, T.oddity_stats, T.perk)
 				items_count = 0
@@ -175,4 +163,5 @@
 
 /obj/item/device/techno_tribalism/examine(user)
 	..()
-	to_chat(user, SPAN_NOTICE("The [src] is fed by [items_count]/[max_count]."))
+	to_chat(user, SPAN_NOTICE("[src] has been fed [items_count]/[max_count] times.")) //Occulus Edit
+	// to_chat(user, SPAN_NOTICE("The [src] is fed by [items_count]/[max_count]."))

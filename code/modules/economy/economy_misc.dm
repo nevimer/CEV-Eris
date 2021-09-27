@@ -48,6 +48,15 @@
 
 /var/list/economic_species_modifier = list(/datum/species/human	= 10)
 
+//---- The following corporations are friendly with NanoTrasen and loosely enable trade and travel:
+//Corporation NanoTrasen - Generalised / high tech research and phoron exploitation.
+//Corporation Vessel Contracting - Ship and station construction, materials research.
+//Corporation Osiris Atmospherics - Atmospherics machinery construction and chemical research.
+//Corporation Second Red Cross Society - 26th century Red Cross reborn as a dominating economic force in biomedical science (research and materials).
+//Corporation Blue Industries - High tech and high energy research, in particular into the mysteries of bluespace manipulation and power generation.
+//Corporation Kusanagi Robotics - Founded by robotics legend Kaito Kusanagi in the 2070s, they have been on the forefront of mechanical augmentation and robotics development ever since.
+//Corporation Free traders - Not so much a corporation as a loose coalition of spacers, Free Traders are a roving band of smugglers, traders and fringe elements following a rigid (if informal) code of loyalty and honour. Mistrusted by most corporations, they are tolerated because of their uncanny ability to smell out a profit.
+
 //---- Descriptions of destination types
 //Space stations can be purpose built for a number of different things, but generally require regular shipments of essential supplies.
 //Corvettes are small, fast warships generally assigned to border patrol or chasing down smugglers.
@@ -114,8 +123,8 @@ var/global/datum/computer_file/data/email_account/service/payroll/payroll_mailer
 	department.account_pin = department_account.remote_access_pin
 
 	//create an entry in the account transaction log for when it was created
-	var/datum/transaction/T = new(department.account_initial_balance, department_account.owner_name, "Account creation", "Asters Guild Terminal #277")
-	T.date = "2 April, 2555"
+	var/datum/transaction/T = new(department.account_initial_balance, department_account.owner_name, "Account creation", "Free Trade Union Terminal #277")
+	T.date = "2 April, [game_year - 3]"
 	T.time = "11:24"
 
 	//add the account
@@ -123,3 +132,6 @@ var/global/datum/computer_file/data/email_account/service/payroll/payroll_mailer
 	all_money_accounts.Add(department_account)
 
 	department_accounts[department.id] = department_account
+	//SYZYGY Edit
+	department_account.owner_name = department.name //This should stop EFTPOS from breaking
+	//End SYZYGY edit

@@ -1,5 +1,5 @@
 // Asters
-/obj/item/computer_hardware/hard_drive/portable/design/tools
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/tools
 	disk_name = "Asters Basic Tool Pack"
 	icon_state = "guild"
 	rarity_value = 5.5
@@ -23,15 +23,14 @@
 		/datum/design/autolathe/tool/shovel,
 		/datum/design/autolathe/tool/spade,
 		/datum/design/autolathe/device/t_scanner,
+		/datum/design/autolathe/tool/rcd_ammo,
 		/datum/design/autolathe/tool/weldertool,
 		/datum/design/autolathe/tool/weldinggoggles,
 		/datum/design/autolathe/tool/weldermask,
-		/datum/design/autolathe/gun/flare_gun,
-		/datum/design/autolathe/ammo/flare_shell,
 		/datum/design/autolathe/device/flamethrower
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/misc
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/misc
 	disk_name = "Asters Miscellaneous Pack"
 	icon_state = "guild"
 	rarity_value = 3.5
@@ -53,7 +52,7 @@
 		/datum/design/autolathe/container/vial,
 		/datum/design/autolathe/container/beaker,
 		/datum/design/autolathe/container/beaker_large,
-		/datum/design/autolathe/container/mixingbowl,
+//		/datum/design/autolathe/container/mixingbowl, Occulus Edit - Not ported
 		/datum/design/autolathe/container/pill_bottle,
 		/datum/design/autolathe/container/spray,
 		/datum/design/autolathe/container/freezer,
@@ -65,7 +64,7 @@
 		/datum/design/autolathe/device/mechpainter
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/devices
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/devices
 	disk_name = "Asters Devices and Instruments"
 	icon_state = "guild"
 	rarity_value = 3
@@ -92,7 +91,7 @@
 		/datum/design/autolathe/sec/hailer,
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/robustcells
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/robustcells
 	disk_name = "Asters Robustcells"
 	icon_state = "guild"
 	rarity_value = 3
@@ -107,15 +106,3 @@
 		/datum/design/autolathe/cell/small/high = 2,
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/armor/asters
-	disk_name = "Asters Enforcement Armor Pack"
-	icon_state = "guild"
-	spawn_tags = SPAWN_TAG_DESIGN_ADVANCED_COMMON
-	rarity_value = 13 // between standard and bulletproof armor
-	license = 6
-	designs = list(
-		/datum/design/autolathe/clothing/generic_helmet_visored,
-		/datum/design/autolathe/clothing/riot_helmet = 2,
-		/datum/design/autolathe/clothing/generic_vest_security,
-		/datum/design/autolathe/clothing/generic_vest_webbing = 2
-	)

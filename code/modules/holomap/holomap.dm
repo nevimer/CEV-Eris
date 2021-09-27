@@ -3,7 +3,7 @@
 //
 /obj/machinery/holomap
 	name = "holomap"
-	desc = "A virtual map of the CEV \"Eris\"."
+	desc = "A virtual map of the CEV \"Northern Light\"."
 	icon = 'icons/obj/machines/stationmap.dmi'
 	icon_state = "station_map"
 	anchored = TRUE
@@ -132,7 +132,7 @@
 			if(bogus)
 				to_chat(user, SPAN_WARNING("The holomap has failed to initialize. This area of space cannot be mapped."))
 			else
-				to_chat(user, SPAN_NOTICE("A hologram of CEV \"Eris\" appears before your eyes."))
+				to_chat(user, SPAN_NOTICE("A hologram of CEV \"Northern Light\" appears before your eyes."))
 
 /obj/machinery/holomap/attack_ai(mob/living/silicon/robot/user)
 	return // TODO
@@ -250,7 +250,7 @@
 			if(buildstage == 1)
 				if(I.use_tool(user, src, WORKTIME_NORMAL, tool_type, FAILCHANCE_VERY_EASY, required_stat = STAT_MEC))
 					to_chat(user, "You pry out the circuit!")
-					new /obj/item/electronics/circuitboard/holomap(get_turf(user))
+					new /obj/item/weapon/electronics/circuitboard/holomap(get_turf(user))
 					buildstage = 0
 					update_icon()
 					return
@@ -282,7 +282,7 @@
 					return
 
 		if(0)
-			if(istype(I, /obj/item/electronics/circuitboard/holomap))
+			if(istype(I, /obj/item/weapon/electronics/circuitboard/holomap))
 				to_chat(user, "You insert the circuit!")
 				qdel(I)
 				buildstage = 1
@@ -311,7 +311,7 @@
 	icon_state = "station_map_frame_0"
 	build_machine_type = /obj/machinery/holomap
 
-/obj/item/electronics/circuitboard/holomap
+/obj/item/weapon/electronics/circuitboard/holomap
 	name = T_BOARD("Holomap")
 	desc = "Looks like a circuit. Probably is."
 	origin_tech = list(TECH_DATA = 3, TECH_ENGINEERING = 2)

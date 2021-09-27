@@ -9,10 +9,10 @@
 	var/analgesic = 0 // when this is set, the mob isn't affected by shock or pain
 					  // life should decrease this by 1 every tick
 	// total amount of wounds on mob, used to spread out healing and the like over all wounds
-	var/obj/item/handcuffed //Whether or not the mob is handcuffed
-	var/obj/item/legcuffed  //Same as handcuffs but for legs. Bear traps use this.
+	var/obj/item/handcuffed = null //Whether or not the mob is handcuffed
+	var/obj/item/legcuffed = null  //Same as handcuffs but for legs. Bear traps use this.
 	//Active emote/pose
-	var/pose
+	var/pose = null
 
 	//Values from all base organs should add up to this
 	var/total_blood_req = 40
@@ -25,16 +25,15 @@
 	var/datum/metabolism_effects/metabolism_effects
 	var/losebreath = 0 //if we failed to breathe last tick
 
-	var/coughedtime
+	var/coughedtime = null
 	var/lastpuke = 0
 
-	var/cpr_time = 1
-	nutrition = 400//Carbon
+	var/cpr_time = 1.0
+	nutrition = 400.0//Carbon
 
 	var/is_watching = TRUE  //used for remote viewing of multiz structures
-	var/can_multiz_pb = FALSE // used for point-blanking people that camp ladders.
 
-	var/obj/item/tank/internal //Human/Monkey
+	var/obj/item/weapon/tank/internal = null//Human/Monkey
 
 
 	bad_type = /mob/living/carbon

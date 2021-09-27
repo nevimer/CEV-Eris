@@ -123,7 +123,7 @@
 	icon_state = "tube1"
 	},
 /obj/structure/table/glass,
-/obj/item/disk/astrodata,
+/obj/item/weapon/disk/astrodata,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
 "av" = (
@@ -150,9 +150,7 @@
 	icon_state = "tube1";
 	dir = 8
 	},
-/obj/structure/closet/wall_mounted/emcloset{
-	pixel_x = -32
-	},
+/obj/structure/closet/wall_mounted/emcloset,
 /turf/simulated/floor/tiled/airless,
 /area/map_template/ecship/crew)
 "az" = (
@@ -175,7 +173,7 @@
 	layer = 2.4;
 	level = 2
 	},
-/obj/item/stool/padded,
+/obj/item/weapon/stool/padded,
 /turf/simulated/floor/tiled/airless,
 /area/map_template/ecship/crew)
 "aD" = (
@@ -188,7 +186,7 @@
 /obj/structure/cable{
 	icon_state = "1-2"
 	},
-/obj/item/reagent_containers/food/drinks/coffee{
+/obj/item/weapon/reagent_containers/food/drinks/coffee{
 	desc = "Old cup of coffee. Very cold.  ";
 	name = "Old Robust Coffee"
 	},
@@ -200,9 +198,7 @@
 	icon_state = "bulb1";
 	dir = 1
 	},
-/obj/structure/closet/wall_mounted/emcloset{
-	pixel_y = 32
-	},
+/obj/structure/closet/wall_mounted/emcloset,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/cryo)
 "aF" = (
@@ -216,17 +212,21 @@
 	dir = 4;
 	icon_state = "tube1"
 	},
-/obj/item/stool/padded,
+/obj/item/weapon/stool/padded,
 /turf/simulated/floor/tiled/airless,
 /area/map_template/ecship/crew)
 "aH" = (
 /obj/machinery/cryopod/broken,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/cryo)
+"aI" = (
+/obj/machinery/cryopod/broken,
+/turf/simulated/floor/tiled/white/lowpressure,
+/area/map_template/ecship/cryo)
 "aJ" = (
 /obj/structure/table/glass,
-/obj/item/ecletters,
-/obj/item/paper/ecrashlog,
+/obj/item/weapon/ecletters,
+/obj/item/weapon/paper/ecrashlog,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
 "aK" = (
@@ -262,7 +262,7 @@
 /obj/structure/cable{
 	icon_state = "1-2"
 	},
-/obj/item/deck/cards,
+/obj/item/weapon/deck/cards,
 /turf/simulated/floor/tiled/airless,
 /area/map_template/ecship/crew)
 "aP" = (
@@ -276,7 +276,7 @@
 /obj/structure/railing{
 	dir = 4
 	},
-/obj/item/stool/padded,
+/obj/item/weapon/stool/padded,
 /obj/machinery/alarm/low{
 	dir = 4;
 	icon_state = "alarm0";
@@ -300,7 +300,7 @@
 "aS" = (
 /obj/effect/floor_decal/industrial/outline/yellow,
 /obj/machinery/light/small{
-	brightness_color = "#aa2733"
+	brightness_color = COLOR_LIGHTING_RED_BRIGHT
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
 	dir = 4
@@ -348,7 +348,7 @@
 /area/map_template/ecship/science)
 "aY" = (
 /obj/structure/table/glass,
-/obj/item/storage/box/monkeycubes,
+/obj/item/weapon/storage/box/monkeycubes,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
 "aZ" = (
@@ -380,7 +380,7 @@
 /turf/simulated/floor,
 /area/map_template/ecship/science)
 "bc" = (
-/obj/item/soap,
+/obj/item/weapon/soap,
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
 	dir = 4
 	},
@@ -456,7 +456,7 @@
 /obj/structure/railing{
 	dir = 8
 	},
-/obj/item/stool/padded,
+/obj/item/weapon/stool/padded,
 /turf/simulated/floor/tiled/airless,
 /area/map_template/ecship/crew)
 "bk" = (
@@ -527,9 +527,7 @@
 "bq" = (
 /obj/machinery/cryopod/broken,
 /obj/machinery/light/small,
-/obj/structure/closet/wall_mounted/emcloset{
-	pixel_y = -32
-	},
+/obj/structure/closet/wall_mounted/emcloset,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/cryo)
 "br" = (
@@ -544,12 +542,11 @@
 	dir = 4
 	},
 /obj/machinery/optable,
-/mob/living/carbon/superior_animal/giant_spider/hunter,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
 "bt" = (
 /obj/structure/reagent_dispensers/watertank,
-/obj/item/reagent_containers/glass/bucket,
+/obj/item/weapon/reagent_containers/glass/bucket,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
 "bu" = (
@@ -559,6 +556,10 @@
 /obj/structure/closet/secure_closet/personal/agrolyte,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
+"bv" = (
+/obj/machinery/cryopod/broken,
+/turf/simulated/floor/tiled/white/lowpressure,
+/area/map_template/ecship/cryo)
 "bw" = (
 /obj/structure/catwalk,
 /obj/structure/cable{
@@ -590,7 +591,7 @@
 	d2 = 4;
 	icon_state = "2-4"
 	},
-/obj/item/board,
+/obj/item/weapon/board,
 /turf/simulated/floor/tiled/airless,
 /area/map_template/ecship/crew)
 "bz" = (
@@ -639,7 +640,7 @@
 	d2 = 8;
 	icon_state = "2-8"
 	},
-/obj/item/stool/padded,
+/obj/item/weapon/stool/padded,
 /turf/simulated/floor/tiled/airless,
 /area/map_template/ecship/crew)
 "bC" = (
@@ -688,7 +689,6 @@
 	dir = 2;
 	health = 1e+007
 	},
-/mob/living/carbon/superior_animal/giant_spider,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
 "bH" = (
@@ -696,6 +696,9 @@
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
 "bI" = (
+/turf/simulated/floor/tiled/white/lowpressure,
+/area/map_template/ecship/science)
+"bJ" = (
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
 "bK" = (
@@ -855,7 +858,7 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
 	},
-/obj/item/tool/scalpel{
+/obj/item/weapon/tool/scalpel{
 	pixel_y = 12
 	},
 /turf/simulated/floor/tiled/white/lowpressure,
@@ -889,6 +892,13 @@
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
+	},
+/turf/simulated/floor/tiled/white/lowpressure,
+/area/map_template/ecship/science)
+"ce" = (
+/obj/machinery/atmospherics/pipe/manifold/hidden/scrubbers,
+/obj/machinery/atmospherics/pipe/manifold/hidden/supply{
+	dir = 1
 	},
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
@@ -929,7 +939,7 @@
 "ch" = (
 /obj/effect/floor_decal/industrial/outline/yellow,
 /obj/machinery/light/small{
-	brightness_color = "#aa2733"
+	brightness_color = COLOR_LIGHTING_RED_BRIGHT
 	},
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers{
 	dir = 4
@@ -984,7 +994,6 @@
 	dir = 8
 	},
 /obj/machinery/door/window/northleft,
-/mob/living/carbon/superior_animal/giant_spider/nurse,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
 "cm" = (
@@ -1100,7 +1109,7 @@
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
 "cz" = (
-/obj/item/stool/padded,
+/obj/item/weapon/stool/padded,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
 "cA" = (
@@ -1122,6 +1131,21 @@
 /obj/effect/floor_decal/industrial/outline/yellow,
 /turf/simulated/floor,
 /area/map_template/ecship/crew)
+"cD" = (
+/obj/machinery/light{
+	icon_state = "tube1";
+	dir = 8
+	},
+/obj/structure/table/glass,
+/turf/simulated/floor/tiled/white/lowpressure,
+/area/map_template/ecship/science)
+"cE" = (
+/obj/machinery/portable_atmospherics/hydroponics{
+	closed_system = 1;
+	name = "isolation tray"
+	},
+/turf/simulated/floor/tiled/white/lowpressure,
+/area/map_template/ecship/science)
 "cF" = (
 /obj/machinery/smartfridge{
 	density = 0;
@@ -1230,7 +1254,7 @@
 /turf/simulated/floor,
 /area/map_template/ecship/engineering)
 "cS" = (
-/obj/item/stool/padded,
+/obj/item/weapon/stool/padded,
 /turf/simulated/floor,
 /area/map_template/ecship/engineering)
 "cT" = (
@@ -1277,9 +1301,7 @@
 /obj/machinery/atmospherics/pipe/manifold/visible/cyan{
 	dir = 4
 	},
-/obj/structure/closet/wall_mounted/emcloset{
-	pixel_x = -32
-	},
+/obj/structure/closet/wall_mounted/emcloset,
 /obj/machinery/meter,
 /turf/simulated/floor,
 /area/map_template/ecship/engineering)
@@ -1336,7 +1358,7 @@
 "de" = (
 /obj/machinery/suit_storage_unit/engineering,
 /obj/machinery/light/small{
-	brightness_color = "#aa2733";
+	brightness_color = COLOR_LIGHTING_RED_BRIGHT
 	icon_state = "bulb1";
 	dir = 8
 	},
@@ -1386,7 +1408,7 @@
 "dk" = (
 /obj/machinery/suit_storage_unit/engineering,
 /obj/machinery/light/small{
-	brightness_color = "#aa2733";
+	brightness_color = COLOR_LIGHTING_RED_BRIGHT
 	icon_state = "bulb1";
 	dir = 4
 	},
@@ -1607,6 +1629,9 @@
 	},
 /turf/simulated/floor/airless,
 /area/map_template/ecship/engine)
+"dD" = (
+/turf/simulated/floor,
+/area/map_template/ecship/engineering)
 "dE" = (
 /obj/structure/table/standard,
 /obj/machinery/button/ignition{
@@ -1763,6 +1788,9 @@
 	},
 /turf/simulated/floor/reinforced,
 /area/map_template/ecship/engine)
+"ec" = (
+/turf/simulated/floor/reinforced,
+/area/map_template/ecship/engine)
 "ed" = (
 /obj/machinery/atmospherics/unary/vent_pump/engine{
 	dir = 4;
@@ -1853,10 +1881,6 @@
 /obj/machinery/atmospherics/pipe/simple/visible/cyan,
 /turf/template_noop,
 /area/template_noop)
-"kP" = (
-/mob/living/simple_animal/hostile/roomba/slayer,
-/turf/simulated/floor/tiled/white/lowpressure,
-/area/map_template/ecship/cryo)
 "mD" = (
 /obj/structure/lattice,
 /obj/effect/damagedfloor,
@@ -1867,10 +1891,6 @@
 /obj/effect/damagedfloor,
 /turf/template_noop,
 /area/template_noop)
-"sf" = (
-/mob/living/simple_animal/hostile/roomba/slayer,
-/turf/simulated/floor,
-/area/map_template/ecship/engineering)
 "NM" = (
 /obj/effect/damagedfloor,
 /turf/template_noop,
@@ -1888,7 +1908,7 @@
 /area/template_noop)
 "Vy" = (
 /obj/machinery/atmospherics/pipe/simple/hidden/scrubbers,
-/obj/item/tool/saw/circular,
+/obj/item/weapon/tool/saw/circular,
 /turf/simulated/floor/tiled/white/lowpressure,
 /area/map_template/ecship/science)
 "YW" = (
@@ -2018,10 +2038,10 @@ aA
 aX
 cm
 bG
-bI
+bJ
 cm
 cw
-aX
+cD
 aA
 aA
 aa
@@ -2057,7 +2077,7 @@ Vy
 bX
 cn
 cx
-co
+cE
 aA
 aA
 aa
@@ -2092,8 +2112,8 @@ aJ
 bI
 bs
 co
-bI
-co
+bJ
+cE
 ao
 aB
 aa
@@ -2161,9 +2181,9 @@ aA
 aA
 au
 bt
-bI
+bJ
 ca
-bI
+bJ
 cz
 cG
 aA
@@ -2306,7 +2326,7 @@ NM
 NM
 aA
 bM
-bZ
+ce
 cs
 cB
 NM
@@ -2638,9 +2658,9 @@ cK
 cP
 cU
 cP
-sf
-dq
 cU
+dq
+dD
 dd
 dG
 mD
@@ -2863,7 +2883,7 @@ dR
 dR
 eb
 eb
-dV
+ec
 aa
 aa
 aa
@@ -2897,11 +2917,11 @@ dv
 aa
 dR
 dU
-dV
-dV
-dV
-dV
-dV
+ec
+ec
+ec
+ec
+ec
 aa
 aa
 "}
@@ -2933,10 +2953,10 @@ dw
 aa
 dR
 dR
-dV
-dV
-dV
-dV
+ec
+ec
+ec
+ec
 dR
 dR
 aa
@@ -3203,9 +3223,9 @@ ab
 as
 aH
 aV
-kP
 aV
-aH
+aV
+bv
 as
 ab
 aa
@@ -3238,9 +3258,9 @@ aa
 aa
 aa
 as
-aH
+aI
 aW
-aH
+aI
 as
 as
 at

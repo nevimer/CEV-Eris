@@ -1,4 +1,4 @@
-#define TRADE_SYSTEM_IC_NAME "Asters Automated Trading System"
+#define TRADE_SYSTEM_IC_NAME "Free Trade Union Automated Trading System"//Occulus Edit
 GLOBAL_LIST_EMPTY(price_cache)
 SUBSYSTEM_DEF(trade)
 	name = "Trade"
@@ -40,47 +40,50 @@ SUBSYSTEM_DEF(trade)
 	var/list/stations2init = collect_spawn_always()
 
 	while(trade_stations_budget && length(weightstationlist))
-		var/datum/trade_station/station_instance = pickweight(weightstationlist)
-		if(istype(station_instance))
-			stations2init += station_instance
-			station_instance.cost_trade_stations_budget()
-		weightstationlist.Remove(station_instance)
+		var/datum/trade_station/s = pickweight(weightstationlist)
+		if(istype(s))
+			stations2init += s
+		s.cost_trade_stations_budget()
+		weightstationlist.Remove(s)
 	init_stations_by_list(stations2init)
 
-/datum/controller/subsystem/trade/proc/collect_trade_stations()
-	. = list()
-	for(var/path in subtypesof(/datum/trade_station))
-		var/datum/trade_station/s = new path()
-		if(!s.spawn_always && s.spawn_probability)
-			.[s] = s.spawn_probability
-		else
-			qdel(s)
+/datum/controller/subsystem/trade/proc
+	collect_trade_stations()
+		. = list()
+		for(var/path in subtypesof(/datum/trade_station))
+			var/datum/trade_station/s = new path()
+			if(!s.spawn_always && s.spawn_probability)
+				.[s] = s.spawn_probability
+			else
+				qdel(s)
 
-/datum/controller/subsystem/trade/proc/collect_spawn_always()
-	. = list()
-	for(var/path in subtypesof(/datum/trade_station))
-		var/datum/trade_station/s = new path()
-		if(s.spawn_always)
-			. += s
-		else
-			qdel(s)
+	collect_spawn_always()
+		. = list()
+		for(var/path in subtypesof(/datum/trade_station))
+			var/datum/trade_station/s = new path()
+			if(s.spawn_always)
+				. += s
+			else
+				qdel(s)
 
-/datum/controller/subsystem/trade/proc/init_station(stype)
-	var/datum/trade_station/station
-	if(istype(stype, /datum/trade_station))
-		station = stype
-		if(!station.name)
-			station.init_src()
-	else if(ispath(stype, /datum/trade_station))
-		station = new stype(TRUE)
-	. = station
+	init_station(stype)
+		var/datum/trade_station/station
+		if(istype(stype, /datum/trade_station))
+			station = stype
+			if(!station.name)
+				station.init_src()
+		else if(ispath(stype, /datum/trade_station))
+			station = new stype(TRUE)
+		if(station?.linked_with)
+			init_stations_by_list(station.linked_with)
+		. = station
 
-/datum/controller/subsystem/trade/proc/init_stations_by_list(list/L)
-	. = list()
-	for(var/i in try_json_decode(L))
-		var/a = init_station(i)
-		if(a)
-			. += a
+	init_stations_by_list(list/L)
+		. = list()
+		for(var/i in try_json_decode(L))
+			var/a = init_station(i)
+			if(a)
+				. += a
 
 //Returns cost of an existing object including contents
 /datum/controller/subsystem/trade/proc/get_cost(atom/movable/target)
@@ -97,7 +100,7 @@ SUBSYSTEM_DEF(trade)
 		else
 			crash_with("Unacceptable get_new_cost() by path ([path]) and type ([A?.type]).")
 			return 0
-	
+
 	if(!GLOB.price_cache[path])
 		var/atom/movable/AM = new path
 		GLOB.price_cache[path] = get_cost(AM)
@@ -114,14 +117,42 @@ SUBSYSTEM_DEF(trade)
 		markup += trade_station.markup
 	. *= markup
 
-/datum/controller/subsystem/trade/proc/assess_offer(obj/machinery/trade_beacon/sending/beacon, datum/trade_station/station, offer_type = station.offer_type)
+/datum/controller/subsystem/trade/proc/sell(obj/machinery/trade_beacon/sending/beacon, datum/money_account/account)
+	if(QDELETED(beacon))
+		return
+
+	var/points = 0
+
+	for(var/atom/movable/AM in beacon.get_objects())
+		if(AM.anchored)
+			continue
+
+		var/export_cost = get_export_cost(AM)
+		if(!export_cost)
+			continue
+
+		points += export_cost
+		qdel(AM)
+
+	if(!points)
+		return
+
+	beacon.activate()
+
+	if(account)
+		var/datum/money_account/A = account
+		var/datum/transaction/T = new(points, account.get_name(), "Exports", "Asters Automated Trading System")
+		T.apply_to(A)
+
+
+/datum/controller/subsystem/trade/proc/assess_offer(obj/machinery/trade_beacon/sending/beacon, datum/trade_station/station)
 	if(QDELETED(beacon) || !station)
 		return
 
 	. = list()
 
 	for(var/atom/movable/AM in beacon.get_objects())
-		if(AM.anchored || !istype(AM, offer_type))
+		if(AM.anchored || !istype(AM, station.offer_type))
 			continue
 		. += AM
 
@@ -145,55 +176,38 @@ SUBSYSTEM_DEF(trade)
 
 	station.generate_offer()
 
-/datum/controller/subsystem/trade/proc/collect_counts_from(list/shopList)
-	. = 0
-	for(var/categoryName in shopList)
-		var/category = shopList[categoryName]
-		if(length(category))
-			for(var/path in category)
-				. += category[path]
 
-/datum/controller/subsystem/trade/proc/collect_price_for_list(list/shopList, datum/trade_station/tradeStation = null)
-	. = 0
-	for(var/categoryName in shopList)
-		var/category = shopList[categoryName]
-		if(length(category))
-			for(var/path in category)
-				. += get_import_cost(path, tradeStation) * category[path]
-
-/datum/controller/subsystem/trade/proc/buy(obj/machinery/trade_beacon/receiving/senderBeacon, datum/money_account/account, list/shopList, datum/trade_station/station)
-	if(QDELETED(senderBeacon) || !istype(senderBeacon) || !account || !recursiveLen(shopList) || !istype(station))
+/datum/controller/subsystem/trade/proc/buy(obj/machinery/trade_beacon/receiving/beacon, datum/money_account/account, list/shoppinglist, datum/trade_station/station)
+	if(QDELETED(beacon) || !account || !length(shoppinglist))
 		return
 
-	var/obj/structure/closet/crate/C
-	var/count_of_all = collect_counts_from(shopList)
-	var/price_for_all = collect_price_for_list(shopList, station)
-	if(isnum(count_of_all) && count_of_all > 1)
-		price_for_all += station.commision
-		C = senderBeacon.drop(/obj/structure/closet/crate)
-	if(price_for_all && get_account_credits(account) < price_for_all)
+	var/cost = 0
+	for(var/category_name in shoppinglist)
+		var/list/category = shoppinglist[category_name]
+		for(var/path in category)
+			cost += get_import_cost(path, station) * category[path]
+
+	if(get_account_credits(account) < cost)
 		return
 
-	for(var/categoryName in shopList)
-		var/list/shoplist_category = shopList[categoryName]
-		var/list/assortiment_category = station.assortiment[categoryName]
-		if(length(shoplist_category) && length(assortiment_category))
-			for(var/pathOfGood in shoplist_category)
-				var/count_of_good = shoplist_category[pathOfGood] //in shoplist
-				var/index_of_good = assortiment_category.Find(pathOfGood) //in assortiment
-				for(var/i in 1 to count_of_good)
-					istype(C) ? new pathOfGood(C) : senderBeacon.drop(pathOfGood)
-				if(isnum(index_of_good))
-					station.set_good_amount(categoryName, index_of_good, max(0, station.get_good_amount(categoryName, index_of_good) - count_of_good))
-	charge_to_account(account.account_number, account.get_name(), "Purchase", station.name, price_for_all)
+	if(length(shoppinglist) == 1 && shoppinglist[shoppinglist[1]] == 1)
+		var/type = shoppinglist[1]
+		if(!beacon.drop(type))
+			return
+	else
+		var/obj/structure/closet/crate/C = beacon.drop(/obj/structure/closet/crate)
+		if(!C)
+			return
+		for(var/category_name in shoppinglist)
+			var/list/category = shoppinglist[category_name]
+			var/list/assortiment_category = station.assortiment[category_name]
+			for(var/t in category)
+				var/tcount = category[t]
+				for(var/i in 1 to tcount)
+					new t(C)
+				var/indix = assortiment_category.Find(t)
+				station.set_good_amount(category_name, indix, max(0, station.get_good_amount(category_name, indix) - tcount))
 
-/datum/controller/subsystem/trade/proc/sell_thing(obj/machinery/trade_beacon/sending/senderBeacon, datum/money_account/account, atom/movable/thing, datum/trade_station/station)
-	if(QDELETED(senderBeacon) || !istype(senderBeacon) || !account || !istype(thing) || !istype(station))
-		return
-	
-	var/cost = get_export_cost(thing)
+	charge_to_account(account.account_number, account.get_name(), "Purchase", "Asters Automated Trading System", cost)
 
-	qdel(thing)
-	senderBeacon.activate()
-
-	charge_to_account(account.account_number, account.get_name(), "Selling", station.name, -cost)
+	RecursiveCut(shoppinglist)

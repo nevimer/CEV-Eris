@@ -1,46 +1,45 @@
 GLOBAL_LIST_EMPTY(various_antag_contracts)	//Contracts from "Various" emloyers, currently used by Traitors, Carrions and Blitzshells
 GLOBAL_LIST_EMPTY(excel_antag_contracts)	//Excelsior contracts
 GLOBAL_LIST_INIT(antag_item_targets,list(
-		"the captain's antique laser gun" = /obj/item/gun/energy/captain,
-		"a hand teleporter" = /obj/item/hand_tele,
-		"an RCD" = /obj/item/rcd,
-		"a jetpack" = /obj/item/tank/jetpack,
+		"the captain's antique laser gun" = /obj/item/weapon/gun/energy/captain,
+		"a hand teleporter" = /obj/item/weapon/hand_tele,
+		"an RCD" = /obj/item/weapon/rcd,
+		"a jetpack" = /obj/item/weapon/tank/jetpack,
 		"a captain's jumpsuit" = /obj/item/clothing/under/rank/captain,
 		"a functional AI" = /obj/item/device/aicard,
-		"the Technomancer Exultant's advanced voidsuit control module" = /obj/item/rig/ce,
+		"the Chief Engineer's advanced voidsuit control module" = /obj/item/weapon/rig/ce,
 		"the ship blueprints" = /obj/item/blueprints,
 		"a sample of slime extract" = /obj/item/slime_extract,
-		"a piece of corgi meat" = /obj/item/reagent_containers/food/snacks/meat/corgi,
-		"a Moebius expedition overseer's jumpsuit" = /obj/item/clothing/under/rank/expedition_overseer,
-		"a exultant's jumpsuit" = /obj/item/clothing/under/rank/exultant,
-		"a Moebius biolab officer's jumpsuit" = /obj/item/clothing/under/rank/moebius_biolab_officer,
-		"a Ironhammer commander's jumpsuit" = /obj/item/clothing/under/rank/ih_commander,
+		"a piece of corgi meat" = /obj/item/weapon/reagent_containers/food/snacks/meat/corgi,
+		"a Chief Science Officer's jumpsuit" = /obj/item/clothing/under/rank/expedition_overseer,
+		"a Chief Engineer's jumpsuit" = /obj/item/clothing/under/rank/exultant,
+		"a Chief Medical OFficer's jumpsuit" = /obj/item/clothing/under/rank/moebius_biolab_officer,
+		"a Aegis commander's jumpsuit" = /obj/item/clothing/under/rank/ih_commander,
 		"a First Officer's jumpsuit" = /obj/item/clothing/under/rank/first_officer,
-		"the hypospray" = /obj/item/reagent_containers/hypospray,
-		"the captain's pinpointer" = /obj/item/pinpointer,
+		"the hypospray" = /obj/item/hypospray/mkii/CMO, //Occulus edit
+		"the captain's pinpointer" = /obj/item/weapon/pinpointer,
 		"an ablative armor vest" = /obj/item/clothing/suit/armor/laserproof/full,
-		"an Ironhammer hardsuit control module" = /obj/item/rig/combat/ironhammer
+		"an Aegis hardsuit control module" = /obj/item/weapon/rig/combat/ironhammer //Occulus Edit
 	))
 GLOBAL_LIST_INIT(excel_item_targets,list(
-		"a Miller revolver" = /obj/item/gun/projectile/revolver,
-		"a Consul revolver" = /obj/item/gun/projectile/revolver/consul,
-		"a Gladstone shotgun" = /obj/item/gun/projectile/shotgun/pump/gladstone,
-		"a Kammerer shotgun" = /obj/item/gun/projectile/shotgun/pump,
-		"a Cassad plasma rifle" = /obj/item/gun/energy/plasma/cassad,
-		"a Spider Rose energy gun" = /obj/item/gun/energy/gun,
-		"a Molly machine pistol" = /obj/item/gun/projectile/automatic/molly,
-		"an Atreides sub machine gun" = /obj/item/gun/projectile/automatic/atreides,
-		"a Straylight sub machine gun" = /obj/item/gun/projectile/automatic/straylight,
-		"a Sol carbine" = /obj/item/gun/projectile/automatic/sol,
-		"a Colt handgun" = /obj/item/gun/projectile/colt,
-		"a Lenar grenade launcher" = /obj/item/gun/launcher/grenade/lenar,
-		"an RCD" = /obj/item/rcd,
-		"a cruciform" = /obj/item/implant/core_implant/cruciform,
+		"a Miller revolver" = /obj/item/weapon/gun/projectile/revolver,
+		"a Consul revolver" = /obj/item/weapon/gun/projectile/revolver/consul,
+		"a Gladstone shotgun" = /obj/item/weapon/gun/projectile/shotgun/pump/gladstone,
+		"a Kammerer shotgun" = /obj/item/weapon/gun/projectile/shotgun/pump,
+		"a Cassad plasma rifle" = /obj/item/weapon/gun/energy/plasma/cassad,
+		"a Spider Rose energy gun" = /obj/item/weapon/gun/energy/gun,
+		"a Molly machine pistol" = /obj/item/weapon/gun/projectile/automatic/molly,
+		"an Atreides sub machine gun" = /obj/item/weapon/gun/projectile/automatic/atreides,
+		"a Straylight sub machine gun" = /obj/item/weapon/gun/projectile/automatic/straylight,
+		"a Sol carbine" = /obj/item/weapon/gun/projectile/automatic/sol,
+		"a Colt handgun" = /obj/item/weapon/gun/projectile/colt,
+		"a Lenar grenade launcher" = /obj/item/weapon/gun/launcher/grenade/lenar,
+		"an RCD" = /obj/item/weapon/rcd,
+		"a cruciform" = /obj/item/weapon/implant/core_implant/cruciform,
 		"the ship blueprints" = /obj/item/blueprints,
-		"a hand teleporter" = /obj/item/hand_tele,
-		"a bluespace Harpoon" = /obj/item/bluespace_harpoon,
-		"a rocket-powered charge hammer" = /obj/item/tool/hammer/charge,
-		"the captain's antique laser gun" = /obj/item/gun/energy/captain,
+		"a hand teleporter" = /obj/item/weapon/hand_tele,
+		"a rocket-powered charge hammer" = /obj/item/weapon/tool/hammer/charge,
+		"the captain's antique laser gun" = /obj/item/weapon/gun/energy/captain,
 
 	))
 /datum/antag_contract
@@ -71,15 +70,11 @@ GLOBAL_LIST_INIT(excel_item_targets,list(
 /datum/antag_contract/proc/complete(datum/mind/M)
 	if(completed)
 		warning("Contract completed twice: [name] [desc]")
-	else
-		GLOB.completed_antag_contracts++
 	completed = TRUE
 	completed_by = M
 
-	if(M)
-		M.contracts_completed++
-		if(M.current)
-			to_chat(M.current, SPAN_NOTICE("Contract completed: [name] ([reward] TC)"))
+	if(M && M.current)
+		to_chat(M.current, SPAN_NOTICE("Contract completed: [name] ([reward] TC)"))
 
 	for(var/obj/item/device/uplink/U in world_uplinks)
 		if(U.uplink_owner != M)
@@ -91,11 +86,11 @@ GLOBAL_LIST_INIT(excel_item_targets,list(
 // A contract to steal a specific item - allows you to check all contents (recursively) for the target item
 /datum/antag_contract/item
 
-/datum/antag_contract/item/proc/on_container(obj/item/storage/bsdm/container)
+/datum/antag_contract/item/proc/on_container(obj/item/weapon/storage/bsdm/container)
 	if(check(container))
 		complete(container.owner)
 
-/datum/antag_contract/item/proc/check(obj/item/storage/container)
+/datum/antag_contract/item/proc/check(obj/item/weapon/storage/container)
 	return check_contents(container.GetAllContents(includeSelf = FALSE))
 
 /datum/antag_contract/item/proc/check_contents(list/contents)
@@ -108,7 +103,7 @@ GLOBAL_LIST_INIT(excel_item_targets,list(
 
 /datum/antag_contract/item/file/check_contents(list/contents)
 	var/list/all_files = list()
-	for(var/obj/item/computer_hardware/hard_drive/H in contents)
+	for(var/obj/item/weapon/computer_hardware/hard_drive/H in contents)
 		all_files += H.stored_files
 
 	return check_files(all_files)
@@ -154,7 +149,7 @@ GLOBAL_LIST_INIT(excel_item_targets,list(
 /datum/antag_contract/implant/can_place()
 	return ..() && target_mind
 
-/datum/antag_contract/implant/proc/check(obj/item/implant/spying/implant)
+/datum/antag_contract/implant/proc/check(obj/item/weapon/implant/spying/implant)
 	if(completed)
 		return
 	if(implant.wearer && implant.wearer.mind == target_mind)
@@ -215,7 +210,7 @@ GLOBAL_LIST_INIT(excel_item_targets,list(
 
 /datum/antag_contract/item/assasinate
 	name = "Assasinate"
-	reward = 12
+	reward = 25	//OCCULUS EDIT - Only nobles get targeted now, so might as well just up the base reward
 	var/obj/item/target
 	var/datum/mind/target_mind
 
@@ -227,15 +222,15 @@ GLOBAL_LIST_INIT(excel_item_targets,list(
 	while(candidates.len)
 		target_mind = pick(candidates)
 		var/mob/living/carbon/human/H = target_mind.current
-		if(!istype(H) || H.stat == DEAD || !isOnStationLevel(H))
+		if(!istype(H) || H.stat == DEAD || !isOnStationLevel(H) || !H.stats.getPerk(PERK_NOBLE)) //OCCULUS EDIT - If the target is not a human, is dead, is not on the ship, or is not a noble, keep looking.
 			candidates -= target_mind
 			continue
-		target = H.get_core_implant(/obj/item/implant/core_implant/cruciform)
+		target = H.get_core_implant(/obj/item/weapon/implant/core_implant/cruciform)
 		if(!target)
 			target = H.organs_by_name[BP_HEAD]
-		desc = "Assasinate [target_mind.current.real_name] and send [gender_datums[target_mind.current.gender].his] [target.name] via BSDM as a proof."
-		if(H.stats.getPerk(PERK_NOBLE))
-			reward *= 1.5
+		desc = "Assasinate [target_mind.current.real_name] and send [gender_datums[H.identifying_gender].his] [target.name] via BSDM as a proof." // OCCULUS EDIT - adjusting for gender rework
+		//if(H.stats.getPerk(PERK_NOBLE))	//OCCULUS EDIT - Only nobles get targeted now, so might as well just up the base reward
+		//	reward *= 1.5					//OCCULUS EDIT - Only nobles get targeted now, so might as well just up the base reward
 		break
 
 /datum/antag_contract/item/assasinate/can_place()
@@ -276,7 +271,7 @@ GLOBAL_LIST_INIT(excel_item_targets,list(
 /datum/antag_contract/item/steal/docs
 	unique = TRUE
 	reward = 12
-	target_type = /obj/item/oddity/secdocs
+	target_type = /obj/item/weapon/oddity/secdocs
 	desc = "Steal a folder of secret documents and send them via BSDM."
 
 
@@ -293,7 +288,7 @@ GLOBAL_LIST_INIT(excel_item_targets,list(
 
 /datum/antag_contract/item/dump/check_contents(list/contents)
 	var/received = 0
-	for(var/obj/item/spacecash/cash in contents)
+	for(var/obj/item/weapon/spacecash/cash in contents)
 		received += cash.worth
 	return received >= sum
 
@@ -311,9 +306,9 @@ GLOBAL_LIST_INIT(excel_item_targets,list(
 
 /datum/antag_contract/item/blood/check_contents(list/contents)
 	var/list/samples = list()
-	for(var/obj/item/reagent_containers/C in contents)
+	for(var/obj/item/weapon/reagent_containers/C in contents)
 		var/list/data = C.reagents?.get_data("blood")
-		if(!data || data["species"] != SPECIES_HUMAN || (data["blood_DNA"] in samples))
+		if(!data || data["species"] != "Human" || (data["blood_DNA"] in samples))
 			continue
 		samples += data["blood_DNA"]
 		if(samples.len >= count)
@@ -368,18 +363,10 @@ GLOBAL_LIST_INIT(excel_item_targets,list(
 		warning("Mandate completed twice: [name] [desc]")
 	completed = TRUE
 
+	if(user)
+		to_chat(user, SPAN_NOTICE("Mandate completed: [name] ([reward] energy)"))
 
 	excelsior_energy += reward
-	var/datum/faction/F = get_faction_by_id(FACTION_EXCELSIOR)
-	var/datum/objective/timed/excelsior/E = (locate(/datum/objective/timed/excelsior) in F.objectives)
-	if(E)
-		E.mandate_completion()
-	if(user)
-		if(E)
-			to_chat(user, SPAN_NOTICE("Mandate completed: [name] ([reward] energy, [E.time2minutes(E.mandate_increase)] minutes have been added to the detection countdown timer.)"))
-		else
-			to_chat(user, SPAN_NOTICE("Mandate completed: [name] ([reward] energy)"))
-	
 	for (var/obj/machinery/complant_teleporter/t in excelsior_teleporters)
 		t.update_nano_data()
 
@@ -436,7 +423,7 @@ GLOBAL_LIST_INIT(excel_item_targets,list(
 				continue
 
 		if (cruciform_check)
-			var/cruciform = H.get_core_implant(/obj/item/implant/core_implant/cruciform)
+			var/cruciform = H.get_core_implant(/obj/item/weapon/implant/core_implant/cruciform)
 			if(cruciform)
 				continue
 

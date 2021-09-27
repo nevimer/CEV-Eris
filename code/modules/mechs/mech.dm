@@ -4,7 +4,7 @@
 	desc = "A powerful machine piloted from a cockpit, but worn like a suit of armour."
 	density = TRUE
 	opacity = TRUE
-	anchored = TRUE
+//	anchored = TRUE Occulus Edit: Removing Anchoring
 	default_pixel_x = -8
 	default_pixel_y = 0
 	status_flags = PASSEMOTES
@@ -13,8 +13,6 @@
 	can_be_fed = 0
 	defaultHUD = "exosuits"
 	bad_type = /mob/living/exosuit
-
-	mob_classification = CLASSIFICATION_SYNTHETIC
 
 	var/initial_icon
 
@@ -27,7 +25,7 @@
 	var/mech_step_sound = 'sound/mechs/mechstep.ogg'
 
 	// Access updating/container.
-	var/obj/item/card/id/access_card
+	var/obj/item/weapon/card/id/access_card
 	var/list/saved_access = list()
 	var/sync_access = 1
 

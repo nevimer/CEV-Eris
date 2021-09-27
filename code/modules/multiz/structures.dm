@@ -122,8 +122,8 @@
 			C.forceMove(target.loc)
 			var/direction = pick(NORTH, SOUTH, EAST, WEST, NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST)
 			C.Move(get_step(C, direction))
-			if(istype(C, /obj/item/grenade))
-				var/obj/item/grenade/G = C
+			if(istype(C, /obj/item/weapon/grenade))
+				var/obj/item/weapon/grenade/G = C
 				if(!G.active)
 					G.activate(user)
 			return TRUE
@@ -140,7 +140,7 @@
 /obj/structure/multiz/ladder/attack_hand(var/mob/M)
 	if (isrobot(M) && !isdrone(M))
 		var/mob/living/silicon/robot/R = M
-		climb(M, (climb_delay*6)/R.speed_factor) //Robots are not built for climbing, they should go around where possible
+		climb(M, (climb_delay)/R.speed_factor) //Robots are not built for climbing, they should go around where possible	// OCCULUS EDIT - Removed the *6 multiplier from robot climb delay
 		//I'd rather make them unable to use ladders at all, but eris' labyrinthine maintenance necessitates it
 	else
 		climb(M, climb_delay)
@@ -159,7 +159,7 @@
 		if(!A.CanPass(M))
 			to_chat(M, SPAN_NOTICE("\A [A] is blocking \the [src]."))
 			return
-		else if (A.density && ismob(A))
+		else if (A.density && istype(A, /mob))
 			tempMob = A
 			continue
 
@@ -211,14 +211,11 @@
 						user.client.perspective = MOB_PERSPECTIVE
 						user.hud_used.updatePlaneMasters(user)
 						user.is_watching = FALSE
-						user.can_multiz_pb = FALSE
 					else if(user.is_watching == FALSE)
 						user.client.eye = target
 						user.client.perspective = EYE_PERSPECTIVE
 						user.hud_used.updatePlaneMasters(user)
 						user.is_watching = TRUE
-						if(Adjacent(user))
-							user.can_multiz_pb = TRUE
 				return
 		else
 			to_chat(user, SPAN_NOTICE("You can't do it right now."))

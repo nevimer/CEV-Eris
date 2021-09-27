@@ -1,11 +1,9 @@
-GLOBAL_VAR_INIT(bluespace_hazard_threshold, 150)
 GLOBAL_VAR_INIT(bluespace_entropy, 0)
 GLOBAL_VAR_INIT(bluespace_gift, 0)
 GLOBAL_VAR_INIT(bluespace_distotion_cooldown, 10 MINUTES)
 
 /area
-	var/bluespace_entropy = 0
-	var/bluespace_hazard_threshold = 100
+	var/local_bluespace_entropy = 0
 
 /proc/go_to_bluespace(turf/T, entropy=1, minor_distortion=FALSE, ateleatom, adestination, aprecision=0, afteleport=1, aeffectin=null, aeffectout=null, asoundin=null, asoundout=null)
 	bluespace_entropy(entropy, T, minor_distortion)
@@ -15,19 +13,19 @@ GLOBAL_VAR_INIT(bluespace_distotion_cooldown, 10 MINUTES)
 	var/entropy_value = rand(0, max_value)
 	var/area/A = get_area(T)
 	if(minor_distortion && A)
-		A.bluespace_entropy += entropy_value
-		var/area_entropy_cap = rand(A.bluespace_hazard_threshold, A.bluespace_hazard_threshold*2)
-		if(A.bluespace_entropy > area_entropy_cap && world.time > GLOB.bluespace_distotion_cooldown)
+		A.local_bluespace_entropy += entropy_value
+		var/area_entropy_cap = rand(100, 200)
+		if(A.local_bluespace_entropy > area_entropy_cap && world.time > GLOB.bluespace_distotion_cooldown)
 			GLOB.bluespace_distotion_cooldown = world.time + 5 MINUTES
-			A.bluespace_entropy -= rand(A.bluespace_hazard_threshold, A.bluespace_hazard_threshold*1.5)
+			A.local_bluespace_entropy -= rand(100, 150)
 			bluespace_distorsion(T, minor_distortion)
 	else
 		GLOB.bluespace_entropy += entropy_value
-		var/entropy_cap = rand(GLOB.bluespace_hazard_threshold, GLOB.bluespace_hazard_threshold*2)
+		var/entropy_cap = rand(150, 300)
 		if(GLOB.bluespace_entropy >= entropy_cap && world.time > GLOB.bluespace_distotion_cooldown)
 			GLOB.bluespace_distotion_cooldown = world.time + 10 MINUTES
 			bluespace_distorsion(T, minor_distortion)
-			GLOB.bluespace_entropy -= rand(GLOB.bluespace_hazard_threshold, GLOB.bluespace_hazard_threshold*1.5)
+			GLOB.bluespace_entropy -= rand(150, 225)
 
 /proc/bluespace_distorsion(turf/T, minor_distortion=FALSE)
 	var/bluespace_event = rand(1, 100)
@@ -49,7 +47,7 @@ GLOBAL_VAR_INIT(bluespace_distotion_cooldown, 10 MINUTES)
 		return
 	var/list/turfs = list()
 	var/turf/picked
-	for(var/turf/T in RANGE_TURFS(outer_range, origin))
+	for(var/turf/T in trange(outer_range, origin))
 		if(!turf_clear(T)) continue
 		if(!T.is_solid_structure()) continue
 		if(T.x >= world.maxx-TRANSITIONEDGE || T.x <= TRANSITIONEDGE)	continue
@@ -69,7 +67,7 @@ GLOBAL_VAR_INIT(bluespace_distotion_cooldown, 10 MINUTES)
 	if(!origin)
 		return
 	var/list/turfs = list()
-	for(var/turf/T in RANGE_TURFS(outer_range, origin))
+	for(var/turf/T in trange(outer_range, origin))
 	//	if(!(T.z in GLOB.using_map.sealed_levels)) // Picking a turf outside the map edge isn't recommended
 		if(T.x >= world.maxx-TRANSITIONEDGE || T.x <= TRANSITIONEDGE)	continue
 		if(T.y >= world.maxy-TRANSITIONEDGE || T.y <= TRANSITIONEDGE)	continue
@@ -115,7 +113,7 @@ GLOBAL_VAR_INIT(bluespace_distotion_cooldown, 10 MINUTES)
 	if(!T)
 		return
 	if(GLOB.bluespace_gift <= 0 && !minor_distortion)
-		new /obj/item/oddity/broken_necklace(T)
+		new /obj/item/weapon/oddity/broken_necklace(T)
 		do_sparks(3, 0, T)
 		log_and_message_admins("Bluespace gif spawned: [jumplink(T)]") //unique item
 	else

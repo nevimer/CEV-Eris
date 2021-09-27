@@ -6,13 +6,11 @@
 	item_state = ""	//no inhands
 	slot_flags = SLOT_ACCESSORY_BUFFER
 	w_class = ITEM_SIZE_SMALL
-	bad_type = /obj/item/clothing/accessory
 	var/slot = "decor"
 	var/obj/item/clothing/has_suit		//the suit the tie may be attached to
 	var/image/inv_overlay	//overlay used when attached to clothing.
 	var/image/mob_overlay
 	var/overlay_state
-	var/isRemovable = TRUE
 
 /obj/item/clothing/accessory/Destroy()
 	if(has_suit)
@@ -97,11 +95,8 @@
 	if(ishuman(M) && isliving(user))
 		if(user.a_intent == I_HELP)
 			var/body_part = parse_zone(user.targeted_organ)
-			if(body_part)
-				var/their = "their"
-				switch(M.gender)
-					if(MALE)	their = "his"
-					if(FEMALE)	their = "her"
+			if(body_part) 
+				var/datum/gender/their = gender_datums[M.identifying_gender].his // OCCULUS EDIT - adjusting for gender rework
 
 				var/sound = "heartbeat"
 				var/sound_strength = "cannot hear"
@@ -192,46 +187,3 @@
 /obj/item/clothing/accessory/medal/gold/heroism
 	name = "medal of exceptional heroism"
 	desc = "An extremely rare golden medal awarded only by company officials. To recieve such a medal is the highest honor and as such, very few exist. This medal is almost never awarded to anybody but commanders."
-
-/obj/item/clothing/accessory/armor
-	name = "armor plates"
-	desc = "Plates from an armored vest, now usable to reinforce clothes."
-	slot = "armor"
-	icon_state = "armor"
-	w_class = ITEM_SIZE_NORMAL
-	isRemovable = FALSE
-	armor = list(
-		melee = 25,
-		bullet = 25,
-		energy = 25,
-		bomb = 0,
-		bio = 0,
-		rad = 0
-	)
-	matter = list(
-		MATERIAL_STEEL = 8,
-		MATERIAL_PLASTEEL = 1,
-	)
-
-/obj/item/clothing/accessory/armor/on_attached()
-	..()
-	has_suit.armor = armor
-	has_suit.style -= 2
-	has_suit.slowdown += 0.05
-
-/obj/item/clothing/accessory/armor/bullet
-	name = "bulletproof armor plates"
-	desc = "Plates from a bulletproof vest, now usable to reinforce clothes."
-	icon_state = "armor_bullet"
-	armor = list(
-		melee = 20,
-		bullet = 40,
-		energy = 20,
-		bomb = 0,
-		bio = 0,
-		rad = 0
-	)
-	matter = list(
-		MATERIAL_STEEL = 10,
-		MATERIAL_PLASTEEL = 3,
-	)

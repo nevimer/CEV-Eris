@@ -35,10 +35,13 @@ var/const/CHARACTER_PREFERENCE_INPUT_TITLE = "Character Preference"
 	sort_order = 5
 	category_item_type = /datum/category_item/player_setup_item/antagonism
 
+// OCCULUS REMOVE - Removes matchmaking from character setup screen
+/*
 /datum/category_group/player_setup_category/relations_preferences
 	name = "Matchmaking"
 	sort_order = 6
 	category_item_type = /datum/category_item/player_setup_item/relations
+*/
 
 /datum/category_group/player_setup_category/loadout_preferences
 	name = "Loadout"
@@ -287,6 +290,7 @@ var/const/CHARACTER_PREFERENCE_INPUT_TITLE = "Character Preference"
 				pref.client = C
 				break
 
+/*	Occulus edit - experimental optimization
 	//lets try again after 1 second
 	//for some reason it doesnt find client on login
 	spawn(10)
@@ -295,9 +299,10 @@ var/const/CHARACTER_PREFERENCE_INPUT_TITLE = "Character Preference"
 				if(C.ckey == pref.client_ckey)
 					pref.client = C
 					break
+*/
+
 	if(pref.client)
 		return pref.client.mob
-/*
+
 /datum/category_item/player_setup_item/proc/preference_species()
 	return all_species[pref.species] || all_species[SPECIES_HUMAN]
-*/

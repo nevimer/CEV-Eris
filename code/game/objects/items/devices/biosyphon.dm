@@ -1,6 +1,6 @@
 /obj/item/biosyphon
-	name = "Bluespace Biosyphon"
-	desc = "Hunts on flora and fauna that sometimes populates bluespace, and use them to produce donuts endlessly."
+	name = "Lazarus Carbon Reclaimer"
+	desc = "A vat of bluespace-enriched yeast that slowly produces donuts seemingly out of nowhere. LCR was generously donated to Aegis after one of the officers was hospitalized as a result of inhaling Lazarus' macroinsect repellant."
 	icon = 'icons/obj/faction_item.dmi'
 	icon_state = "biosyphon"
 	item_state = "biosyphon"
@@ -17,26 +17,16 @@
 	var/last_produce = 0
 	var/cooldown = 15 MINUTES
 
-/obj/item/biosyphon/Initialize()
-	. = ..()
-	GLOB.all_faction_items[src] = GLOB.department_security
+/obj/item/biosyphon/New()
+	..()
 	START_PROCESSING(SSobj, src)
 
 /obj/item/biosyphon/Destroy()
 	STOP_PROCESSING(SSobj, src)
-	for(var/mob/living/carbon/human/H in viewers(get_turf(src)))
-		SEND_SIGNAL(H, COMSIG_OBJ_FACTION_ITEM_DESTROY, src)
-	GLOB.all_faction_items -= src
-	GLOB.ironhammer_faction_item_loss++
 	. = ..()
 
 /obj/item/biosyphon/Process()
 	if(world.time >= (last_produce + cooldown))
-		var/obj/item/storage/box/donut/D = new /obj/item/storage/box/donut(get_turf(src))
-		visible_message(SPAN_NOTICE("[name] drop [D]."))
+		var/obj/item/weapon/storage/box/donut/D = new /obj/item/weapon/storage/box/donut(src.loc)
+		visible_message(SPAN_NOTICE("[name] dispenses [D]."))
 		last_produce = world.time
-
-/obj/item/biosyphon/attackby(obj/item/I, mob/living/user, params)
-	if(nt_sword_attack(I, user))
-		return
-	..()

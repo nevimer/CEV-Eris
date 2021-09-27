@@ -48,17 +48,17 @@
 	//example: n2o triggerproc
 	//note: im lazy
 
-	for (var/turf/simulated/floor/target in RANGE_TURFS(1,src))
+	for (var/turf/simulated/floor/target in trange(1,src))
 		if(!target.blocks_air)
 			target.assume_gas("sleeping_agent", 30)
 
 	spawn(0)
 		qdel(src)
 
-/obj/effect/mine/proc/triggerplasma(obj)
-	for (var/turf/simulated/floor/target in RANGE_TURFS(1,src))
+/obj/effect/mine/proc/triggerphoron(obj)
+	for (var/turf/simulated/floor/target in trange(1,src))
 		if(!target.blocks_air)
-			target.assume_gas("plasma", 30)
+			target.assume_gas("phoron", 30)
 
 			target.hotspot_expose(1000, CELL_VOLUME)
 
@@ -83,10 +83,10 @@
 	icon_state = "uglymine"
 	triggerproc = "triggerrad"
 
-/obj/effect/mine/plasma
-	name = "Plasma Mine"
+/obj/effect/mine/phoron
+	name = "Phoron Mine"
 	icon_state = "uglymine"
-	triggerproc = "triggerplasma"
+	triggerproc = "triggerphoron"
 
 /obj/effect/mine/kick
 	name = "Kick Mine"

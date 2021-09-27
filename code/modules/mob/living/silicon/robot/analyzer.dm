@@ -15,7 +15,7 @@
 	origin_tech = list(TECH_MAGNET = 2, TECH_BIO = 1, TECH_ENGINEERING = 2)
 	matter = list(MATERIAL_PLASTIC = 2, MATERIAL_GLASS = 1)
 	rarity_value = 50
-	suitable_cell = /obj/item/cell/small
+	suitable_cell = /obj/item/weapon/cell/small
 
 /obj/item/device/robotanalyzer/attack(mob/living/M, mob/living/user)
 	if(!cell_use_check(5, user))
@@ -47,8 +47,8 @@
 			user.show_message("\blue Analyzing Results for [M]:\n\t Overall Status: [M.stat > 1 ? "fully disabled" : "[M.health - M.halloss]% functional"]")
 			user.show_message("\t Key: <font color='#FFA500'>Electronics</font>/<font color='red'>Brute</font>", 1)
 			user.show_message("\t Damage Specifics: <font color='#FFA500'>[BU]</font> - <font color='red'>[BR]</font>")
-			if(M.timeofdeath && M.stat == DEAD)
-				user.show_message("\blue Time of Disable: [worldtime2stationtime(M.timeofdeath)]")
+			if(M.tod && M.stat == DEAD)
+				user.show_message("\blue Time of Disable: [M.tod]")
 			var/mob/living/silicon/robot/H = M
 			var/list/damaged = H.get_damaged_components(1,1,1)
 			user.show_message("\blue Localized Damage:",1)

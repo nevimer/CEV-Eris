@@ -1,4 +1,4 @@
-/obj/item/gun/projectile/revolver
+/obj/item/weapon/gun/projectile/revolver
 	name = "FS REV .40 Magnum \"Miller\""
 	desc = "The \"Frozen Star\" \"Miller\" is a revolver of choice when you absolutely, positively need to make a hole in someone. Uses .40 Magnum ammo."
 	icon = 'icons/obj/guns/projectile/revolver.dmi'
@@ -20,12 +20,13 @@
 	price_tag = 2000 //avasarala of revolver world
 	fire_delay = 3 //all revolvers can fire faster, but have huge recoil
 	damage_multiplier = 1.75
-	penetration_multiplier = 0.65 // Insanely powerful handcannon, but worthless against heavy armor
+	armor_penetration = 0.65 // Insanely powerful handcannon, but worthless against heavy armor
+	rarity_value = 9.6
 	recoil_buildup = 8
 	var/drawChargeMeter = TRUE
 	var/chamber_offset = 0 //how many empty chambers in the cylinder until you hit a round
 
-/obj/item/gun/projectile/revolver/verb/spin_cylinder()
+/obj/item/weapon/gun/projectile/revolver/verb/spin_cylinder()
 	set name = "Spin cylinder"
 	set desc = "Fun when you're bored out of your skull."
 	set category = "Object"
@@ -38,17 +39,17 @@
 	if(rand(1,max_shells) > loaded.len)
 		chamber_offset = rand(0,max_shells - loaded.len)
 
-/obj/item/gun/projectile/revolver/consume_next_projectile()
+/obj/item/weapon/gun/projectile/revolver/consume_next_projectile()
 	if(chamber_offset)
 		chamber_offset--
 		return
 	return ..()
 
-/obj/item/gun/projectile/revolver/load_ammo(obj/item/A, mob/user)
+/obj/item/weapon/gun/projectile/revolver/load_ammo(obj/item/A, mob/user)
 	chamber_offset = 0
 	return ..()
 
-/obj/item/gun/projectile/revolver/proc/update_charge()
+/obj/item/weapon/gun/projectile/revolver/proc/update_charge()
 	if(!drawChargeMeter)
 		return
 	cut_overlays()
@@ -58,9 +59,10 @@
 		add_overlays("[icon_state]_on")
 
 
-/obj/item/gun/projectile/revolver/on_update_icon()
+/obj/item/weapon/gun/projectile/revolver/on_update_icon()
 	update_charge()
 
-/obj/item/gun/projectile/revolver/generate_guntags()
+/obj/item/weapon/gun/projectile/revolver/generate_guntags()
 	..()
 	gun_tags |= GUN_REVOLVER
+

@@ -6,7 +6,7 @@
 
 	PATHS THAT USE DATUMS
 		turf/simulated/wall
-		obj/item/material
+		obj/item/weapon/material
 		obj/structure/barricade
 		obj/item/stack/material
 		obj/structure/table
@@ -217,13 +217,10 @@ var/list/name_to_material
 		G.reinforce_girder()
 
 // Use this to drop a given amount of material.
-/material/proc/place_material(target, amount=1, mob/living/user = null)
+/material/proc/place_material(target, amount=1)
 	// Drop the integer amount of sheets
-	var/obj/sheets = place_sheet(target, round(amount))
-	if(sheets)
+	if(place_sheet(target, round(amount)))
 		amount -= round(amount)
-		if(user)
-			sheets.add_fingerprint(user)
 
 	// If there is a remainder left, drop it as a shard instead
 	if(amount)
@@ -237,7 +234,7 @@ var/list/name_to_material
 // As above.
 /material/proc/place_shard(target, amount=1)
 	if(shard_type)
-		return new /obj/item/material/shard(target, src.name, amount)
+		return new /obj/item/weapon/material/shard(target, src.name, amount)
 
 // Used by walls and weapons to determine if they break or not.
 /material/proc/is_brittle()
@@ -294,34 +291,34 @@ var/list/name_to_material
 	sheet_singular_name = "ingot"
 	sheet_plural_name = "ingots"
 
-/material/plasma
-	name = MATERIAL_PLASMA
-	stack_type = /obj/item/stack/material/plasma
-	ignition_point = PLASMA_MINIMUM_BURN_TEMPERATURE
+/material/phoron
+	name = MATERIAL_PHORON
+	stack_type = /obj/item/stack/material/phoron
+	ignition_point = PHORON_MINIMUM_BURN_TEMPERATURE
 	icon_base = "stone"
 	icon_colour = "#FC2BC5"
 	shard_type = SHARD_SHARD
 	hardness = 30
-	stack_origin_tech = list(TECH_MATERIAL = 2, TECH_PLASMA = 2)
+	stack_origin_tech = list(TECH_MATERIAL = 2, TECH_PHORON = 2)
 	door_icon_base = "stone"
 	sheet_singular_name = "crystal"
 	sheet_plural_name = "crystals"
 
 /*
 // Commenting this out while fires are so spectacularly lethal, as I can't seem to get this balanced appropriately.
-/material/plasma/combustion_effect(var/turf/T, var/temperature, var/effect_multiplier)
+/material/phoron/combustion_effect(var/turf/T, var/temperature, var/effect_multiplier)
 	if(isnull(ignition_point))
 		return 0
 	if(temperature < ignition_point)
 		return 0
-	var/totalPlasma = 0
-	for(var/turf/simulated/floor/target_tile in RANGE_TURFS(2, T))
-		var/plasmaToDeduce = (temperature/30) * effect_multiplier
-		totalPlasma += plasmaToDeduce
-		target_tile.assume_gas("plasma", plasmaToDeduce, 200+T0C)
+	var/totalPhoron = 0
+	for(var/turf/simulated/floor/target_tile in trange(2, T))
+		var/phoronToDeduce = (temperature/30) * effect_multiplier
+		totalPhoron += phoronToDeduce
+		target_tile.assume_gas("phoron", phoronToDeduce, 200+T0C)
 		spawn (0)
 			target_tile.hotspot_expose(temperature, 400)
-	return round(totalPlasma/100)
+	return round(totalPhoron/100)
 */
 
 /material/stone
@@ -518,27 +515,27 @@ var/list/name_to_material
 	wire_product = null
 	rod_product = null
 
-/material/glass/plasma
-	name = MATERIAL_PLASMAGLASS
+/material/glass/phoron
+	name = MATERIAL_PHORONGLASS
 	display_name = "borosilicate glass"
-	stack_type = /obj/item/stack/material/glass/plasmaglass
+	stack_type = /obj/item/stack/material/glass/phoronglass
 	flags = MATERIAL_BRITTLE
 	integrity = 100
 	icon_colour = "#FC2BC5"
 	stack_origin_tech = list(TECH_MATERIAL = 4)
-	created_window = /obj/structure/window/plasmabasic
-	created_window_full = /obj/structure/window/plasmabasic/full
+	created_window = /obj/structure/window/phoronbasic
+	created_window_full = /obj/structure/window/phoronbasic/full
 	wire_product = null
-	rod_product = /obj/item/stack/material/glass/plasmarglass
+	rod_product = /obj/item/stack/material/glass/phoronrglass
 
-/material/glass/plasma/reinforced
-	name = MATERIAL_RPLASMAGLASS
+/material/glass/phoron/reinforced
+	name = MATERIAL_RPHORONGLASS
 	display_name = "reinforced borosilicate glass"
-	stack_type = /obj/item/stack/material/glass/plasmarglass
+	stack_type = /obj/item/stack/material/glass/phoronrglass
 	stack_origin_tech = list(TECH_MATERIAL = 5)
 	composite_material = list() //todo
-	created_window = /obj/structure/window/reinforced/plasma
-	created_window_full = /obj/structure/window/reinforced/plasma/full
+	created_window = /obj/structure/window/reinforced/phoron
+	created_window_full = /obj/structure/window/reinforced/phoron/full
 	hardness = 40
 	weight = 30
 	//composite_material = list() //todo
@@ -583,7 +580,6 @@ var/list/name_to_material
 	stack_type = /obj/item/stack/material/mhydrogen
 	icon_colour = "#E6C5DE"
 	stack_origin_tech = list(TECH_MATERIAL = 6, TECH_POWER = 6, TECH_MAGNET = 5)
-	display_name = "metallic hydrogen"
 
 /material/platinum
 	name = MATERIAL_PLATINUM
@@ -666,6 +662,22 @@ var/list/name_to_material
 	melting_point = T0C+300
 	flags = MATERIAL_PADDING
 
+/material/resin
+	name = "resin"
+	icon_colour = "#E85DD8"
+	dooropen_noise = 'sound/effects/attackblob.ogg'
+	door_icon_base = "resin"
+	melting_point = T0C+300
+	sheet_singular_name = "blob"
+	sheet_plural_name = "blobs"
+/*
+/material/resin/can_open_material_door(var/mob/living/user)
+	var/mob/living/carbon/M = user
+
+	if(istype(M) && locate(/obj/item/organ/internal/xenos/hivenode) in M.internal_organs)
+		return 1
+	return 0
+*/
 /material/biomatter
 	name = MATERIAL_BIOMATTER
 	stack_type = /obj/item/stack/material/biomatter
@@ -673,13 +685,6 @@ var/list/name_to_material
 	stack_origin_tech = list(TECH_MATERIAL = 2, TECH_BIO = 2)
 	sheet_singular_name = "sheet"
 	sheet_plural_name = "sheets"
-
-/material/compressed
-	name = MATERIAL_COMPRESSED
-	stack_type = /obj/item/stack/material/compressed
-	icon_colour = "#00E1FF"
-	sheet_singular_name = "cartrigde"
-	sheet_plural_name = "cartridges"
 
 //TODO PLACEHOLDERS:
 /material/leather

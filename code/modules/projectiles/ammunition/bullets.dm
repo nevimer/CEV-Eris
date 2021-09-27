@@ -230,8 +230,8 @@
 //// .60 ////
 
 /obj/item/ammo_casing/antim
-	name = "\"Penetrator\" shell casing"
-	desc = "A .60 Anti-Material \"Penetrator\" shell."
+	name = "shell casing"
+	desc = "A .60 Anti-Material shell."
 	icon_state = "atmr"
 	spent_icon = "atmr-spent"
 	caliber = CAL_ANTIM
@@ -244,36 +244,6 @@
 	sprite_scale = 0.5
 
 /obj/item/ammo_casing/antim/prespawned
-	amount = 5
-
-/obj/item/ammo_casing/antim/emp
-	name = "\"Blackout\" shell casing"
-	desc = "A .60 Anti-Material \"Blackout\" shell."
-	icon_state = "atmr-emp"
-	spent_icon = "atmr-emp-spent"
-	projectile_type = /obj/item/projectile/bullet/antim/emp
-
-/obj/item/ammo_casing/antim/emp/prespawned
-	amount = 5
-
-/obj/item/ammo_casing/antim/uranium
-	name = "\"Meltdown\" shell casing"
-	desc = "A .60 Anti-Material \"Meltdown\" shell."
-	icon_state = "atmr-DU"
-	spent_icon = "atmr-DU-spent"
-	projectile_type = /obj/item/projectile/bullet/antim/uranium
-
-/obj/item/ammo_casing/antim/uranium/prespawned
-	amount = 5
-
-/obj/item/ammo_casing/antim/breach
-	name = "\"Breacher\" shell casing"
-	desc = "A .60 Anti-Material \"Breacher\" shell."
-	icon_state = "atmr-HE"
-	spent_icon = "atmr-HE-spent"
-	projectile_type = /obj/item/projectile/bullet/antim/breach
-
-/obj/item/ammo_casing/antim/breach/prespawned
 	amount = 5
 
 /obj/item/ammo_casing/antim/scrap
@@ -401,7 +371,7 @@
 	icon_state = "s-shell_i"
 	spent_icon = "s-shell_i-spent"
 	projectile_type = /obj/item/projectile/bullet/shotgun/incendiary
-	matter = list(MATERIAL_STEEL = 1, MATERIAL_PLASMA = 0.5)
+	matter = list(MATERIAL_STEEL = 1, MATERIAL_PHORON = 0.5)
 
 /obj/item/ammo_casing/shotgun/incendiary/prespawned
 	amount = 5
@@ -464,17 +434,3 @@
 	caliber = CAL_CAP
 	color = "#FF0000"
 	projectile_type = /obj/item/projectile/bullet/cap
-
-/obj/item/ammo_casing/flare
-	name = "flare shell"
-	desc = "A chemical flare shell designed to produce a distress signal or illuminate an area."
-	caliber = CAL_FLARE
-	icon_state = "f-shell"
-	spent_icon = "f-shell-spent"
-	projectile_type = /obj/item/projectile/bullet/flare
-	matter = list(MATERIAL_PLASTIC = 1)
-	matter_reagents = list("phosphorus" = 3)
-	rarity_value = 8
-
-/obj/item/ammo_casing/flare
-	amount = 3

@@ -20,19 +20,25 @@
 	if(stats.getPerk(PERK_FAST_WALKER))
 		tally -= 0.5
 
-	var/obj/item/implant/core_implant/cruciform/C = get_core_implant(/obj/item/implant/core_implant/cruciform)
+	var/obj/item/weapon/implant/core_implant/cruciform/C = get_core_implant(/obj/item/weapon/implant/core_implant/cruciform)
 	if(C && C.active)
-		var/obj/item/cruciform_upgrade/upgrade = C.upgrade
+		var/obj/item/weapon/cruciform_upgrade/upgrade = C.upgrade
 		if(upgrade && upgrade.active && istype(upgrade, CUPGRADE_SPEED_OF_THE_CHOSEN))
-			var/obj/item/cruciform_upgrade/speed_of_the_chosen/sotc = upgrade
+			var/obj/item/weapon/cruciform_upgrade/speed_of_the_chosen/sotc = upgrade
 			tally -= sotc.speed_increase
 
+	var/health_deficiency = (maxHealth - health)
 	var/hunger_deficiency = (MOB_BASE_MAX_HUNGER - nutrition)
 	if(hunger_deficiency >= 200) tally += (hunger_deficiency / 100) //If youre starving, movement slowdown can be anything up to 4.
+	if(health_deficiency >= 40) tally += (health_deficiency / 25)
 
 	if(istype(buckled, /obj/structure/bed/chair/wheelchair))
-		//Not porting bay's silly organ checking code here
-		tally += 1 //Small slowdown so wheelchairs aren't turbospeed
+		for(var/organ_name in list(BP_L_HAND, BP_R_HAND, BP_L_ARM, BP_R_ARM))
+			var/obj/item/organ/external/E = get_organ(organ_name)
+			if(!E)
+				tally += 4
+			else
+				tally += E.get_tally()
 	else
 		if(wear_suit)
 			tally += wear_suit.slowdown
@@ -47,8 +53,6 @@
 
 	if(slowdown)
 		tally += 1
-	
-	tally += (r_hand?.slowdown_hold + l_hand?.slowdown_hold)
 
 	return tally
 
@@ -58,7 +62,7 @@
 	if(restrained())	return 0
 
 	//Do we have a working jetpack?
-	var/obj/item/tank/jetpack/thrust = get_jetpack()
+	var/obj/item/weapon/tank/jetpack/thrust = get_jetpack()
 
 	if(thrust)
 		if(thrust.allow_thrust(JETPACK_MOVE_COST, src))

@@ -21,19 +21,19 @@
 	path = /obj/item/clothing/head/beret/purple
 
 /datum/gear/head/beret/bsec
-	display_name = "beret, navy"
+	display_name = "beret, navy (officer)"
 	path = /obj/item/clothing/head/beret/sec/navy/officer
-	allowed_roles = list("Ironhammer Operative","Ironhammer Commander","Gunnery Sergeant","Ironhammer Medical Specialist")
+	allowed_roles = list("Aegis Operative","Aegis Commander","Aegis Gunnery Sergeant")
 
 /datum/gear/head/beret/bsec_warden
 	display_name = "beret, navy (warden)"
 	path = /obj/item/clothing/head/beret/sec/navy/warden
-	allowed_roles = list("Ironhammer Commander","Gunnery Sergeant")
+	allowed_roles = list("Aegis Commander","Aegis Gunnery Sergeant")
 
 /datum/gear/head/beret/bsec_hos
 	display_name = "beret, navy (hos)"
 	path = /obj/item/clothing/head/beret/sec/navy/hos
-	allowed_roles = list("Ironhammer Commander")
+	allowed_roles = list("Aegis Commander")
 
 /datum/gear/head/beret/eng
 	display_name = "beret, engie-orange"
@@ -52,7 +52,7 @@
 /datum/gear/head/cap/corp
 	display_name = "cap, corporate (Security)"
 	path = /obj/item/clothing/head/soft/sec/corp
-	allowed_roles = list("Ironhammer Operative","Ironhammer Commander","Gunnery Sergeant", "Inspector")
+	allowed_roles = list("Aegis Operative","Aegis Commander","Aegis Gunnery Sergeant", "Inspector")
 
 /datum/gear/head/cap/rainbow
 	display_name = "cap, rainbow"
@@ -127,14 +127,14 @@
 	path = /obj/item/clothing/head/ushanka
 
 /datum/gear/head/cap/secfield
-	display_name = "cap, IH field"
+	display_name = "cap, Aegis field"
 	path = /obj/item/clothing/head/soft/sec2soft
-	allowed_roles = list("Ironhammer Operative","Ironhammer Commander","Ironhammer Gunnery Sergeant", "Inspector")
+	allowed_roles = list("Aegis Operative","Aegis Commander","Aegis Gunnery Sergeant", "Inspector")
 
 /datum/gear/head/cap/sarge
-	display_name = "cap, IH sergeant"
+	display_name = "cap, Aegis sergeant"
 	path = /obj/item/clothing/head/soft/sarge2soft
-	allowed_roles = list("Ironhammer Commander","Ironhammer Gunnery Sergeant")
+	allowed_roles = list("Aegis Commander","Aegis Gunnery Sergeant")
 
 /datum/gear/head/cyberpunkgoggle
 	display_name = "Type-34C Semi-Enclosed Headwear"

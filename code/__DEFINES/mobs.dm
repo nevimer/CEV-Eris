@@ -16,6 +16,7 @@
 #define GODMODE     0x1000
 #define FAKEDEATH   0x2000  // Replaces stuff like carrion.carrion_fakedeath.
 #define DISFIGURED  0x4000  // Set but never checked. Remove this sometime and replace occurences with the appropriate organ code
+#define XENO_HOST   0x8000  // Tracks whether we're gonna be a baby alien's mummy.
 
 // Grab levels.
 #define GRAB_PASSIVE    1
@@ -53,12 +54,6 @@
 #define I_DISARM	"disarm"
 #define I_GRAB		"grab"
 #define I_HURT		"harm"
-
-//Used in mob/proc/get_input
-
-#define MOB_INPUT_TEXT "text"
-#define MOB_INPUT_MESSAGE "message"
-#define MOB_INPUT_NUM "num"
 
 //These are used Bump() code for living mobs, in the mob_bump_flag, mob_swap_flags, and mob_push_flags vars to determine whom can bump/swap with whom.
 #define HUMAN 1
@@ -155,8 +150,8 @@
 #define ANIMAL	"animal"//Used for mice and any other simple animals
 #define MINISYNTH	"minisynth"//Used for drones and pAIs
 
-#define ANIMAL_SPAWN_DELAY 5 MINUTES
-#define DRONE_SPAWN_DELAY  10 MINUTES
+#define ANIMAL_SPAWN_DELAY 2 MINUTES
+#define DRONE_SPAWN_DELAY  3 MINUTES
 
 #define CRYOPOD_SPAWN_BONUS	20 MINUTES//Going to sleep in a cryopod takes this much off your respawn time in minutes
 #define CRYOPOD_SPAWN_BONUS_DESC	"20 minutes"	//Tells players how long they have until respawn.
@@ -203,11 +198,44 @@
 
 #define HEAT_MOBIGNITE_THRESHOLD 530 //minimum amount of heat an object needs to ignite a mob when it hits the mob
 
-#define SPECIES_HUMAN       "Human"
-
 #define RANDOM_BLOOD_TYPE pick(4;"O-", 36;"O+", 3;"A-", 28;"A+", 1;"B-", 20;"B+", 1;"AB-", 5;"AB+")
 
 #define NECROZTIME 	(5 MINUTES)
+
+// 'Regular' species.
+#define SPECIES_HUMAN			"Human"
+#define SPECIES_HUMAN_VATBORN	"Vatborn"
+#define SPECIES_UNATHI			"Unathi"
+#define SPECIES_SKRELL			"Skrell"
+#define SPECIES_TESHARI			"Teshari"
+#define SPECIES_TAJ				"Tajara"
+#define SPECIES_PROMETHEAN		"Promethean"
+#define SPECIES_DIONA			"Diona"
+#define SPECIES_VOX				"Vox"
+#define SPECIES_CARNIFEX		"Carnifex"
+
+// Monkey and alien monkeys.
+#define SPECIES_MONKEY			"Monkey"
+#define SPECIES_MONKEY_TAJ		"Farwa"
+#define SPECIES_MONKEY_SKRELL	"Neaera"
+#define SPECIES_MONKEY_UNATHI	"Stok"
+
+//species defines
+#define SPECIES_AKULA			"Akula"
+#define SPECIES_ALRAUNE			"Alraune"
+#define SPECIES_NEVREAN			"Nevrean"
+#define SPECIES_PROTEAN			"Protean"
+#define SPECIES_RAPALA			"Rapala"
+#define SPECIES_SERGAL			"Sergal"
+#define SPECIES_VASILISSAN		"Vasilissan"
+#define SPECIES_VULPKANIN		"Vulpkanin"
+#define SPECIES_XENOCHIMERA		"Xenochimera"
+#define SPECIES_XENOHYBRID		"Xenomorph Hybrid"
+#define SPECIES_ZORREN_FLAT		"Flatland Zorren"
+#define SPECIES_ZORREN_HIGH		"Zorren" //Occulus Edit - Removing Flatlander Zorren, making Highlander the default sprite.
+#define SPECIES_CUSTOM			"Custom Species"
+#define SPECIES_PHORONMAN		"Phoronoid"
+#define SPECIES_MOTH			"Mothperson"
 
 
 

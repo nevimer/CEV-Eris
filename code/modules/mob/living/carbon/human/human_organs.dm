@@ -5,8 +5,8 @@
 		regenerate_icons()
 
 /mob/living/carbon/var/list/internal_organs = list()
-/mob/living/carbon/human/var/list/organs = list()
-/mob/living/carbon/human/var/list/organs_by_name = list() // map organ names to organs
+/mob/living/carbon/human/var/list/obj/item/organ/organs = list()	//OCCULUS EDIT - Type annotation for our wonky body markings
+/mob/living/carbon/human/var/list/obj/item/organ/external/organs_by_name = list() // map organ names to organs	//OCCULUS EDIT - Type annotation for our wonky body markings
 /mob/living/carbon/human/var/list/internal_organs_by_efficiency = list()
 
 // Takes care of organ related updates, such as broken and missing limbs
@@ -83,9 +83,9 @@
 	// One cane fully mitigates a broken leg.
 	// Two canes are needed for a lost leg. If you are missing both legs, canes aren't gonna help you.
 	if(stance_damage > 0 && stance_damage < 8)
-		if (l_hand && istype(l_hand, /obj/item/tool/cane))
+		if (l_hand && istype(l_hand, /obj/item/weapon/cane))
 			stance_damage -= 3
-		if (r_hand && istype(r_hand, /obj/item/tool/cane))
+		if (r_hand && istype(r_hand, /obj/item/weapon/cane))
 			stance_damage -= 3
 		stance_damage = max(stance_damage, 0)
 
@@ -103,7 +103,7 @@
 
 	// You should not be able to pick anything up, but stranger things have happened.
 	if(l_hand)
-		for(var/limb_tag in list(BP_L_ARM))
+		for(var/limb_tag in list(BP_L_HAND, BP_L_ARM))
 			var/obj/item/organ/external/E = get_organ(limb_tag)
 			if(!E)
 				visible_message(SPAN_DANGER("Lacking a functioning left hand, \the [src] drops \the [l_hand]."))
@@ -111,7 +111,7 @@
 				break
 
 	if(r_hand)
-		for(var/limb_tag in list(BP_R_ARM))
+		for(var/limb_tag in list(BP_R_HAND, BP_R_ARM))
 			var/obj/item/organ/external/E = get_organ(limb_tag)
 			if(!E)
 				visible_message(SPAN_DANGER("Lacking a functioning right hand, \the [src] drops \the [r_hand]."))
@@ -128,11 +128,11 @@
 
 		if(E.is_broken() || E.is_dislocated() || E.limb_efficiency <= 50)
 			switch(E.body_part)
-				if(ARM_LEFT)
+				if(HAND_LEFT, ARM_LEFT)
 					if(!l_hand)
 						continue
 					drop_from_inventory(l_hand)
-				if(ARM_RIGHT)
+				if(HAND_RIGHT, ARM_RIGHT)
 					if(!r_hand)
 						continue
 					drop_from_inventory(r_hand)
@@ -147,11 +147,11 @@
 
 		else if(E.is_malfunctioning())
 			switch(E.body_part)
-				if(ARM_LEFT)
+				if(HAND_LEFT, ARM_LEFT)
 					if(!l_hand)
 						continue
 					drop_from_inventory(l_hand)
-				if(ARM_RIGHT)
+				if(HAND_RIGHT, ARM_RIGHT)
 					if(!r_hand)
 						continue
 					drop_from_inventory(r_hand)

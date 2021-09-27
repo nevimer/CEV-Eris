@@ -110,18 +110,18 @@
 
 /obj/machinery/bodyscanner/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(1.0)
 			for(var/atom/movable/A in src)
 				A.forceMove(loc)
 				A.ex_act(severity)
 			qdel(src)
-		if(2)
+		if(2.0)
 			if (prob(50))
 				for(var/atom/movable/A in src)
 					A.forceMove(loc)
 					A.ex_act(severity)
 				qdel(src)
-		if(3)
+		if(3.0)
 			if (prob(25))
 				for(var/atom/movable/A in src)
 					A.forceMove(loc)
@@ -130,10 +130,10 @@
 
 /obj/machinery/body_scanconsole/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(1.0)
 			qdel(src)
 			return
-		if(2)
+		if(2.0)
 			if (prob(50))
 				qdel(src)
 				return
@@ -145,11 +145,12 @@
 /obj/machinery/body_scanconsole
 	var/obj/machinery/bodyscanner/connected
 	var/known_implants = list(
-		/obj/item/implant/chem,
-		/obj/item/implant/death_alarm,
-		/obj/item/implant/tracking,
-		/obj/item/implant/core_implant/cruciform,
-		/obj/item/implant/excelsior
+		/obj/item/weapon/implant/chem,
+		/obj/item/weapon/implant/death_alarm,
+		/obj/item/weapon/implant/tracking,
+		/obj/item/weapon/implant/core_implant/cruciform,
+		/obj/item/weapon/implant/excelsior,
+		/obj/item/weapon/implant/core_implant/soulcrypt		//SYZYGY EDIT - Makes soulcrypts show up properly on scanners
 	)
 	var/delete
 	var/temphtml
@@ -212,7 +213,7 @@
 		if (!ishuman(occupant))
 			to_chat(usr, "\icon[src]<span class='warning'>The body scanner cannot scan that lifeform.</span>")
 			return
-		var/obj/item/paper/R = new(src.loc)
+		var/obj/item/weapon/paper/R = new(src.loc)
 		R.name = "[occupant.get_visible_name()] scan report"
 		R.info = format_occupant_data(src.connected.get_occupant_data())
 		R.update_icon()
@@ -248,9 +249,7 @@
 		"lung_ruptured" = H.is_lung_ruptured(),
 		"external_organs" = H.organs.Copy(),
 		"internal_organs" = H.internal_organs.Copy(),
-		"species_organs" = H.species.has_process, //Just pass a reference for this, it shouldn't ever be modified outside of the datum.
-		"NSA" = max(0, H.metabolism_effects.get_nsa()),
-		"NSA_threshold" = H.metabolism_effects.nsa_threshold
+		"species_organs" = H.species.has_process //Just pass a reference for this, it shouldn't ever be modified outside of the datum.
 		)
 	return occupant_data
 
@@ -278,7 +277,6 @@
 	dat += text("[]\tRadiation Level %: []</font><br>", ("<font color='[occ["rads"] < 10  ? "blue" : "red"]'>"), occ["rads"])
 	dat += text("[]\tGenetic Tissue Damage %: []</font><br>", ("<font color='[occ["cloneloss"] < 1  ? "blue" : "red"]'>"), occ["cloneloss"])
 	dat += text("[]\tApprox. Brain Damage %: []</font><br>", ("<font color='[occ["brainloss"] < 1  ? "blue" : "red"]'>"), occ["brainloss"])
-	dat += text("[]\tNeural System Accumulation: []/[]</font><br>", ("<font color='[occ["NSA"] < occ["NSA_threshold"]  ? "blue" : "red"]'>"), occ["NSA"], occ["NSA_threshold"])
 	dat += text("Paralysis Summary %: [] ([] seconds left!)<br>", occ["paralysis"], round(occ["paralysis"] / 4))
 	dat += text("Body Temperature: [occ["bodytemp"]-T0C]&deg;C ([occ["bodytemp"]*1.8-459.67]&deg;F)<br><HR>")
 
@@ -306,20 +304,20 @@
 		var/significant = FALSE
 
 		for(var/obj/item/organ/internal/I in e.internal_organs) // I put this before the actual external organ
-			if(I.scanner_hidden) // so that I could set significant based on internal organ results.
-				continue
-	
+			//if(I.scanner_hidden) // so that I could set significant based on internal organ results. // OCCULUS NOTE: We need #5795 for this
+				//continue
+
 			var/list/internal_wounds = list()
 			if(BP_IS_ASSISTED(I))
 				internal_wounds += "Assisted"
 			if(BP_IS_ROBOTIC(I))
 				internal_wounds += "Prosthetic"
-	
+
 			var/obj/item/organ/internal/bone/B = I
 			if(istype(B))
 				if(B.parent.status & ORGAN_BROKEN)
 					internal_wounds += "[B.broken_description]"
-	
+
 			switch (I.germ_level)
 				if (0 to INFECTION_LEVEL_ONE - 1) //in the case of no infection, do nothing.
 				if (1 to INFECTION_LEVEL_ONE + 200)
@@ -380,7 +378,7 @@
 			var/unknown_body = FALSE
 			for(var/I in e.implants)
 				if(is_type_in_list(I,known_implants))
-					var/obj/item/implant/device = I
+					var/obj/item/weapon/implant/device = I
 					other_wounds += "[device.get_scanner_name()] implanted"
 				else
 					unknown_body = TRUE

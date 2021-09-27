@@ -1,3 +1,11 @@
+// fun if you want to typecast humans/monkeys/etc without writing long path-filled lines.
+/*
+/proc/isxenomorph(A)
+	if(ishuman(A))
+		var/mob/living/carbon/human/H = A
+		return istype(H.species, /datum/species/xenos)
+	return 0
+*/
 /proc/issmall(A)
 	if(A && isliving(A))
 		var/mob/living/L = A
@@ -29,24 +37,24 @@ proc/isdeaf(A)
 		return (M.sdisabilities & DEAF) || M.ear_deaf
 	return 0
 
-/proc/hasorgans(A) // Fucking really??
+proc/hasorgans(A) // Fucking really??
 	return ishuman(A)
 
-/proc/iscuffed(A)
+proc/iscuffed(A)
 	if(iscarbon(A))
 		var/mob/living/carbon/C = A
 		if(C.handcuffed)
 			return 1
 	return 0
 
-/proc/hassensorlevel(A, var/level)
+proc/hassensorlevel(A, var/level)
 	var/mob/living/carbon/human/H = A
 	if(istype(H) && istype(H.w_uniform, /obj/item/clothing/under))
 		var/obj/item/clothing/under/U = H.w_uniform
 		return U.sensor_mode >= level
 	return 0
 
-/proc/getsensorlevel(A)
+proc/getsensorlevel(A)
 	var/mob/living/carbon/human/H = A
 	if(istype(H) && istype(H.w_uniform, /obj/item/clothing/under))
 		var/obj/item/clothing/under/U = H.w_uniform
@@ -75,8 +83,12 @@ var/list/global/base_miss_chance = list(
 	BP_L_LEG  = 20,
 	BP_R_LEG = 20,
 	BP_L_ARM = 20,
-	BP_R_ARM = 20
-	)
+	BP_R_ARM = 20,
+	BP_L_HAND = 50,
+	BP_R_HAND = 50,
+	BP_L_FOOT = 50,
+	BP_R_FOOT = 50,
+)
 
 //Used to weight organs when an organ is hit randomly (i.e. not a directed, aimed attack).
 //Also used to weight the protection value that armour provides for covering that body part when calculating protection from full-body effects.
@@ -87,7 +99,11 @@ var/list/global/organ_rel_size = list(
 	BP_L_LEG  = 25,
 	BP_R_LEG = 25,
 	BP_L_ARM = 25,
-	BP_R_ARM = 25
+	BP_R_ARM = 25,
+	BP_L_HAND = 10,
+	BP_R_HAND = 10,
+	BP_L_FOOT = 10,
+	BP_R_FOOT = 10,
 )
 
 /proc/check_zone(zone)
@@ -118,6 +134,10 @@ var/list/global/organ_rel_size = list(
 			organ_rel_size[BP_R_ARM]; BP_R_ARM,
 			organ_rel_size[BP_L_LEG ]; BP_L_LEG ,
 			organ_rel_size[BP_R_LEG]; BP_R_LEG,
+			organ_rel_size[BP_L_HAND]; BP_L_HAND,
+			organ_rel_size[BP_R_HAND]; BP_R_HAND,
+			organ_rel_size[BP_L_FOOT]; BP_L_FOOT,
+			organ_rel_size[BP_R_FOOT]; BP_R_FOOT,
 		)
 
 	return ran_zone
@@ -133,7 +153,7 @@ var/list/global/organ_rel_size = list(
 		if(target.buckled || target.lying)
 			return zone
 		// if your target is being grabbed aggressively by someone you cannot miss either
-		for(var/obj/item/grab/G in target.grabbed_by)
+		for(var/obj/item/weapon/grab/G in target.grabbed_by)
 			if(G.state >= GRAB_AGGRESSIVE)
 				return zone
 
@@ -189,7 +209,7 @@ var/list/global/organ_rel_size = list(
 	if(re_encode)
 		. = html_encode(.)
 
-/proc/slur(phrase)
+proc/slur(phrase)
 	phrase = html_decode(phrase)
 	var/leng=length(phrase)
 	var/counter=length(phrase)
@@ -234,7 +254,7 @@ var/list/global/organ_rel_size = list(
 		p++//for each letter p is increased to find where the next letter will be.
 	return sanitize(jointext(t, null))
 
-/proc/Gibberish(t, p)//t is the inputted message, and any value higher than 70 for p will cause letters to be replaced instead of added
+proc/Gibberish(t, p)//t is the inputted message, and any value higher than 70 for p will cause letters to be replaced instead of added
 	/* Turn text into complete gibberish! */
 	var/returntext = ""
 	for(var/i = 1, i <= length(t), i++)
@@ -499,27 +519,27 @@ proc/is_blind(A)
 		return SAFE_PERP
 
 	//Agent cards lower threatlevel.
-	var/obj/item/card/id/id = GetIdCard()
-	if(id && istype(id, /obj/item/card/id/syndicate))
+	var/obj/item/weapon/card/id/id = GetIdCard()
+	if(id && istype(id, /obj/item/weapon/card/id/syndicate))
 		threatcount -= 2
 	// A proper	CentCom id is hard currency.
-	else if(id && istype(id, /obj/item/card/id/centcom))
+	else if(id && istype(id, /obj/item/weapon/card/id/centcom))
 		return SAFE_PERP
 
 	if(check_access && !access_obj.allowed(src))
 		threatcount += 4
 
 	if(auth_weapons && !access_obj.allowed(src))
-		if(isgun(l_hand) || istype(l_hand, /obj/item/melee))
+		if(istype(l_hand, /obj/item/weapon/gun) || istype(l_hand, /obj/item/weapon/melee))
 			threatcount += 4
 
-		if(isgun(r_hand) || istype(r_hand, /obj/item/melee))
+		if(istype(r_hand, /obj/item/weapon/gun) || istype(r_hand, /obj/item/weapon/melee))
 			threatcount += 4
 
-		if(isgun(belt) || istype(belt, /obj/item/melee))
+		if(istype(belt, /obj/item/weapon/gun) || istype(belt, /obj/item/weapon/melee))
 			threatcount += 2
 
-		if(species.name != SPECIES_HUMAN)
+		if(species.name != "Human")
 			threatcount += 2
 
 	if(check_records || check_arrest)
@@ -550,7 +570,7 @@ proc/is_blind(A)
 
 #undef SAFE_PERP
 
-/mob/proc/get_multitool(var/obj/item/tool/multitool/P)
+/mob/proc/get_multitool(var/obj/item/weapon/tool/multitool/P)
 	if(istype(P))
 		return P
 
@@ -620,25 +640,24 @@ proc/is_blind(A)
 			A.tumble()
 	embedded = list()
 
-/mob/proc/skill_to_evade_traps()
-	var/prob_evade = 0
-	var/base_prob_evade = 30
-	if(MOVING_DELIBERATELY(src))
-		prob_evade += base_prob_evade
+/mob/proc/skill_to_evade_traps(prob_catch)
 	if(!stats)
-		return prob_evade
-	prob_evade += base_prob_evade * (stats.getStat(STAT_VIG)/STAT_LEVEL_GODLIKE - weight_coeff())
-	if(stats.getPerk(PERK_SURE_STEP))
-		prob_evade += base_prob_evade*30/STAT_LEVEL_GODLIKE
-	if(stats.getPerk(PERK_RAT))
-		prob_evade += base_prob_evade/1.5
+		return 0
+	var/prob_evade = 0
+	if(MOVING_DELIBERATELY(src))
+		prob_evade = 25
+		prob_evade += prob_evade/stats.getMult(STAT_VIG, STAT_LEVEL_GODLIKE) - prob_evade*get_max_w_class()/ITEM_SIZE_TITANIC
+		if(stats.getPerk(PERK_SURE_STEP))
+			prob_evade += prob_evade*30/STAT_LEVEL_GODLIKE
+		if(stats.getPerk(PERK_RAT))
+			prob_evade *= 2
 	return prob_evade
 
 /mob/proc/mob_playsound(atom/source, soundin, vol as num, vary, extrarange as num, falloff, is_global, frequency, is_ambiance = 0,  ignore_walls = TRUE, zrange = 2, override_env, envdry, envwet, use_pressure = TRUE)
 	if(isliving(src))
 		var/mob/living/L = src
-		vol *= L.noise_coeff + weight_coeff()
-		extrarange *= L.noise_coeff + weight_coeff()
+		vol *= L.noise_coeff
+		extrarange *= L.noise_coeff
 	playsound(source, soundin, vol, vary, extrarange, falloff, is_global, frequency, is_ambiance,  ignore_walls, zrange, override_env, envdry, envwet, use_pressure)
 
 /mob/proc/weight_coeff()

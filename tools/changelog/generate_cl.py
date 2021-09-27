@@ -1,18 +1,14 @@
 """
 DO NOT MANUALLY RUN THIS SCRIPT.
 ---------------------------------
-
 This script is designed to generate and push a CL file that can be later compiled.
 The body of the changelog is determined by the description of the PR that was merged.
-
 If a commit is pushed without being associated with a PR, or if a PR is missing a CL,
 the script is designed to exit as a failure. This is to help keep track of PRs without
 CLs and direct commits. See the relating comments in the below source to disable this function.
-
 This script depends on the tags.yml file located in the same directory. You can use that
 file to configure the exact tags you'd like this script to use when generating changelog entries.
 If this is being used in a /tg/ or Bee downstream, the default tags should work.
-
 Expected envrionmental variables:
 -----------------------------------
 GIT_NAME: Username of the github account to be used as the commiter (User provided)
@@ -28,7 +24,7 @@ from pathlib import Path
 from ruamel import yaml
 from github import Github, InputGitAuthor
 
-CL_BODY = re.compile(r":cl:(.+)?\r\n((.|\n|\r)+?)\r\n\/:cl:", re.MULTILINE)
+CL_BODY = re.compile(r"```changelog(.+)?\r\n((.|\n|\r)+?)\r\n```", re.MULTILINE)
 CL_SPLIT = re.compile(r"(^\w+):\s+(\w.+)", re.MULTILINE)
 
 git_email = os.getenv("GIT_EMAIL")
@@ -60,7 +56,8 @@ try:
     cl_list = CL_SPLIT.findall(cl.group(2))
 except AttributeError:
     print("No CL found!")
-    exit(0) # Change to '0' if you do not want the action to fail when no CL is provided
+
+    exit(0)
 
 
 if cl.group(1) is not None:

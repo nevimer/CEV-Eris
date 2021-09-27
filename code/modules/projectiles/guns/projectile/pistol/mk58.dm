@@ -1,4 +1,4 @@
-/obj/item/gun/projectile/mk58
+/obj/item/weapon/gun/projectile/mk58
 	name = "NT HG .35 Auto \"Mk58\""
 	desc = "The NT Mk58 is a cheap, ubiquitous sidearm, that was produced by a NanoTrasen subsidiary. Uses standard .35 and high capacity magazines."
 	icon = 'icons/obj/guns/projectile/mk58.dmi'
@@ -6,9 +6,9 @@
 	item_state = "pistol"
 	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2)
 	matter = list(MATERIAL_PLASTEEL = 12, MATERIAL_PLASTIC = 6)
-	price_tag = 600
+	price_tag = 1400
 	fire_sound = 'sound/weapons/guns/fire/pistol_fire.ogg'
-	can_dual = TRUE
+	can_dual = 1
 	caliber = CAL_PISTOL
 	load_method = MAGAZINE
 	mag_well = MAG_WELL_PISTOL|MAG_WELL_H_PISTOL
@@ -16,8 +16,10 @@
 	damage_multiplier = 1.3
 	penetration_multiplier = 1.3
 	recoil_buildup = 3
+	rarity_value = 9.6
 
-/obj/item/gun/projectile/mk58/on_update_icon()
+
+/obj/item/weapon/gun/projectile/mk58/on_update_icon()
 	..()
 
 	if(!ammo_magazine)
@@ -28,9 +30,11 @@
 		icon_state = initial(icon_state) + "_full"
 
 
-/obj/item/gun/projectile/mk58/wood
+
+/obj/item/weapon/gun/projectile/mk58/wood
 	name = "NT HG .35 Auto \"Mk58-C\""
 	desc = "The NT Mk58 is a cheap, ubiquitous sidearm, produced by a NanoTrasen subsidiary. This one has a sweet wooden grip. Uses standard .35 Auto mags."
 	icon_state = "mk58_wood"
 	matter = list(MATERIAL_PLASTEEL = 12, MATERIAL_WOOD = 6)
-	price_tag = 650
+	price_tag = 1500
+	rarity_value = 24

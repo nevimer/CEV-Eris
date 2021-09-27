@@ -8,7 +8,7 @@
 	idle_power_usage = 10
 	active_power_usage = 2000
 
-	circuit = /obj/item/electronics/circuitboard/smelter
+	circuit = /obj/item/weapon/electronics/circuitboard/smelter
 
 	// base smelting speed - based on levels of manipulators
 	var/speed = 10
@@ -107,7 +107,6 @@
 
 /obj/machinery/smelter/proc/smelt_item(obj/smelting)
 	var/list/materials = result_materials(smelting)
-
 	if(materials)
 		if(!are_valid_materials(materials))
 			eject(smelting, refuse_output_side)
@@ -128,6 +127,20 @@
 	for(var/obj/O in smelting.contents)
 		smelt_item(O)
 
+	//Occulus Edit Start: Smelting Mobs
+	for(var/mob/smeltingmob in smelting.contents)
+		for(var/obj/item/W in smeltingmob)
+			if(W.is_equipped())
+				smeltingmob.drop_from_inventory(W)
+				smelt_item(W)
+		to_chat(smeltingmob, SPAN_DANGER("You feel a horrific crunch and a burning sensation as the blades and lasers in [src] tear apart your flesh!"))
+		eject(smeltingmob, refuse_output_side)
+		smeltingmob.take_overall_damage(80,0,used_weapon = "tiny blades")
+		smeltingmob.take_overall_damage(0,20,used_weapon = "micro-laser burns")
+		for(var/obj/item/organ/external/smeltingorgan in smeltingmob.contents)
+			if(BP_IS_ROBOTIC(smeltingorgan))
+				smeltingorgan.droplimb(TRUE, DROPLIMB_EDGE)
+	//Occulus Edit End
 	qdel(smelting)
 
 /obj/machinery/smelter/proc/smelt_scrap(obj/smelting)
@@ -154,8 +167,22 @@
 
 	for(var/obj/O in smelting.contents)
 		smelt_scrap(O)
-
+	//Occulus Edit Start: Smelting Mobs
+	for(var/mob/smeltingmob in smelting.contents)
+		for(var/obj/item/W in smeltingmob)
+			if(W.is_equipped())
+				smeltingmob.drop_from_inventory(W)
+				smelt_item(W)
+		to_chat(smeltingmob, SPAN_DANGER("You feel a horrific crunch and a burning sensation as the blades and lasers in [src] tear apart your flesh!"))
+		eject(smeltingmob, refuse_output_side)
+		smeltingmob.take_overall_damage(80,0,used_weapon = "tiny blades")
+		smeltingmob.take_overall_damage(0,20,used_weapon = "micro-laser burns")
+		for(var/obj/item/organ/external/smeltingorgan in smeltingmob.contents)
+			if(BP_IS_ROBOTIC(smeltingorgan))
+				smeltingorgan.droplimb(TRUE, DROPLIMB_EDGE)
+	//Occulus Edit End
 	qdel(smelting)
+
 
 /obj/machinery/smelter/proc/are_valid_materials(list/materials)
 	for(var/material in forbidden_materials)
@@ -165,8 +192,8 @@
 
 
 /obj/machinery/smelter/proc/result_materials(obj/O)
-	if(istype(O, /obj/item/ore))
-		var/obj/item/ore/ore = O
+	if(istype(O, /obj/item/weapon/ore))
+		var/obj/item/weapon/ore/ore = O
 		var/ore/data = ore_data[ore.material]
 		if(data.smelts_to)
 			return list(data.smelts_to = 1)
@@ -179,10 +206,10 @@
 	if(istype(smelting, /obj/item/stack))
 		return 30
 
-	if(istype(smelting, /obj/item/ore))
+	if(istype(smelting, /obj/item/weapon/ore))
 		return 20
 
-	if(istype(smelting, /obj/item/material/shard))
+	if(istype(smelting, /obj/item/weapon/material/shard))
 		return 20
 
 	// Just one material - makes smelting easier
@@ -229,7 +256,7 @@
 
 	var/manipulator_rating = 0
 	var/manipulator_count = 0
-	for(var/obj/item/stock_parts/manipulator/M in component_parts)
+	for(var/obj/item/weapon/stock_parts/manipulator/M in component_parts)
 		manipulator_rating += M.rating
 		++manipulator_count
 
@@ -237,15 +264,15 @@
 
 	var/ml_rating = 0
 	var/ml_count = 0
-	for(var/obj/item/stock_parts/micro_laser/ML in component_parts)
+	for(var/obj/item/weapon/stock_parts/micro_laser/ML in component_parts)
 		ml_rating += ML.rating
 		++ml_count
 
-	scrap_multiplier = initial(scrap_multiplier)+(((ml_rating/ml_count)-1)*0.05)
+	scrap_multiplier = initial(scrap_multiplier)+(((ml_rating/ml_count)-1)*0.15)//SYZYGY Edit - Boosts smelter to 25/40/55/70/85/100% effeciency based on the laser. Max reachable tier is 55% in normal play.
 
 	var/mb_rating = 0
 	var/mb_count = 0
-	for(var/obj/item/stock_parts/matter_bin/MB in component_parts)
+	for(var/obj/item/weapon/stock_parts/matter_bin/MB in component_parts)
 		mb_rating += MB.rating
 		++mb_count
 	storage_capacity = round(initial(storage_capacity)*(mb_rating/mb_count))

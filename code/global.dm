@@ -1,8 +1,16 @@
+//#define TESTING
+#if DM_VERSION < 506
+#warn This compiler is out of date. You may experience issues with projectile animations.
+#endif
+
 // Items that ask to be called every cycle.
 var/global/datum/datacore/data_core
 var/global/datum/DB_search/db_search = new()
 var/global/list/all_areas                = list()
 var/global/list/ship_areas               = list()
+
+
+var/global/list/ships 	= list() // List of ships in the game.
 
 //var/global/list/machines                 = list()		//Removed
 //var/global/list/processing_objects       = list()		//Removed
@@ -10,7 +18,6 @@ var/global/list/ship_areas               = list()
 var/global/list/active_diseases          = list()
 var/global/list/med_hud_users            = list() // List of all entities using a medical HUD.
 var/global/list/sec_hud_users            = list() // List of all entities using a security HUD.
-var/global/list/excel_hud_users          = list() // List of all entities using an excelsior HUD.
 var/global/list/hud_icon_reference       = list()
 
 
@@ -23,19 +30,19 @@ var/list/hit_appends = list("-OOF", "-ACK", "-UGH", "-HRNK", "-HURGH", "-GLORF")
 
 
 var/runtime_diary
-var/diary
+var/diary              
 var/world_qdel_log
-var/href_logfile
-var/station_name        = "CEV Eris"
-var/station_short       = "Eris"
+var/href_logfile       
+var/station_name        = "CEV Northern Light" //Occulus edits
+var/station_short       = "Northern Light"
 var/const/dock_name     = "N.A.S. Crescent"
-var/const/boss_name     = "Central Command"
-var/const/boss_short    = "Centcom"
-var/const/company_name  = "CEV Eris"
-var/const/company_short = "Eris"
+var/const/boss_name     = "NL Command Board"
+var/const/boss_short    = "The Board"
+var/const/company_name  = "Northern Light"
+var/const/company_short = "Northern Light" //Occulus Edits end here
 var/game_version        = "Discordia"
 var/changelog_hash      = ""
-var/game_year           = (text2num(time2text(world.realtime, "YYYY")) + 544)
+var/game_year           = (text2num(time2text(world.realtime, "YYYY")) + 400)
 
 var/round_progressing = 1
 var/master_storyteller       = "shitgenerator"

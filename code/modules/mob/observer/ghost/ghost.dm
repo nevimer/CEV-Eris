@@ -7,7 +7,7 @@ var/global/list/image/ghost_sightless_images = list() //this is a list of images
 	icon = 'icons/mob/mob.dmi'
 	icon_state = "ghost"
 	canmove = 0
-	blinded = FALSE
+	blinded = 0
 	anchored = TRUE	//  don't get pushed around
 	layer = GHOST_LAYER
 	movement_handlers = list(/datum/movement_handler/mob/incorporeal)
@@ -28,7 +28,7 @@ var/global/list/image/ghost_sightless_images = list() //this is a list of images
 	var/ghostvision = 1 //is the ghost able to see things humans can't?
 	var/seedarkness = 1
 
-	var/obj/item/tool/multitool/ghost_multitool
+	var/obj/item/weapon/tool/multitool/ghost_multitool
 	incorporeal_move = 1
 
 /mob/observer/ghost/New(mob/body)
@@ -88,7 +88,7 @@ var/global/list/image/ghost_sightless_images = list() //this is a list of images
 
 /mob/observer/ghost/Topic(href, href_list)
 	if (href_list["track"])
-		if(ismob(href_list["track"]))
+		if(istype(href_list["track"],/mob))
 			var/mob/target = locate(href_list["track"]) in SSmobs.mob_list
 			if(target)
 				ManualFollow(target)
@@ -138,7 +138,7 @@ Works together with spawning an observer, noted above.
 	return 1
 
 /mob/proc/ghostize(var/can_reenter_corpse = 1)
-	if(key)
+	if(key && client)
 		var/mob/observer/ghost/ghost = new(src)	//Transfer safety to observer spawning proc.
 		ghost.can_reenter_corpse = can_reenter_corpse
 		ghost.timeofdeath = src.stat == DEAD ? src.timeofdeath : world.time
@@ -167,7 +167,7 @@ Works together with spawning an observer, noted above.
 		if(ghost.client && !ghost.client.holder && !config.antag_hud_allowed)		// For new ghosts we remove the verb from even showing up if it's not allowed.
 			ghost.verbs -= /mob/observer/ghost/verb/toggle_antagHUD	// Poor guys, don't know what they are missing!
 
-		ghost.client?.create_UI(ghost.type)
+		ghost.client.create_UI(ghost.type)
 
 		return ghost
 
@@ -434,8 +434,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 
 
 	if(!MayRespawn(1, ANIMAL))
-		if(!check_rights(0, 0) || alert("Normal players must wait at least [ANIMAL_SPAWN_DELAY / 600] minutes to spawn as mouse! Would you like to bypass it?","Warning", "No", "Yes") != "Yes")
-			return
+		return
 
 	var/turf/T = get_turf(src)
 	if(!T || !(T.z in GLOB.maps_data.station_levels))

@@ -48,7 +48,7 @@
 /turf/simulated/wall/levelupdate()
 	for(var/obj/O in src)
 		O.hide(TRUE)
-		SEND_SIGNAL(O, COMSIG_TURF_LEVELUPDATE, TRUE)
+		SEND_SIGNAL(O, CONSIG_TURF_LEVELUPDATE, TRUE)
 
 /turf/simulated/wall/New(newloc, materialtype, rmaterialtype)
 	if (!damage_overlays)
@@ -211,7 +211,7 @@
 		src.ricochet_id = 0
 	var/proj_damage = Proj.get_structure_damage()
 	if(istype(Proj,/obj/item/projectile/beam))
-		burn(500)//TODO : fucking write these two procs not only for plasma (see plasma in materials.dm:283) ~
+		burn(500)//TODO : fucking write these two procs not only for phoron (see phoron in materials.dm:283) ~
 	else if(istype(Proj,/obj/item/projectile/ion))
 		burn(500)
 
@@ -240,11 +240,7 @@
 	proj_damage = round(Proj.get_structure_damage() / 3)//Yo may replace 3 to 5-6 to make walls fucking stronk as a Poland
 
 	//cap the amount of damage, so that things like emitters can't destroy walls in one hit.
-	var/damage_taken = 0
-	if(Proj.nocap_structures)
-		damage_taken = proj_damage * 4
-	else
-		damage_taken = min(proj_damage, 100)
+	var/damage = min(proj_damage, 100)
 
 	create_bullethole(Proj)//Potentially infinite bullet holes but most walls don't last long enough for this to be a problem.
 
@@ -254,7 +250,7 @@
 		slug.matter[reinf_material ? reinf_material.name : material.name] = 0.1
 		slug.throw_at(get_turf(Proj), 0, 1)
 
-	take_damage(damage_taken)
+	take_damage(damage)
 
 /turf/simulated/wall/hitby(AM as mob|obj, var/speed=THROWFORCE_SPEED_DIVISOR)
 	..()
@@ -351,19 +347,18 @@
 
 	return ..()
 
-/turf/simulated/wall/proc/dismantle_wall(devastated, explode, no_product, mob/user)
+/turf/simulated/wall/proc/dismantle_wall(devastated, explode, no_product)
 	playsound(src, 'sound/items/Welder.ogg', 100, 1)
 	if(!no_product)
 		if(reinf_material)
 			reinf_material.place_dismantled_girder(src, reinf_material)
 		else
 			material.place_dismantled_girder(src)
-		var/obj/sheets = material.place_sheet(src, amount=3)
-		sheets.add_fingerprint(user)
+		material.place_sheet(src, amount=3)
 
 	for(var/obj/O in src.contents) //Eject contents!
-		if(istype(O,/obj/item/contraband/poster))
-			var/obj/item/contraband/poster/P = O
+		if(istype(O,/obj/item/weapon/contraband/poster))
+			var/obj/item/weapon/contraband/poster/P = O
 			P.roll_and_drop(src)
 		else
 			O.loc = src
@@ -378,11 +373,11 @@
 
 /turf/simulated/wall/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(1.0)
 			take_damage(rand(500, 800))
-		if(2)
+		if(2.0)
 			take_damage(rand(200, 500))
-		if(3)
+		if(3.0)
 			take_damage(rand(90, 250))
 		else
 	return
@@ -429,11 +424,11 @@
 	return total_radiation
 
 /turf/simulated/wall/proc/burn(temperature)
-	if(material.combustion_effect(src, temperature, 0.7))//it wont return something in any way, this proc is commented and it belongs to plasma material.(see materials.dm:283)
+	if(material.combustion_effect(src, temperature, 0.7))//it wont return something in any way, this proc is commented and it belongs to phoron material.(see materials.dm:283)
 		spawn(2)
 			new /obj/structure/girder(src)
 			src.ChangeTurf(/turf/simulated/floor)
-			for(var/turf/simulated/wall/W in RANGE_TURFS(3, src) - src)
+			for(var/turf/simulated/wall/W in trange(3, src) - src)
 				W.burn((temperature/4))
-			for(var/obj/machinery/door/airlock/plasma/D in range(3,src))
+			for(var/obj/machinery/door/airlock/phoron/D in range(3,src))
 				D.ignite(temperature/4)

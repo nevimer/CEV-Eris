@@ -108,7 +108,7 @@
 					request_log[candidate.key] = world.time //Record this request so we don't spam them repeatedly
 					usr = candidate
 					usr << 'sound/effects/magic/blind.ogg' //Play this sound to a player whenever when he's chosen to decide.
-					if(alert("Do you want to become the [temp.role_text]? Hurry up, you have 60 seconds to make choice!","Antag lottery","OH YES","No, I'm autist") == "OH YES")
+					if(alert("Do you want to become the [temp.role_text]? Hurry up, you have 60 seconds to make choice!","Antag lottery","Yes","No") == "Yes")//Occulus Edit: Removed particularily autistic wording on this prompt
 						if(!agree_time_out)
 							candidates.Add(candidate)
 			else
@@ -127,7 +127,7 @@
 	calc_target_quantity()
 	if (!target_quantity || target_quantity <= 0)
 		//Something is completely wrong, abort!
-		cancel(severity, 0)
+		cancel(severity, 0.0)
 
 	var/datum/antagonist/antag = GLOB.all_antag_types[role_id]
 
@@ -182,11 +182,11 @@
 		Roleset pool points will be refunded pro-rata for the failures")
 
 		//We will now refund part of the cost
-		var/success_percent = 0
-		if (success_quantity > 1)
+		var/success_percent = 0.0
+		if (success_quantity > 0)//Occulus Edit: If this is 1, we refund all the points if only one antag spawns. Dummies! HAHAHA I FUCKING FOUND IT.
 			success_percent = success_quantity / target_quantity
 		cancel(severity, success_percent)
-			
+
 		if ( success_quantity > 0 )
 			// At least one antag has spawned
 			return TRUE

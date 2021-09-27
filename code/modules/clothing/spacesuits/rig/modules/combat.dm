@@ -32,9 +32,9 @@
 	var/fire_distance = 10
 
 	charges = list(
-		list("flashbang",   "flashbang",   /obj/item/grenade/flashbang,  3),
-		list("smoke bomb",  "smoke bomb",  /obj/item/grenade/smokebomb,  3),
-		list("EMP grenade", "EMP grenade", /obj/item/grenade/empgrenade, 3),
+		list("flashbang",   "flashbang",   /obj/item/weapon/grenade/flashbang,  3),
+		list("smoke bomb",  "smoke bomb",  /obj/item/weapon/grenade/smokebomb,  3),
+		list("EMP grenade", "EMP grenade", /obj/item/weapon/grenade/empgrenade, 3),
 		)
 
 /obj/item/rig_module/grenade_launcher/accepts_item(var/obj/item/input_device, var/mob/living/user)
@@ -86,7 +86,7 @@
 		return 0
 
 	charge.charges--
-	var/obj/item/grenade/new_grenade = new charge.product_type(get_turf(H))
+	var/obj/item/weapon/grenade/new_grenade = new charge.product_type(get_turf(H))
 	H.visible_message(SPAN_DANGER("[H] launches \a [new_grenade]!"))
 	new_grenade.activate(H)
 	new_grenade.throw_at(target,fire_force,fire_distance)
@@ -96,8 +96,8 @@
 	desc = "A shoulder-mounted battery-powered laser cannon mount."
 	selectable = 1
 	usable = 1
-	module_cooldown = 1
-	
+	module_cooldown = 0
+
 	icon_state = "lcannon"
 
 	engage_string = "Configure"
@@ -105,8 +105,8 @@
 	interface_name = "mounted laser cannon"
 	interface_desc = "A shoulder-mounted cell-powered laser cannon."
 	rarity_value = 100
-	var/gun_type = /obj/item/gun/energy/lasercannon/mounted
-	var/obj/item/gun/gun
+	var/gun_type = /obj/item/weapon/gun/energy/lasercannon/mounted
+	var/obj/item/weapon/gun/gun
 
 /obj/item/rig_module/mounted/New()
 	..()
@@ -134,7 +134,7 @@
 	interface_name = "mounted energy gun"
 	interface_desc = "A forearm-mounted suit-powered energy gun."
 
-	gun_type = /obj/item/gun/energy/gun/mounted
+	gun_type = /obj/item/weapon/gun/energy/gun/mounted
 	rarity_value = 50
 
 /obj/item/rig_module/mounted/taser
@@ -152,10 +152,10 @@
 	interface_name = "mounted taser"
 	interface_desc = "A shoulder-mounted cell-powered taser."
 
-	gun_type = /obj/item/gun/energy/taser/mounted
+	gun_type = /obj/item/weapon/gun/energy/taser/mounted
 	spawn_tags = SPAWN_TAG_RIG_MODULE_COMMON
 
-/obj/item/rig_module/energy_blade
+/obj/item/rig_module/mounted/energy_blade
 	name = "energy blade projector"
 	desc = "A powerful cutting beam projector."
 	icon_state = "eblade"
@@ -164,7 +164,7 @@
 	deactivate_string = "Cancel Blade"
 
 	interface_name = "spider fang blade"
-	interface_desc = "A lethal energy projector that can shape a blade projected from the hand of the wearer."
+	interface_desc = "A lethal energy projector that can shape a blade projected from the hand of the wearer or launch radioactive darts."
 
 	usable = 0
 	selectable = 1
@@ -173,17 +173,18 @@
 	active_power_cost = 10
 	passive_power_cost = 0
 	rarity_value = 100
+	gun_type = /obj/item/weapon/gun/energy/crossbow/ninja
 
-/obj/item/rig_module/energy_blade/Process()
+/obj/item/rig_module/mounted/energy_blade/Process()
 
 	if(holder && holder.wearer)
-		if(!(locate(/obj/item/melee/energy/blade) in holder.wearer))
+		if(!(locate(/obj/item/weapon/melee/energy/blade) in holder.wearer))
 			deactivate()
 			return 0
 
 	return ..()
 
-/obj/item/rig_module/energy_blade/activate()
+/obj/item/rig_module/mounted/energy_blade/activate()
 
 	..()
 
@@ -194,11 +195,11 @@
 		deactivate()
 		return
 
-	var/obj/item/melee/energy/blade/blade = new(M)
+	var/obj/item/weapon/melee/energy/blade/blade = new(M)
 	blade.creator = M
 	M.put_in_hands(blade)
 
-/obj/item/rig_module/energy_blade/deactivate()
+/obj/item/rig_module/mounted/energy_blade/deactivate()
 
 	..()
 
@@ -207,7 +208,7 @@
 	if(!M)
 		return
 
-	for(var/obj/item/melee/energy/blade/blade in M.contents)
+	for(var/obj/item/weapon/melee/energy/blade/blade in M.contents)
 		M.drop_from_inventory(blade)
 		qdel(blade)
 
@@ -224,7 +225,7 @@
 	interface_name = "death blossom launcher"
 	interface_desc = "An integrated microfactory that produces poisoned throwing stars from thin air and electricity."
 	rarity_value = 100
-	var/fabrication_type = /obj/item/material/star/ninja
+	var/fabrication_type = /obj/item/weapon/material/star/ninja
 	var/fire_force = 30
 	var/fire_distance = 10
 

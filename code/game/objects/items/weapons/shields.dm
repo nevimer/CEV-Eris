@@ -29,13 +29,17 @@
 
 	return 1
 
-/obj/item/shield
+/obj/item/weapon/shield
 	name = "shield"
 	armor = list(melee = 20, bullet = 20, energy = 20, bomb = 0, bio = 0, rad = 0)
-	var/base_block_chance = 50
+	var/base_block_chance = 35	// OCCULUS EDIT: Less block chance / hey what if we got 5% more chance -tori
 	var/slowdown_time = 1
+//OCCULUS CRUTCH FIX - REMOVE WHEN UPSTREAM PAYS ATTENTION TO THEIR RUNTIMES
+	var/list/armor_carry = list(melee = 0, bullet = 0, energy = 0, bomb = 0, bio = 0, rad = 0)
+	var/list/armor_brace = list(melee = 20, bullet = 20, energy = 20, bomb = 0, bio = 0, rad = 0)
+//OCCULUS EDIT END
 
-/obj/item/shield/handle_shield(mob/user, var/damage, atom/damage_source = null, mob/attacker = null, var/def_zone = null, var/attack_text = "the attack")
+/obj/item/weapon/shield/handle_shield(mob/user, var/damage, atom/damage_source = null, mob/attacker = null, var/def_zone = null, var/attack_text = "the attack")
 	if(user.incapacitated())
 		return 0
 
@@ -47,17 +51,17 @@
 			return 1
 	return 0
 
-/obj/item/shield/proc/get_block_chance(mob/user, var/damage, atom/damage_source = null, mob/attacker = null)
+/obj/item/weapon/shield/proc/get_block_chance(mob/user, var/damage, atom/damage_source = null, mob/attacker = null)
 	return base_block_chance
 
-/obj/item/shield/attack(mob/M, mob/user)
+/obj/item/weapon/shield/attack(mob/M, mob/user)
 	if(isliving(M))
 		var/mob/living/L = M
 		if(L.slowdown < slowdown_time * 3)
 			L.slowdown += slowdown_time
 	return ..()
 
-/obj/item/shield/riot
+/obj/item/weapon/shield/riot
 	name = "tactical shield"
 	desc = "A personal shield made of pre-preg aramid fibres designed to stop or deflect bullets and other projectiles fired at its wielder."
 	icon = 'icons/obj/weapons.dmi'
@@ -77,24 +81,23 @@
 	var/cooldown = 0 //shield bash cooldown. based on world.time
 	var/picked_by_human = FALSE
 	var/mob/living/carbon/human/picking_human
-	var/initial_armor
 
-/obj/item/shield/riot/handle_shield(mob/user)
+/obj/item/weapon/shield/riot/handle_shield(mob/user)
 	. = ..()
 	if(.) playsound(user.loc, 'sound/weapons/Genhit.ogg', 50, 1)
 
-/obj/item/shield/riot/get_block_chance(mob/user, var/damage, atom/damage_source = null, mob/attacker = null)
+/obj/item/weapon/shield/riot/get_block_chance(mob/user, var/damage, atom/damage_source = null, mob/attacker = null)
 	if(MOVING_QUICKLY(user))
 		return 0
 	if(MOVING_DELIBERATELY(user))
 		return base_block_chance
 
-/obj/item/shield/riot/New()
+/obj/item/weapon/shield/riot/New()
 	RegisterSignal(src, COMSIG_ITEM_PICKED, .proc/is_picked)
 	RegisterSignal(src, COMSIG_ITEM_DROPPED, .proc/is_dropped)
 	return ..()
 
-/obj/item/shield/riot/proc/is_picked()
+/obj/item/weapon/shield/riot/proc/is_picked()
 	var/mob/living/carbon/human/user = loc
 	if(istype(user))
 		picked_by_human = TRUE
@@ -102,34 +105,32 @@
 		RegisterSignal(picking_human, COMSIG_HUMAN_WALKINTENT_CHANGE, .proc/update_state)
 		update_state()
 
-/obj/item/shield/riot/proc/is_dropped()
+/obj/item/weapon/shield/riot/proc/is_dropped()
 	if(picked_by_human && picking_human)
 		UnregisterSignal(picking_human, COMSIG_HUMAN_WALKINTENT_CHANGE)
 		picked_by_human = FALSE
 		picking_human = null
 
-/obj/item/shield/riot/proc/update_state()
+/obj/item/weapon/shield/riot/proc/update_state()
 	if(!picking_human)
 		return
-	if(!initial_armor)
-		initial_armor = armor
 	if(MOVING_QUICKLY(picking_human))
 		item_state = "[initial(item_state)]_run"
-		armor = list(melee = 0, bullet = 0, energy = 0, bomb = 0, bio = 0, rad = 0)
+		armor = getArmor(arglist(armor_carry)) //OCCULUS CRUTCH FIX - REMOVE WHEN UPSTREAM PAYS ATTENTION TO THEIR RUNTIMES
 		visible_message("[picking_human] lowers [gender_datums[picking_human.gender].his] [src.name].")
 	else
 		item_state = "[initial(item_state)]_walk"
-		armor = initial_armor
+		armor = getArmor(arglist(armor_brace)) //OCCULUS CRUTCH FIX - REMOVE WHEN UPSTREAM PAYS ATTENTION TO THEIR RUNTIMES
 		visible_message("[picking_human] raises [gender_datums[picking_human.gender].his] [src.name] to cover [gender_datums[picking_human.gender].him]self!")
 	update_wear_icon()
 
-/obj/item/shield/riot/attackby(obj/item/W as obj, mob/user as mob)
-	if(istype(W, /obj/item/melee/baton))
+/obj/item/weapon/shield/riot/attackby(obj/item/weapon/W as obj, mob/user as mob)
+	if(istype(W, /obj/item/weapon/melee/baton) || istype(W, /obj/item/weapon/tool/baton/stun))//Occulus Edit
 		on_bash(W, user)
 	else
 		..()
 
-/obj/item/shield/riot/proc/on_bash(var/obj/item/W, var/mob/user)
+/obj/item/weapon/shield/riot/proc/on_bash(var/obj/item/weapon/W, var/mob/user)
 	if(cooldown < world.time - 25)
 		user.visible_message(SPAN_WARNING("[user] bashes [src] with [W]!"))
 		playsound(user.loc, 'sound/effects/shieldbash.ogg', 50, 1)
@@ -139,7 +140,7 @@
  * Handmade shield
  */
 
-/obj/item/shield/riot/handmade
+/obj/item/weapon/shield/riot/handmade
 	name = "round handmade shield"
 	desc = "A handmade stout shield, but with a small size."
 	icon_state = "buckler"
@@ -150,17 +151,17 @@
 	base_block_chance = 35
 
 
-/obj/item/shield/riot/handmade/get_block_chance(mob/user, var/damage, atom/damage_source = null, mob/attacker = null)
+/obj/item/weapon/shield/riot/handmade/get_block_chance(mob/user, var/damage, atom/damage_source = null, mob/attacker = null)
 	return base_block_chance
 
 
-/obj/item/shield/riot/handmade/attackby(obj/item/W as obj, mob/user as mob)
-	if(istype(W, /obj/item/extinguisher) || istype(W, /obj/item/storage/toolbox) || istype(W, /obj/item/melee))
+/obj/item/weapon/shield/riot/handmade/attackby(obj/item/weapon/W as obj, mob/user as mob)
+	if(istype(W, /obj/item/weapon/extinguisher) || istype(W, /obj/item/weapon/storage/toolbox) || istype(W, /obj/item/weapon/melee))
 		on_bash(W, user)
 	else
 		..()
 
-/obj/item/shield/riot/handmade/tray
+/obj/item/weapon/shield/riot/handmade/tray
 	name = "tray shield"
 	desc = "This one is thin, but compensate it with a good size."
 	icon_state = "tray_shield"
@@ -171,7 +172,7 @@
 	base_block_chance = 35
 
 
-/obj/item/shield/riot/handmade/tray/get_block_chance(mob/user, var/damage, atom/damage_source = null, mob/attacker = null)
+/obj/item/weapon/shield/riot/handmade/tray/get_block_chance(mob/user, var/damage, atom/damage_source = null, mob/attacker = null)
 	if(istype(damage_source, /obj/item))
 		var/obj/item/I = damage_source
 		if((is_sharp(I) && damage > 10) || istype(damage_source, /obj/item/projectile/beam))
@@ -182,14 +183,14 @@
  * Energy Shield
  */
 
-/obj/item/shield/energy
+/obj/item/weapon/shield/energy
 	name = "energy combat shield"
 	desc = "A shield capable of stopping most projectile and melee attacks. It can be retracted, expanded, and stored anywhere."
 	icon = 'icons/obj/weapons.dmi'
 	icon_state = "eshield0" // eshield1 for expanded
 	flags = CONDUCT
-	force = 3
-	throwforce = 5
+	force = 3.0
+	throwforce = 5.0
 	throw_speed = 1
 	throw_range = 4
 	w_class = ITEM_SIZE_SMALL
@@ -197,7 +198,7 @@
 	attack_verb = list("shoved", "bashed")
 	var/active = 0
 
-/obj/item/shield/energy/handle_shield(mob/user)
+/obj/item/weapon/shield/energy/handle_shield(mob/user)
 	if(!active)
 		return 0 //turn it on first!
 	. = ..()
@@ -208,14 +209,14 @@
 		spark_system.start()
 		playsound(user.loc, 'sound/weapons/blade1.ogg', 50, 1)
 
-/obj/item/shield/energy/get_block_chance(mob/user, var/damage, atom/damage_source = null, mob/attacker = null)
+/obj/item/weapon/shield/energy/get_block_chance(mob/user, var/damage, atom/damage_source = null, mob/attacker = null)
 	if(istype(damage_source, /obj/item/projectile))
 		var/obj/item/projectile/P = damage_source
 		if((is_sharp(P) && damage > 10) || istype(P, /obj/item/projectile/beam))
 			return (base_block_chance - round(damage / 3)) //block bullets and beams using the old block chance
 	return base_block_chance
 
-/obj/item/shield/energy/attack_self(mob/living/user as mob)
+/obj/item/weapon/shield/energy/attack_self(mob/living/user as mob)
 	if ((CLUMSY in user.mutations) && prob(50))
 		to_chat(user, SPAN_WARNING("You beat yourself in the head with [src]."))
 		user.take_organ_damage(5)
@@ -237,7 +238,7 @@
 	add_fingerprint(user)
 	return
 
-/obj/item/shield/energy/on_update_icon()
+/obj/item/weapon/shield/energy/on_update_icon()
 	icon_state = "eshield[active]"
 	update_wear_icon()
 	if(active)

@@ -214,9 +214,9 @@
 	desc = "WARNING! N2O flow tube. Ensure the flow is disengaged before working."
 	icon_state = "atmos_n2o"
 
-/obj/structure/sign/atmos_plasma
-	name = "Plasma warning sign"
-	desc = "WARNING! Plasma flow tube. Ensure the flow is disengaged before working."
+/obj/structure/sign/atmos_phoron
+	name = "Phoron warning sign"
+	desc = "WARNING! Phoron flow tube. Ensure the flow is disengaged before working."
 	icon_state = "atmos_plasma"
 
 /obj/structure/sign/atmos_n2
@@ -524,8 +524,8 @@
 	desc = "Faction sign of some sort."
 
 /obj/structure/sign/faction/ironhammer
-	name = "Ironhammer Security"
-	desc = "This sign depicts the symbol of Ironhammer Security, the largest security provider within the Hansa Trade Union."
+	name = "Aegis Security"
+	desc = "This sign depicts the symbol of Aegis Security, the largest security provider within SolGov Space."
 	icon_state = "ironhammer"
 
 /obj/structure/sign/faction/one_star
@@ -540,27 +540,27 @@
 
 /obj/structure/sign/faction/frozenstar
 	name = "Frozen Star"
-	desc = "The most popular weapon manufacturer in the Hansa Trade Union."
+	desc = "A popular weapon manufacturer in the Hansa Trade Union."
 	icon_state = "frozenstar"
 
 /obj/structure/sign/faction/moebius
-	name = "Moebius Laboratories"
-	desc = "Shady pharmaceutical and prosthetic manufacturer. Few outsiders know what happens behind the doors of their labs, and whoever knows does not live a long life."
+	name = "NanoTrasen Laboratories"
+	desc = "A shady megacorporation that owns the Northern Light "
 	icon_state = "moebius"
 
 /obj/structure/sign/faction/neotheology
-	name = "NeoTheology"
-	desc = "the Tau Cross - symbol of NeoTheology."
+	name = "Mekhane"
+	desc = "the Tau Cross - symbol of the Children of Mekhane."
 	icon_state = "neotheology"
 
 /obj/structure/sign/faction/neotheology_old
-	name = "NeoTheology"
-	desc = "the Tau Cross - symbol of NeoTheology."
+	name = "Mekhane"
+	desc = "the Tau Cross - symbol of the Children of Mekhane."
 	icon_state = "neotheology-old"
 
 /obj/structure/sign/faction/neotheology_cross
-	name = "NeoTheology Tau cross"
-	desc = "Religious symbol of NeoTheology - the Tau cross. It looks like a decoration, not a real cruciform."
+	name = "Mekhane Tau cross"
+	desc = "Religious symbol of the Children of Mekhane - the Tau cross. It looks like a decoration.."
 	icon_state = "wall_cross_steel"
 
 /obj/structure/sign/faction/neotheology_cross/gold
@@ -572,8 +572,8 @@
 	icon_state = "astersguild"
 
 /obj/structure/sign/faction/technomancers
-	name = "Technomancer League"
-	desc = "Technomancer League - anarchistic community ruled by powerful clans."
+	name = "Engineering Department"
+	desc = "Oh, dear, Atmosia isn't declaring independence <i>again</i>, are they...?"
 	icon_state = "technomancers"
 
 /obj/structure/sign/faction/excelsior

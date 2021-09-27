@@ -357,6 +357,10 @@
 	if(msg != null)
 		flavor_text = msg
 
+/mob/living/carbon/human/update_flavor_text()
+	..()
+	dna.flavor_text = flavor_text
+
 /mob/proc/print_flavor_text()
 	if (flavor_text && flavor_text != "")
 		var/msg = trim(replacetext(flavor_text, "\n", " "))
@@ -690,11 +694,12 @@
 
 // facing verbs
 /mob/proc/canface()
-	if(!canmove)						return 0
-	if(stat)							return 0
-	if(anchored)						return 0
-	if(transforming)						return 0
-	return 1
+	// Occulus edit: shuffled order around and added resting check to allow facing and pixelmoving while resting
+	if(stat || anchored || transforming)
+		return FALSE
+	if(incapacitated(INCAPACITATION_STUNNED|INCAPACITATION_UNCONSCIOUS)) // Incapacitated but not resting
+		return FALSE
+	return TRUE
 
 // Not sure what to call this. Used to check if humans are wearing an AI-controlled exosuit and hence don't need to fall over yet.
 /mob/proc/can_stand_overridden()
@@ -750,6 +755,8 @@ All Canmove setting in this proc is temporary. This var should not be set from h
 		regenerate_icons()
 	else if( lying != lying_prev )
 		update_icons()
+
+	update_transform()
 
 /mob/proc/reset_layer()
 	if(lying)
@@ -1247,12 +1254,12 @@ mob/proc/yank_out_object()
 	set name = "body-r-arm"
 	set hidden = TRUE
 	set category = "OOC"
-	toggle_zone_sel(list(BP_R_ARM))
+	toggle_zone_sel(list(BP_R_ARM, BP_R_HAND))		//Eclipse edit.
 
 /client/verb/body_l_arm()
 	set name = "body-l-arm"
 	set hidden = TRUE
-	toggle_zone_sel(list(BP_L_ARM))
+	toggle_zone_sel(list(BP_L_ARM, BP_L_HAND))		//Eclipse edit.
 
 /client/verb/body_chest()
 	set name = "body-chest"
@@ -1267,12 +1274,12 @@ mob/proc/yank_out_object()
 /client/verb/body_r_leg()
 	set name = "body-r-leg"
 	set hidden = TRUE
-	toggle_zone_sel(list(BP_R_LEG))
+	toggle_zone_sel(list(BP_R_LEG, BP_R_FOOT))		//Eclipse edit.
 
 /client/verb/body_l_leg()
 	set name = "body-l-leg"
 	set hidden = TRUE
-	toggle_zone_sel(list(BP_L_LEG))
+	toggle_zone_sel(list(BP_L_LEG, BP_L_FOOT))		//Eclipse edit.
 
 /client/proc/toggle_zone_sel(list/zones)
 	if(!check_has_body_select())

@@ -13,13 +13,9 @@
 	metabolism = REM * 0.5
 	scannable = 1
 
-/datum/reagent/medicine/inaprovaline/holy
-	id = "holyinaprovaline"
-	scannable = 0
-
 /datum/reagent/medicine/inaprovaline/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
 	M.add_chemical_effect(CE_STABLE)
-	M.add_chemical_effect(CE_PAINKILLER, 15)
+	M.add_chemical_effect(CE_PAINKILLER, 15 * effect_multiplier)
 	M.add_chemical_effect(CE_PULSE, 1)
 
 /datum/reagent/medicine/inaprovaline/sleeper
@@ -37,9 +33,9 @@
 	overdose = REAGENTS_OVERDOSE
 	scannable = 1
 
-/datum/reagent/medicine/bicaridine/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
-	M.heal_organ_damage(0.6 * effect_multiplier, 0, 5 * effect_multiplier)
-	M.add_chemical_effect(CE_BLOODCLOT, 0.15)
+///datum/reagent/medicine/bicaridine/affect_blood(mob/living/carbon/M, alien, effect_multiplier) Occulus Edit
+//	M.heal_organ_damage(0.6 * effect_multiplier, 0, 5 * effect_multiplier) Occulus Edit
+//	M.add_chemical_effect(CE_BLOODCLOT, 0.15) Occulus Edit
 
 /datum/reagent/medicine/meralyne
 	name = "Meralyne"
@@ -51,9 +47,9 @@
 	color = "#E6666C"
 	overdose = REAGENTS_OVERDOSE
 	scannable = 1
-/datum/reagent/medicine/meralyne/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
-	M.heal_organ_damage(1.2 * effect_multiplier, 0, 5 * effect_multiplier)
-	M.add_chemical_effect(CE_BLOODCLOT, 0.30)
+///datum/reagent/medicine/meralyne/affect_blood(mob/living/carbon/M, alien, effect_multiplier) Occulus Edit
+//	M.heal_organ_damage(1.2 * effect_multiplier, 0, 5 * effect_multiplier) Occulus Edit
+//	M.add_chemical_effect(CE_BLOODCLOT, 0.30) Occulus Edit
 
 /datum/reagent/medicine/kelotane
 	name = "Kelotane"
@@ -65,8 +61,8 @@
 	overdose = REAGENTS_OVERDOSE
 	scannable = 1
 
-/datum/reagent/medicine/kelotane/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
-	M.heal_organ_damage(0, 0.6 * effect_multiplier, 0, 3 * effect_multiplier)
+///datum/reagent/medicine/kelotane/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
+//	M.heal_organ_damage(0, 0.6 * effect_multiplier, 0, 3 * effect_multiplier)
 
 /datum/reagent/medicine/dermaline
 	name = "Dermaline"
@@ -79,8 +75,8 @@
 	overdose = REAGENTS_OVERDOSE * 0.5
 	scannable = 1
 
-/datum/reagent/medicine/dermaline/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
-	M.heal_organ_damage(0, 1.2 * effect_multiplier, 0, 5 * effect_multiplier)
+///datum/reagent/medicine/dermaline/affect_blood(mob/living/carbon/M, alien, effect_multiplier) Occulus Edit
+//	M.heal_organ_damage(0, 1.2 * effect_multiplier, 0, 5 * effect_multiplier) Occulus Edit
 
 /datum/reagent/medicine/dylovene
 	name = "Dylovene"
@@ -108,10 +104,6 @@
 	color = "#0080FF"
 	overdose = REAGENTS_OVERDOSE
 	scannable = 1
-
-/datum/reagent/medicine/dexalin/holy
-	id = "holydexalin"
-	scannable = 0
 
 /datum/reagent/medicine/dexalin/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
 	M.adjustOxyLoss(-1.5 * effect_multiplier)
@@ -142,11 +134,11 @@
 	color = "#8040FF"
 	scannable = 1
 
-/datum/reagent/medicine/tricordrazine/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
-	M.adjustOxyLoss(-0.6 * effect_multiplier)
-	M.heal_organ_damage(0.3 * effect_multiplier, 0.3 * effect_multiplier)
-	M.adjustToxLoss(-0.3 * effect_multiplier)
-	M.add_chemical_effect(CE_BLOODCLOT, 0.1)
+///datum/reagent/medicine/tricordrazine/affect_blood(mob/living/carbon/M, alien, effect_multiplier) Occulus Edit
+//	M.adjustOxyLoss(-0.6 * effect_multiplier) Occulus Edit
+//	M.heal_organ_damage(0.3 * effect_multiplier, 0.3 * effect_multiplier) Occulus Edit
+//	M.adjustToxLoss(-0.3 * effect_multiplier) Occulus Edit
+//	M.add_chemical_effect(CE_BLOODCLOT, 0.1) Occulus Edit
 
 /datum/reagent/medicine/cryoxadone
 	name = "Cryoxadone"
@@ -157,6 +149,7 @@
 	color = "#8080FF"
 	metabolism = REM * 0.5
 	scannable = 1
+	affects_dead = 1//Occulus Edit
 
 /datum/reagent/medicine/cryoxadone/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
 	if(M.bodytemperature < 170)
@@ -176,6 +169,7 @@
 	color = "#80BFFF"
 	metabolism = REM * 0.5
 	scannable = 1
+	affects_dead = 1//Occulus Edit
 
 /datum/reagent/medicine/clonexadone/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
 	if(M.bodytemperature < 170)
@@ -185,6 +179,8 @@
 		M.heal_organ_damage(3 * effect_multiplier, 3 * effect_multiplier, 5 * effect_multiplier, 5 * effect_multiplier)
 		M.adjustToxLoss(-(3 + (M.getToxLoss() * 0.05)) * effect_multiplier)
 		M.add_chemical_effect(CE_PULSE, -2)
+		if(M.stat == DEAD)//Occulus Edit
+			M.timeofdeath += 20//Occulus Edit
 
 /* Painkillers */
 
@@ -237,7 +233,7 @@
 	reagent_state = LIQUID
 	color = "#800080"
 	overdose = REAGENTS_OVERDOSE * 0.66
-	metabolism = 0.1
+	metabolism = 0.02
 	nerve_system_accumulations = 60
 
 /datum/reagent/medicine/oxycodone/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
@@ -291,7 +287,7 @@
 
 /datum/reagent/medicine/alkysine/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
 	M.adjustBrainLoss(-(3 + (M.getBrainLoss() * 0.05)) * effect_multiplier)
-	M.add_chemical_effect(CE_PAINKILLER, 10)
+	M.add_chemical_effect(CE_PAINKILLER, 10 * effect_multiplier)
 
 /datum/reagent/medicine/imidazoline
 	name = "Imidazoline"
@@ -584,27 +580,27 @@
 /datum/reagent/medicine/ossisine
 	name = "Ossisine"
 	id = "ossisine"
-	description = "Puts the user in a great amount of pain and repairs broken bones one at a time. Medicate in critical conditions only."
+	description = "Paralyses user and restores broken bones. Medicate in critical conditions only."
 	taste_description = "calcium"
 	reagent_state = LIQUID
 	color = "#660679"
-	metabolism = REM * 5
 	overdose = REAGENTS_OVERDOSE/2
 
 /datum/reagent/medicine/ossisine/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
-	M.apply_damage(15, HALLOSS)
+	M.paralysis = max(M.paralysis, 5)
 	M.add_chemical_effect(CE_BLOODCLOT, 0.1)
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
-		var/list/brokenBP = list()
-		for(var/obj/item/organ/external/E in H.organs)
-			if(E.is_broken())
-				brokenBP += E
-		if(brokenBP.len)
-			var/obj/item/organ/external/E = pick(brokenBP)
-			E.mend_fracture()
-			M.pain(E.name, 60, TRUE)
-			dose -= min(dose, metabolism)
+		if(prob(5 * effect_multiplier + dose) || dose == overdose)
+			var/list/brokenBP = list()
+			for(var/obj/item/organ/external/E in H.organs)
+				if(E.is_broken())
+					brokenBP += E
+			if(brokenBP.len)
+				var/obj/item/organ/external/E = pick(brokenBP)
+				E.mend_fracture()
+				M.pain(E.name, 60, TRUE)
+				dose = 0
 
 /datum/reagent/medicine/ossisine/overdose(mob/living/carbon/M, alien)
 	M.adjustCloneLoss(2)
@@ -661,11 +657,11 @@
 	color = "#ded890"
 	scannable = 1
 	metabolism = REM/2
-	overdose = REAGENTS_OVERDOSE - 10
+	overdose = REAGENTS_OVERDOSE
 
-/datum/reagent/medicine/polystem/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
-	M.heal_organ_damage(0.2 * effect_multiplier, 0, 3 * effect_multiplier)
-	M.add_chemical_effect(CE_BLOODCLOT, min(1,0.1 * effect_multiplier))
+///datum/reagent/medicine/polystem/affect_blood(mob/living/carbon/M, alien, effect_multiplier) Occulus Edit
+//	M.heal_organ_damage(0.2 * effect_multiplier, 0, 3 * effect_multiplier) Occulus Edit
+//	M.add_chemical_effect(CE_BLOODCLOT, min(1,0.1 * effect_multiplier)) Occulus Edit
 
 /datum/reagent/medicine/polystem/overdose(mob/living/carbon/M, alien)
 	M.add_chemical_effect(CE_BLOODCLOT, min(1,0.1))
@@ -682,19 +678,19 @@
 	metabolism = REM/2
 
 /datum/reagent/medicine/detox/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
-	if(M.metabolism_effects.nsa_threshold_base == initial(M.metabolism_effects.nsa_threshold_base))
-		M.metabolism_effects.nsa_threshold_base += rand(20, 60)
+	if(M.metabolism_effects.nsa_threshold == initial(M.metabolism_effects.nsa_threshold))
+		M.metabolism_effects.nsa_threshold += rand(20, 60)
 
 /datum/reagent/medicine/detox/on_mob_delete(mob/living/L)
 	..()
 	var/mob/living/carbon/C = L
 	if(istype(C))
-		C.metabolism_effects.nsa_threshold_base = initial(C.metabolism_effects.nsa_threshold_base)
+		C.metabolism_effects.nsa_threshold = initial(C.metabolism_effects.nsa_threshold)
 
 /datum/reagent/medicine/detox/overdose(mob/living/carbon/M, alien)
 	var/mob/living/carbon/C = M
 	if(istype(C))
-		C.metabolism_effects.nsa_threshold_base = initial(C.metabolism_effects.nsa_threshold_base) - rand(20, 40)
+		C.metabolism_effects.nsa_threshold = initial(C.metabolism_effects.nsa_threshold) - rand(20, 40)
 
 /datum/reagent/medicine/purger
 	name = "Purger"
@@ -790,7 +786,7 @@
 /datum/reagent/medicine/vomitol
 	name = "Vomitol"
 	id = "vomitol"
-	description = "Forces patient to vomit - results in total cleaning of his stomach. Has extremely unpleasant taste and seems to collect on food in mushroom rich enviroments."
+	description = "Forces patient to vomit - results in total cleaning of his stomach. Has extremely unpleasant taste."
 	taste_description = "worst thing in the world"
 	reagent_state = LIQUID
 	color = "#a6b85b"

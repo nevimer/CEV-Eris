@@ -10,13 +10,13 @@
 	var/maxhealth = 20
 	var/resistance = RESISTANCE_NONE	//Incoming damage is reduced by this flat amount before being subtracted from health. Defines found in code\__defines\weapons.dm
 	var/maximal_heat = T0C + 100 		// Maximal heat before this window begins taking damage from fire
-	var/damage_per_fire_tick = 2 		// Amount of damage per fire tick. Regular windows are not fireproof so they might as well break quickly.
+	var/damage_per_fire_tick = 2.0 		// Amount of damage per fire tick. Regular windows are not fireproof so they might as well break quickly.
 	var/health
 	var/ini_dir = null
 	var/state = 2
 	var/reinf = 0
 	var/basestate
-	var/shardtype = /obj/item/material/shard
+	var/shardtype = /obj/item/weapon/material/shard
 	var/glasstype = null // Set this in subtypes. Null is assumed strange or otherwise impossible to dismantle, such as for shuttle glass.
 	var/silicate = 0 // number of units of silicate
 	var/no_color = FALSE //If true, don't apply a color to the base
@@ -62,8 +62,7 @@
 	var/initialhealth = health
 
 	if (!ignore_resistance)
-		damage = damage * (1 - silicate / 200) // up to 50% damage resistance
-		damage -= resistance // then flat resistance from material
+		damage -= resistance
 	if (damage <= 0)
 		return 0
 
@@ -117,9 +116,7 @@
 	//Cache a list of nearby turfs for throwing shards at
 	var/list/turf/nearby
 	if (explode)
-		nearby = (RANGE_TURFS(2, src) - get_turf(src))
-	else
-		nearby = (RANGE_TURFS(1, src) - get_turf(src))
+		nearby = (trange(2, src) - get_turf(src))
 
 	if(display_message)
 		visible_message("[src] shatters!")
@@ -129,8 +126,8 @@
 		if(reinf)
 			new /obj/item/stack/rods(loc)
 		while(index < rand(4,6))
-			var/obj/item/material/shard/S = new shardtype(loc)
-			if (nearby.len > 0)
+			var/obj/item/weapon/material/shard/S = new shardtype(loc)
+			if (explode && nearby.len > 0)
 				var/turf/target = pick(nearby)
 				spawn()
 					S.throw_at(target,40,3)
@@ -155,13 +152,13 @@
 
 /obj/structure/window/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(1.0)
 			qdel(src)
 			return
-		if(2)
+		if(2.0)
 			shatter(0,TRUE)
 			return
-		if(3)
+		if(3.0)
 			if(prob(50))
 				shatter(0,TRUE)
 				return
@@ -307,13 +304,10 @@
 						return
 					if(I.use_tool(user, src, WORKTIME_FAST, tool_type, FAILCHANCE_EASY, required_stat = STAT_MEC))
 						visible_message(SPAN_NOTICE("[user] dismantles \the [src]."))
-						var/obj/glass
 						if(is_fulltile())
-							glass = new glasstype(loc, 6)
+							new glasstype(loc, 6)
 						else
-							glass = new glasstype(loc, 1)
-						glass.add_fingerprint(user)
-
+							new glasstype(loc, 1)
 						qdel(src)
 						return
 				return 1 //No whacking the window with tools unless harm intent
@@ -487,7 +481,7 @@
 			if(W.anchored && W.density && W.type == src.type && W.is_fulltile()) //Only counts anchored, not-destroyed fill-tile windows.
 				dirs += get_dir(src, W)
 
-	for(var/turf/simulated/wall/T in RANGE_TURFS(1, src) - src)
+	for(var/turf/simulated/wall/T in trange(1, src) - src)
 		var/T_dir = get_dir(src, T)
 		dirs |= T_dir
 		if(propagate)
@@ -521,7 +515,7 @@
 	basestate = "window"
 	glasstype = /obj/item/stack/material/glass
 	maximal_heat = T0C + 200	// Was 100. Spaceship windows surely surpass coffee pots.
-	damage_per_fire_tick = 3	// Was 2. Made weaker than rglass per tick.
+	damage_per_fire_tick = 3.0	// Was 2. Made weaker than rglass per tick.
 	maxhealth = 15
 	resistance = RESISTANCE_NONE
 
@@ -534,22 +528,21 @@
 	resistance = RESISTANCE_NONE
 	flags = null
 
-/obj/structure/window/plasmabasic
-	name = "plasma window"
+/obj/structure/window/phoronbasic
+	name = "phoron window"
 	desc = "A borosilicate alloy window. It seems to be quite strong."
-
+	basestate = "pwindow"
 	icon_state = "plasmawindow"
-	shardtype = /obj/item/material/shard/plasma
-	glasstype = /obj/item/stack/material/glass/plasmaglass
+	shardtype = /obj/item/weapon/material/shard/phoron
+	glasstype = /obj/item/stack/material/glass/phoronglass
 	maximal_heat = T0C + 5227  // Safe use temperature at 5500 kelvin. Easy to remember.
 	damage_per_fire_tick = 1.5 // Lowest per-tick damage so overheated supermatter chambers have some time to respond to it. Will still shatter before a delam.
 	maxhealth = 150
 	resistance = RESISTANCE_AVERAGE
 
-/obj/structure/window/plasmabasic/full
+/obj/structure/window/phoronbasic/full
 	dir = SOUTH|EAST
 	icon = 'icons/obj/structures/windows.dmi'
-	basestate = "pwindow"
 	icon_state = "plasmawindow_mask"
 	alpha = 150
 	maxhealth = 200
@@ -563,7 +556,7 @@
 	basestate = "rwindow"
 	reinf = 1
 	maximal_heat = T0C + 750	// Fused quartz.
-	damage_per_fire_tick = 2
+	damage_per_fire_tick = 2.0
 	glasstype = /obj/item/stack/material/glass/reinforced
 
 	maxhealth = 50
@@ -585,22 +578,21 @@
 	resistance = RESISTANCE_FRAGILE
 	flags = null
 
-/obj/structure/window/reinforced/plasma
-	name = "reinforced plasma window"
+/obj/structure/window/reinforced/phoron
+	name = "reinforced phoron window"
 	desc = "A borosilicate alloy window, with rods supporting it. It seems to be very strong."
-	basestate = "plasmarwindow"
+	basestate = "rpwindow"
 	icon_state = "plasmarwindow"
-	shardtype = /obj/item/material/shard/plasma
-	glasstype = /obj/item/stack/material/glass/plasmarglass
+	shardtype = /obj/item/weapon/material/shard/phoron
+	glasstype = /obj/item/stack/material/glass/phoronrglass
 	maximal_heat = T0C + 5453 // Safe use temperature at 6000 kelvin.
 	damage_per_fire_tick = 1.5
 	maxhealth = 200
 	resistance = RESISTANCE_IMPROVED
 
-/obj/structure/window/reinforced/plasma/full
+/obj/structure/window/reinforced/phoron/full
 	dir = SOUTH|EAST
 	icon = 'icons/obj/structures/windows.dmi'
-	basestate = "rpwindow"
 	icon_state = "plasmarwindow_mask"
 	alpha = 150
 	maxhealth = 250
@@ -674,7 +666,7 @@
 
 /obj/machinery/button/windowtint
 	name = "window tint control"
-	icon = 'icons/obj/power.dmi'
+	icon = 'icons/obj/machines/buttons.dmi'	//- Occulus edit- Someone linked the wrong dmi file, Hah. Should function now properly
 	icon_state = "light0"
 	desc = "A remote control switch for polarized windows."
 	var/range = 7
@@ -692,7 +684,7 @@
 	update_icon()
 
 	for(var/obj/structure/window/reinforced/polarized/W in range(src,range))
-		if (W.id == src.id || !W.id)
+		if (W.id == src.id) //|| !W.id) occulus edit- WHY WAS THIS A THING? IT LITTERALLY TOGGLED ALL WINDOWS INSTEAD OF ID'D ONES!
 			spawn(0)
 				W.toggle()
 				return

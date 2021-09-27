@@ -138,13 +138,13 @@
 	spawn_tags = SPAWN_TAG_MATERIAL_RESOURCES_RARE
 	rarity_value = 90
 
-/obj/item/stack/material/plasma
-	name = "solid plasma"
+/obj/item/stack/material/phoron
+	name = "solid phoron"
 	icon_state = "sheet-plasma"
-	default_type = MATERIAL_PLASMA
+	default_type = MATERIAL_PHORON
 	price_tag = 30
 
-/obj/item/stack/material/plasma/random
+/obj/item/stack/material/phoron/random
 	rand_min = 3
 	rand_max = 20
 	spawn_tags = SPAWN_TAG_MATERIAL_RESOURCES
@@ -200,16 +200,15 @@
 /obj/item/stack/material/platinum/random
 	rand_min = 1
 	rand_max = 10
-	//spawn_tags = SPAWN_TAG_MATERIAL_RESOURCES_RARE
-	//rarity_value = 45
+	spawn_tags = SPAWN_TAG_MATERIAL_RESOURCES_RARE  //Occulus edit: Re-adding platinum glass to spawn pools
+	rarity_value = 45 //Occulus edit: Re-adding platinum glass to spawn pools
 
 //Extremely valuable to Research.
 /obj/item/stack/material/mhydrogen
 	name = "metallic hydrogen"
-	icon_state = "sheet-hydrogen"
+	icon_state = "sheet-mythril"
 	default_type = MATERIAL_MHYDROGEN
 	price_tag = 50
-	novariants = FALSE
 
 //Fuel for MRSPACMAN generator.
 /obj/item/stack/material/tritium
@@ -325,26 +324,26 @@
 	icon_state = "sheet-rglass"
 	default_type = MATERIAL_RGLASS
 
-/obj/item/stack/material/glass/plasmaglass
+/obj/item/stack/material/glass/phoronglass
 	name = "borosilicate glass"
-	desc = "This sheet is special plasma-glass alloy designed to withstand large temperatures"
+	desc = "This sheet is special platinum-glass alloy designed to withstand large temperatures"
 	singular_name = "borosilicate glass sheet"
 	icon_state = "sheet-plasmaglass"
-	default_type = MATERIAL_PLASMAGLASS
+	default_type = MATERIAL_PHORONGLASS
 	price_tag = 10
 
-/obj/item/stack/material/glass/plasmaglass/random
+/obj/item/stack/material/glass/phoronglass/random
 	rand_min = 3
 	rand_max = 30
-	//spawn_tags = SPAWN_TAG_MATERIAL_RESOURCES_RARE
-	//rarity_value = 50
+	spawn_tags = SPAWN_TAG_MATERIAL_BUILDING //Occulus edit: Re-adding phoron glass to spawn pools
+	rarity_value = 50 //Occulus edit: Re-adding phoron glass to spawn pools
 
-/obj/item/stack/material/glass/plasmarglass
+/obj/item/stack/material/glass/phoronrglass
 	name = "reinforced borosilicate glass"
-	desc = "This sheet is special plasma-glass alloy designed to withstand large temperatures. It is reinforced with few rods."
+	desc = "This sheet is special platinum-glass alloy designed to withstand large temperatures. It is reinforced with few rods."
 	singular_name = "reinforced borosilicate glass sheet"
-	icon_state = "sheet-plasmarglass"
-	default_type = MATERIAL_RPLASMAGLASS
+	icon_state = "sheet-plasmaglass"
+	default_type = MATERIAL_RPHORONGLASS
 	price_tag = 12
 
 /obj/item/stack/material/biomatter
@@ -365,13 +364,3 @@
 
 /obj/item/stack/material/biomatter/full
 	amount = 60
-
-/obj/item/stack/material/compressed
-	name = "compressed matter"
-	desc = "Useful matter that has been compressed and squeezed into cartridges."
-	singular_name = "compressed matter cartridge"
-	icon = 'icons/obj/ammo.dmi'
-	icon_state = "rcd"
-	item_state = "rcdammo"
-	default_type = MATERIAL_COMPRESSED
-	price_tag = 30

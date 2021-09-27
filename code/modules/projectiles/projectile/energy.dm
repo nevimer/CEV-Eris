@@ -94,7 +94,7 @@
 	damage_types = list(TOX = 5)
 	weaken = 5
 
-/obj/item/projectile/energy/plasma
-	name = "plasma bolt"
+/obj/item/projectile/energy/phoron
+	name = "phoron bolt"
 	icon_state = "energy"
 	damage_types = list(TOX = 25)

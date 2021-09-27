@@ -6,7 +6,7 @@
 	origin_tech = list(TECH_MAGNET = 2, TECH_ENGINEERING = 2)
 	matter = list(MATERIAL_PLASTIC = 2, MATERIAL_STEEL = 1, MATERIAL_GLASS = 1)
 
-	charge_per_use = 0.5
+	charge_per_use = 2
 	var/precision = FALSE
 
 /obj/item/device/scanner/mining/is_valid_scan_target(atom/O)
@@ -32,7 +32,7 @@
 		)
 	var/list/lines = list("Ore deposits found at [source.x], [source.y]:")
 
-	for(var/turf/simulated/T in RANGE_TURFS(2, source))
+	for(var/turf/simulated/T in trange(2, source))
 		if(!T.has_resources)
 			continue
 
@@ -46,7 +46,7 @@
 					ore_type = "precious metals"
 				if(MATERIAL_URANIUM)
 					ore_type = "nuclear fuel"
-				if(MATERIAL_PLASMA, MATERIAL_OSMIUM, MATERIAL_TRITIUM)
+				if(MATERIAL_PHORON, MATERIAL_OSMIUM, MATERIAL_TRITIUM)
 					ore_type = "exotic matter"
 
 			if(ore_type)
@@ -67,7 +67,7 @@
 /proc/mining_scan_action_precise(turf/source, mob/user)
 	var/list/lines = list("Ore deposits found at [source.x], [source.y]:")
 	var/list/metals = list()
-	for(var/turf/simulated/T in RANGE_TURFS(2, source))
+	for(var/turf/simulated/T in trange(2, source))
 		if(!T.has_resources)
 			continue
 

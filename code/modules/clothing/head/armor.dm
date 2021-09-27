@@ -15,6 +15,7 @@
 	price_tag = 100
 	spawn_tags = SPAWN_TAG_CLOTHING_HEAD_HELMET
 	bad_type = /obj/item/clothing/head/armor
+	rarity_value = 10
 	style = STYLE_NEG_HIGH
 
 /*
@@ -24,6 +25,7 @@
 	name = "helmet"
 	desc = "Standard Security gear. Protects the head from impacts."
 	icon_state = "helmet"
+	rarity_value = 5
 	armor = list(
 		melee = 35,
 		bullet = 30,
@@ -41,6 +43,7 @@
 	desc = "Standard Security gear. Protects the head from impacts. Has a permanently affixed visor to protect the eyes."
 	icon_state = "helmet_visor"
 	body_parts_covered = HEAD | EARS | EYES
+	rarity_value = 6.66
 	matter = list(
 		MATERIAL_STEEL = 5,
 		MATERIAL_PLASTEEL = 1,
@@ -69,15 +72,16 @@
 	icon_state = "dermal"
 	body_parts_covered = HEAD
 	flags_inv = NONE
+	rarity_value = 50
 
 /obj/item/clothing/head/armor/helmet/ironhammer
 	name = "operator helmet"
-	desc = "Ironhammer Security gear. Protects the head from impacts."
+	desc = "Aegis Security gear. Protects the head from impacts."
 	icon_state = "helmet_ironhammer"
-	flags_inv = BLOCKHEADHAIR|HIDEEARS
+	rarity_value = 50
 
 /obj/item/clothing/head/armor/helmet/technomancer
-	name = "insulated technomancer helmet"
+	name = "engineering helmet"
 	desc = "A piece of armor used in hostile work conditions to protect the head. Comes with a built-in flashlight."
 	body_parts_covered = HEAD|EARS|EYES|FACE
 	item_flags = THICKMATERIAL
@@ -86,11 +90,11 @@
 	light_overlay = "technohelmet_light"
 	brightness_on = 4
 	armor = list(
-		melee = 35,
-		bullet = 25,
-		energy = 40,
-		bomb = 20,
-		bio = 0,
+		melee = 45,
+		bullet = 35,
+		energy = 35,
+		bomb = 30,
+		bio = 15,
 		rad = 30
 	)//Mix between hardhat.dm armor values, helmet armor values in armor.dm, and armor values for TM void helmet in station.dm.
 	flash_protection = FLASH_PROTECTION_MAJOR
@@ -235,6 +239,7 @@
 	icon_state = "ablative"
 	body_parts_covered = HEAD | EARS | EYES
 	flags_inv = HIDEEARS | HIDEEYES
+	rarity_value = 25
 	armor = list(
 		melee = 30,
 		bullet = 25,
@@ -276,11 +281,7 @@
 	armor_down = list(melee = 40, bullet = 40, energy = 30, bomb = 35, bio = 0, rad = 0)
 	item_flags = THICKMATERIAL | COVER_PREVENT_MANIPULATION
 	price_tag = 150
-	matter = list(
-		MATERIAL_STEEL = 6, // more covered by helmet
-		MATERIAL_PLASTEEL = 2,
-		MATERIAL_GLASS = 6,
-	)
+	rarity_value = 25
 
 /obj/item/clothing/head/armor/faceshield/Initialize()
 	. = ..()
@@ -289,7 +290,7 @@
 /obj/item/clothing/head/armor/faceshield/attack_self()
 	toggle()
 
-/obj/item/clothing/head/armor/faceshield/on_update_icon()
+/obj/item/clothing/head/armor/faceshield/update_icon()
 	icon_state = up ? "[initial(icon_state)]_up" : initial(icon_state)
 
 //I wanted to name it set_up() but some how I thought that would be misleading
@@ -327,12 +328,13 @@
 		usr.update_action_buttons()
 
 
+
 /*
  * Ironhammer riot helmet with HUD
  */
 /obj/item/clothing/head/armor/riot_hud
 	name = "riot helmet"
-	desc = "Standard-issue Ironhammer helmet with a basic HUD and targeting system included."
+	desc = "Standard-issue Aegis helmet with a basic HUD and targeting system included."
 	icon_state = "light_riot"
 	body_parts_covered = HEAD|FACE|EARS
 	armor = list(
@@ -420,6 +422,7 @@
 	armor_up = list(melee = 20, bullet = 15, energy = 0, bomb = 15, bio = 0, rad = 0)
 	armor_down = list(melee = 40, bullet = 40, energy = 0, bomb = 35, bio = 0, rad = 0)
 	siemens_coefficient = 1
+	rarity_value = 50
 	up = TRUE
 
 /obj/item/clothing/head/armor/faceshield/altyn/brown
@@ -433,6 +436,7 @@
 	desc = "\"I do not know who I am, I don\'t know why I\'m here. All I know is that I must kill.\""
 	icon_state = "maska"
 	armor_down = list(melee = 55, bullet = 55, energy = 0, bomb = 45, bio = 0, rad = 0) // best what you can get, unless you face lasers
+	rarity_value = 100
 
 /obj/item/clothing/head/armor/helmet/visor/cyberpunkgoggle
 	name = "\improper Type-34C Semi-Enclosed Headwear"
@@ -440,6 +444,7 @@
 	icon_state = "cyberpunkgoggle"
 	flags_inv = HIDEEARS|HIDEEYES|BLOCKHAIR
 	siemens_coefficient = 0.9	//More conductive than most helmets
+	rarity_value = 5.55
 	armor = list(
 		melee = 5,
 		bullet = 20,
@@ -458,8 +463,8 @@
 	matter = list(MATERIAL_BIOMATTER = 15, MATERIAL_PLASTEEL = 5, MATERIAL_STEEL = 5, MATERIAL_GOLD = 1)
 	armor = list(
 		melee = 70,
-		bullet = 50,
-		energy = 50,
+		bullet = 30,
+		energy = 30,
 		bomb = 30,
 		bio = 0,
 		rad = 0

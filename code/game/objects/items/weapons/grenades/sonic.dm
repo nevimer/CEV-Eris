@@ -1,9 +1,9 @@
-/obj/item/grenade/sonic
+/obj/item/weapon/grenade/sonic
 	name = "SG \"Loudmouth\""
 	desc = "A hailer overclocked to reproduce a noise similar to the leading roaches."
 	icon_state = "screamer"
 
-/obj/item/grenade/sonic/prime()
+/obj/item/weapon/grenade/sonic/prime()
 	playsound(loc, 'sound/voice/shriek1.ogg', 100, 1, 8, 8)
 
 	visible_message(SPAN_DANGER("\The [src] emits a horrifying wail!"))

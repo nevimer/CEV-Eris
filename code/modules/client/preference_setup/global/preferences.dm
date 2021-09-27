@@ -188,10 +188,16 @@ var/list/_client_preferences_by_type
 	description = "Hardsuit Module Activation Key"
 	key = "HARDSUIT_ACTIVATION"
 	options = list(GLOB.PREF_MIDDLE_CLICK, GLOB.PREF_CTRL_CLICK, GLOB.PREF_ALT_CLICK, GLOB.PREF_CTRL_SHIFT_CLICK)
-/*
+
 /datum/client_preference/show_credits
 	description = "Show End Titles"
 	key = "SHOW_CREDITS"
+
+/*
+/datum/client_preference/show_ckey_credits
+	description = "Show Ckey in End Credits/Special Role List"
+	key = "SHOW_CKEY_CREDITS"
+	options = list(GLOB.PREF_HIDE, GLOB.PREF_SHOW)
 */
 /*
 /datum/client_preference/play_instruments
@@ -211,15 +217,19 @@ var/list/_client_preferences_by_type
 	description = "Enable gun crosshair"
 	key = "GUN_CURSOR"
 
-/datum/client_preference/play_jukebox
-	description ="Play jukebox music"
-	key = "SOUND_JUKEBOX"
+// OCCULUS EDIT START: For compatibility with downstreams, these preferences are not in a modular file
 
-/datum/client_preference/play_jukebox/changed(var/mob/preference_mob, var/new_value)
-	if(new_value == GLOB.PREF_NO)
-		preference_mob.stop_all_music()
-	else
-		preference_mob.update_music()
+/datum/client_preference/spawn_silent_vagabond
+	description = "Spawn silently as vagabond"
+	key = "SPAWN_SILENT_VAGABOND"
+	default_value = GLOB.PREF_YES
+
+/datum/client_preference/spawn_silent_dormitory
+	description = "Spawn silently in dormitory"
+	key = "SPAWN_SILENT_DORMITORY"
+	default_value = GLOB.PREF_NO
+
+// OCCULUS EDIT END
 
 /********************
 * General Staff Preferences *
@@ -270,3 +280,11 @@ var/list/_client_preferences_by_type
 	options = list(GLOB.PREF_SHOW, GLOB.PREF_HIDE)
 	default_value = GLOB.PREF_HIDE
 	flags = R_ADMIN|R_DEBUG
+
+//OCCULUS EDIT BELOW THIS LINE
+
+/datum/client_preference/area_info_blurb
+	description = "Show area narration."
+	key = "AREA_INFO"
+
+//OCCULUS EDIT END

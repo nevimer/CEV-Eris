@@ -1,9 +1,9 @@
 /obj/machinery/computer/teleporter
 	name = "Teleporter Control Console"
-	desc = "Used to control a linked teleportation Hub and Ship."
+	desc = "Used to control a linked teleportation Hub and Station."
 	icon_keyboard = "teleport_key"
 	icon_screen = "teleport"
-	circuit = /obj/item/electronics/circuitboard/teleporter
+	circuit = /obj/item/weapon/electronics/circuitboard/teleporter
 	var/obj/item/locked
 	var/id
 	var/one_time_use = 0 //Used for one-time-use teleport cards (such as clown planet coordinates.)
@@ -19,7 +19,7 @@
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 10
 	active_power_usage = 2000
-	circuit = /obj/item/electronics/circuitboard/teleporterhub
+	circuit = /obj/item/weapon/electronics/circuitboard/teleporterhub
 	var/obj/machinery/computer/teleporter/mconsole
 	var/obj/machinery/teleport/station/mstation
 	var/entropy_value = 8
@@ -33,7 +33,7 @@
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 10
 	active_power_usage = 2000
-	circuit = /obj/item/electronics/circuitboard/teleporterstation
+	circuit = /obj/item/weapon/electronics/circuitboard/teleporterstation
 	var/obj/machinery/teleport/hub/mhub
 	var/obj/machinery/computer/teleporter/mconsole
 
@@ -146,8 +146,8 @@
 
 
 /obj/machinery/computer/teleporter/attackby(I as obj, mob/living/user)
-	if(istype(I, /obj/item/card/data/))
-		var/obj/item/card/data/C = I
+	if(istype(I, /obj/item/weapon/card/data/))
+		var/obj/item/weapon/card/data/C = I
 		if(stat & (NOPOWER|BROKEN) & (C.function != "teleporter"))
 			src.attack_hand()
 
@@ -165,7 +165,7 @@
 
 		if(istype(L, /obj/landmark/) && istype(L.loc, /turf))
 			to_chat(usr, "You insert the coordinates into the machine.")
-			to_chat(usr, "A message flashes across the screen reminding the traveller that the nuclear authentication disk is to remain on the ship at all times.")
+			to_chat(usr, "A message flashes across the screen reminding the traveller that the nuclear authentication disk is to remain on the station at all times.")
 			user.drop_item()
 			qdel(I)
 
@@ -216,7 +216,7 @@
 			areaindex[tmpname] = 1
 		L[tmpname] = R
 
-	for (var/obj/item/implant/tracking/I in world)
+	for (var/obj/item/weapon/implant/tracking/I in world)
 		if (!I.implanted || !ismob(I.loc))
 			continue
 		else

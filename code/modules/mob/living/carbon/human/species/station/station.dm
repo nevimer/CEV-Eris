@@ -1,20 +1,304 @@
+////This page is now an Occulus Edit////
 /datum/species/human
-	name = SPECIES_HUMAN
+	name = "Human"
 	name_plural = "Humans"
 	primitive_form = "Monkey"
 	unarmed_types = list(/datum/unarmed_attack/stomp, /datum/unarmed_attack/kick, /datum/unarmed_attack/punch, /datum/unarmed_attack/bite)
-	blurb = "Humanity originated in the Sol system, and over the last five centuries has spread \
-	colonies across a wide swathe of space. They hold a wide range of forms and creeds.<br/><br/> \
-	While the central Sol government maintains control of its far-flung people, powerful corporate \
-	interests, rampant cyber and bio-augmentation and secretive factions make life on most human \
-	worlds tumultous at best."
+	blurb = "Humanity originated in the Sol system, and over the last three centuries has spread \
+	colonies across a wide swathe of the Orion Spur. Humanity is one of the two most genetically and culturally divergent species \
+	with genetic splicing and bio-augmentation being so common among groups of them. While the United Terran Systems - \
+	nicknamed Solgov, does it's best to provide a federal backbone to the species, it's secular nature still thrives today."
 	num_alternate_languages = 2
 	name_language = null // Use the first-name last-name generator rather than a language scrambler
 	min_age = 17
 	max_age = 110
-
 	spawn_flags = CAN_JOIN
 	appearance_flags = HAS_HAIR_COLOR | HAS_SKIN_TONE | HAS_LIPS | HAS_UNDERWEAR | HAS_EYE_COLOR
 
 /datum/species/human/get_bodytype()
-	return SPECIES_HUMAN
+	return "Human"
+
+
+/datum/species/unathi
+	name = SPECIES_UNATHI
+	name_plural = "Unathi"
+	icobase = 'icons/mob/human_races/r_lizard_vr.dmi'		//Eclipse edit.
+	deform = 'icons/mob/human_races/r_def_lizard_vr.dmi'		//Eclipse edit.
+	tail = "sogtail"
+	tail_animation = 'icons/mob/species/unathi/tail_vr.dmi'		//Eclipse edit.
+	tail_blend = ICON_MULTIPLY								//Eclipse edit.
+	unarmed_types = list(/datum/unarmed_attack/stomp, /datum/unarmed_attack/kick, /datum/unarmed_attack/claws, /datum/unarmed_attack/bite/sharp)
+	primitive_form = SPECIES_MONKEY_UNATHI
+	darksight = 3
+//	ambiguous_genders = TRUE
+	gluttonous = 1
+	slowdown = 0.3
+	total_health = 125
+	brute_mod = 0.90	//syzygy edit
+	burn_mod = 0.90		//also edit
+	color_mult = 1
+//	metabolic_rate = 0.85
+//	item_slowdown_mod = 0.25
+	mob_size = MOB_LARGE
+	blood_volume = 840
+//	bloodloss_rate = 0.75
+	num_alternate_languages = 3
+	secondary_langs = list(LANGUAGE_UNATHI)
+	name_language = LANGUAGE_UNATHI
+//	species_language = LANGUAGE_UNATHI
+//	health_hud_intensity = 2.5
+
+	min_age = 18 // OCCULUS EDIT - so now you can roleplay as someone who's not middle aged if you're just a unathi-based custom species
+	max_age = 260
+
+//	economic_modifier = 7
+
+	blurb = "A reptilian species from the Uuosa-Eso system that speaks the hissing Sinta'Unathi language. \
+	Most Unathi are guided by a complex Ethnoreligion called the Unity,\
+	which stresses honesty, bravery, and the perfection of one's craft. \
+	Discovered a handful of generations ago by the Skrell, they're an independent power with loyal ties to the \
+	Skrellian people."
+
+	cold_level_1 = 280 //Default 260 - Lower is better
+	cold_level_2 = 220 //Default 200
+	cold_level_3 = 130 //Default 120
+
+	heat_level_1 = 420 //Default 360 - Higher is better
+	heat_level_2 = 480 //Default 400
+	heat_level_3 = 1100 //Default 1000
+
+/*	breath_cold_level_1 = 260	//Default 240 - Lower is better
+	breath_cold_level_2 = 200	//Default 180
+	breath_cold_level_3 = 120	//Default 100
+
+
+
+	breath_heat_level_1 = 450	//Default 380 - Higher is better
+	breath_heat_level_2 = 530	//Default 450
+	breath_heat_level_3 = 1400	//Default 1250
+
+	minimum_breath_pressure = 18	//Bigger, means they need more air
+*/
+	body_temperature = T20C
+
+	spawn_flags = CAN_JOIN | IS_WHITELISTED
+	appearance_flags = HAS_HAIR_COLOR | HAS_LIPS | HAS_UNDERWEAR | HAS_SKIN_COLOR | HAS_EYE_COLOR
+
+	flesh_color = "#34AF10"
+	blood_color = "#f24b2e"		//syzygy edit
+	base_color = "#066000"
+
+//	reagent_tag = IS_UNATHI
+
+//	move_trail = /obj/effect/decal/cleanable/blood/tracks/claw
+/*
+	has_limbs = list(
+		BP_TORSO =  list("path" = /obj/item/organ/external/chest/unathi),
+		BP_GROIN =  list("path" = /obj/item/organ/external/groin/unathi),
+		BP_HEAD =   list("path" = /obj/item/organ/external/head/unathi),
+		BP_L_ARM =  list("path" = /obj/item/organ/external/arm),
+		BP_R_ARM =  list("path" = /obj/item/organ/external/arm/right),
+		BP_L_LEG =  list("path" = /obj/item/organ/external/leg),
+		BP_R_LEG =  list("path" = /obj/item/organ/external/leg/right),
+		BP_L_HAND = list("path" = /obj/item/organ/external/hand),
+		BP_R_HAND = list("path" = /obj/item/organ/external/hand/right),
+		BP_L_FOOT = list("path" = /obj/item/organ/external/foot),
+		BP_R_FOOT = list("path" = /obj/item/organ/external/foot/right)
+		)
+
+	//No kidneys or appendix
+	has_organ = list(
+		O_HEART =    /obj/item/organ/internal/heart/unathi,
+		O_LUNGS =    /obj/item/organ/internal/lungs/unathi,
+		O_LIVER =    /obj/item/organ/internal/liver/unathi,
+		O_BRAIN =    /obj/item/organ/internal/brain/unathi,
+		O_EYES =     /obj/item/organ/internal/eyes,
+		)
+*/
+
+	heat_discomfort_level = 295
+	heat_discomfort_strings = list(
+		"You feel soothingly warm.",
+		"You feel the heat sink into your bones.",
+		"You feel warm enough to take a nap."
+		)
+
+	cold_discomfort_level = 292
+	cold_discomfort_strings = list(
+		"You feel chilly.",
+		"You feel sluggish and cold.",
+		"Your scales bristle against the cold."
+		)
+/*
+	descriptors = list(
+		/datum/mob_descriptor/height = 2,
+		/datum/mob_descriptor/build = 2
+		)*/
+
+/datum/species/unathi/equip_survival_gear(var/mob/living/carbon/human/H)
+	..()
+	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/sandal(H),slot_shoes)
+
+/datum/species/tajaran
+	name = SPECIES_TAJ
+	name_plural = "Tajaran"
+	icobase = 'icons/mob/human_races/r_tajaran.dmi'
+	deform = 'icons/mob/human_races/r_def_tajaran.dmi'
+	tail = "tajtail"
+	tail_animation = 'icons/mob/species/tajaran/tail.dmi'
+	tail_blend = ICON_MULTIPLY								//Eclipse edit.
+	unarmed_types = list(/datum/unarmed_attack/stomp, /datum/unarmed_attack/kick, /datum/unarmed_attack/claws, /datum/unarmed_attack/bite/sharp)
+	darksight = 8
+	slowdown = -0.15
+//	snow_movement = -1		//Ignores half of light snow
+	brute_mod = 1.10
+	burn_mod =  1.10
+	flash_mod = 1.1
+//	metabolic_rate = 1.1
+	gluttonous = 1
+	num_alternate_languages = 3
+	secondary_langs = list(LANGUAGE_SIIK, LANGUAGE_AKHANI)
+	name_language = LANGUAGE_SIIK
+//	species_language = LANGUAGE_SIIK
+//	health_hud_intensity = 2.5
+
+	min_age = 17
+	max_age = 80
+
+//	economic_modifier = 7
+
+	blurb = "Hailing from the world of Merelar in the Mecati-Stendarr binary star system. Tajaran are a hardy species of feline-like \
+	bipedal sapients that easily stand below-freezing temperatures and adapt quickly to humid ones. The Tajaran species shares a joint republic \
+	with the Teshari on the far edge of the Orion spur, formally known as the Tajaran-Teshari Alliance."
+	body_temperature = 293.15	//this actualy fixes itchy fur spam
+
+	cold_level_1 = 200 //Default 260
+	cold_level_2 = 140 //Default 200
+	cold_level_3 = 80  //Default 120
+
+
+
+	heat_level_1 = 330 //Default 360
+	heat_level_2 = 380 //Default 400
+	heat_level_3 = 800 //Default 1000
+	/*
+	breath_cold_level_1 = 180	//Default 240 - Lower is better
+	breath_cold_level_2 = 100	//Default 180
+	breath_cold_level_3 = 60	//Default 100
+	breath_heat_level_1 = 360	//Default 380 - Higher is better
+	breath_heat_level_2 = 430	//Default 450
+	breath_heat_level_3 = 1000	//Default 1250
+*/
+	primitive_form = SPECIES_MONKEY_TAJ
+
+	spawn_flags = CAN_JOIN | IS_WHITELISTED
+	appearance_flags = HAS_HAIR_COLOR | HAS_LIPS | HAS_UNDERWEAR | HAS_SKIN_COLOR | HAS_EYE_COLOR
+
+	flesh_color = "#AFA59E"
+	base_color = "#333333"
+
+//	reagent_tag = IS_TAJARA
+
+//	move_trail = /obj/effect/decal/cleanable/blood/tracks/paw
+
+	heat_discomfort_level = 303		// Occulus edit - this does nothing for itchy fur spam, see body temp above
+	heat_discomfort_strings = list(
+		"Your fur prickles in the heat.",
+		"You feel uncomfortably warm.",
+		"Your overheated skin itches."
+		)
+
+	cold_discomfort_level = 275
+/*
+	has_organ = list(    //No appendix.
+		O_HEART =    /obj/item/organ/internal/heart,
+		O_LUNGS =    /obj/item/organ/internal/lungs,
+		O_VOICE = 		/obj/item/organ/internal/voicebox,
+		O_LIVER =    /obj/item/organ/internal/liver,
+		O_KIDNEYS =  /obj/item/organ/internal/kidneys,
+		O_BRAIN =    /obj/item/organ/internal/brain,
+		O_EYES =     /obj/item/organ/internal/eyes
+		)
+*/
+/datum/species/tajaran/equip_survival_gear(var/mob/living/carbon/human/H)
+	..()
+	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/sandal(H),slot_shoes)
+
+/datum/species/skrell
+	name = SPECIES_SKRELL
+	name_plural = "Skrell"
+	icobase = 'icons/mob/human_races/r_skrell.dmi'
+	deform = 'icons/mob/human_races/r_def_skrell.dmi'
+	primitive_form = SPECIES_MONKEY_SKRELL
+	unarmed_types = list(/datum/unarmed_attack/punch)
+	blurb = "The Skrell are a race of amphibious, cold-blooded humanoid aliens. They are one of the major players in \
+	galactic politics, and although they are considered relatively on a similar level of political and military power to SolGov,\
+	 their exact capabilities are kept secret and unclear. Their society follows a caste system and generally tries to project the \
+	 Skrell as rational, dependable, and careful. It is their overt caution that borders on paranoia in their interactions, however, \
+	 that most hinders them. A remainder from a harsh period of history and potential bad actors. Skrell are, in short, hard to trust, \
+	 and choose their words and truths carefully."
+	num_alternate_languages = 4 //Let's give the smart frogs some love
+	secondary_langs = list(LANGUAGE_SKRELLIAN, LANGUAGE_SCHECHI)
+	name_language = LANGUAGE_SKRELLIAN
+//	species_language = LANGUAGE_SKRELLIAN
+//	assisted_langs = list(LANGUAGE_EAL, LANGUAGE_TERMINUS, LANGUAGE_ROOTLOCAL, LANGUAGE_ROOTGLOBAL, LANGUAGE_VOX)
+//	health_hud_intensity = 2
+
+//	water_movement = -3
+
+	min_age = 19
+	max_age = 130
+
+//	economic_modifier = 12
+
+	darksight = 4
+	flash_mod = 1.2
+//	chemOD_mod = 0.9
+
+//	bloodloss_rate = 1.5
+
+//	ambiguous_genders = TRUE
+
+	spawn_flags = CAN_JOIN | IS_WHITELISTED
+	appearance_flags = HAS_HAIR_COLOR | HAS_LIPS | HAS_UNDERWEAR | HAS_SKIN_COLOR
+
+	flesh_color = "#8CD7A3"
+	blood_color = "#1D2CBF"
+	base_color = "#006666"
+
+	cold_level_1 = 280 //Default 260 - Lower is better
+	cold_level_2 = 220 //Default 200
+	cold_level_3 = 130 //Default 120
+
+
+
+	heat_level_1 = 420 //Default 360 - Higher is better
+	heat_level_2 = 480 //Default 400
+	heat_level_3 = 1100 //Default 1000
+/*
+	breath_cold_level_1 = 250	//Default 240 - Lower is better
+	breath_cold_level_2 = 190	//Default 180
+	breath_cold_level_3 = 120	//Default 100
+
+	breath_heat_level_1 = 400	//Default 380 - Higher is better
+	breath_heat_level_2 = 500	//Default 450
+	breath_heat_level_3 = 1350	//Default 1250
+
+	reagent_tag = IS_SKRELL*/
+
+/*	has_limbs = list(
+		BP_TORSO =  list("path" = /obj/item/organ/external/chest),
+		BP_GROIN =  list("path" = /obj/item/organ/external/groin),
+		BP_HEAD =   list("path" = /obj/item/organ/external/head/skrell),
+		BP_L_ARM =  list("path" = /obj/item/organ/external/arm),
+		BP_R_ARM =  list("path" = /obj/item/organ/external/arm/right),
+		BP_L_LEG =  list("path" = /obj/item/organ/external/leg),
+		BP_R_LEG =  list("path" = /obj/item/organ/external/leg/right),
+		BP_L_HAND = list("path" = /obj/item/organ/external/hand),
+		BP_R_HAND = list("path" = /obj/item/organ/external/hand/right),
+		BP_L_FOOT = list("path" = /obj/item/organ/external/foot),
+		BP_R_FOOT = list("path" = /obj/item/organ/external/foot/right)
+		)
+
+/datum/species/skrell/can_breathe_water()
+	return TRUE*/

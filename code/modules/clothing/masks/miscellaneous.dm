@@ -1,6 +1,3 @@
-#define THIEF_MASK_SANITY_COEFF_BUFF 1.6
-#define NORMAL_MASK_SANITY_COEFF_BUFF 1.3
-
 /obj/item/clothing/mask/muzzle
 	name = "muzzle"
 	desc = "To stop that awful noise."
@@ -10,6 +7,7 @@
 	w_class = ITEM_SIZE_SMALL
 	gas_transfer_coefficient = 0.90
 	voicechange = 1
+	rarity_value = 100
 
 /obj/item/clothing/mask/muzzle/tape
 	name = "length of tape"
@@ -35,6 +33,7 @@
 	desc = "A sterile mask designed to help prevent the spread of diseases."
 	icon_state = "sterile"
 	item_state = "sterile"
+	rarity_value = 25
 	w_class = ITEM_SIZE_SMALL
 	body_parts_covered = FACE
 	item_flags = FLEXIBLEMATERIAL
@@ -49,10 +48,6 @@
 		rad = 0
 	)
 	price_tag = 10
-
-/obj/item/clothing/mask/surgical/New()
-	..()
-	AddComponent(/datum/component/clothing_sanity_protection, NORMAL_MASK_SANITY_COEFF_BUFF)
 
 /obj/item/clothing/mask/thief
 	name = "mastermind's mask"
@@ -70,10 +65,6 @@
 		rad = 0
 	)
 	price_tag = 150
-
-/obj/item/clothing/mask/thief/New()
-	..()
-	AddComponent(/datum/component/clothing_sanity_protection, THIEF_MASK_SANITY_COEFF_BUFF)
 
 /obj/item/clothing/mask/thief/wolf
 	name = "technician's mask"
@@ -137,6 +128,7 @@
 	w_class = ITEM_SIZE_SMALL
 	gas_transfer_coefficient = 0.90
 	price_tag = 50
+	rarity_value = 100
 
 /obj/item/clothing/mask/scarf/stripedblue
 	name = "striped blue scarf"
@@ -181,32 +173,6 @@
 	item_state = "ninja_scarf"
 	siemens_coefficient = 0
 
-/obj/item/clothing/mask/scarf/style
-	name = "black scarf"
-	desc = "A stylish, black scarf."
-	icon_state = "blackscarf"
-	item_state = "blackscarf"
-	style = STYLE_HIGH
-	price_tag = 100
-
-/obj/item/clothing/mask/scarf/style/bluestyle
-	name = "blue scarf"
-	desc = "A stylish, blue scarf."
-	icon_state = "bluescarf"
-	item_state = "bluescarf"
-
-/obj/item/clothing/mask/scarf/style/yellowstyle
-	name = "yellow scarf"
-	desc = "A stylish, yellow scarf."
-	icon_state = "yellowscarf"
-	item_state = "yellowscarf"
-
-/obj/item/clothing/mask/scarf/style/redstyle
-	name = "red scarf"
-	desc = "A stylish, red scarf."
-	icon_state = "redscarf"
-	item_state = "redscarf"
-
 /obj/item/clothing/mask/pig
 	name = "pig mask"
 	desc = "A rubber pig mask."
@@ -216,10 +182,6 @@
 	w_class = ITEM_SIZE_SMALL
 	siemens_coefficient = 0.9
 	body_parts_covered = HEAD|FACE|EYES
-
-/obj/item/clothing/mask/pig/New()
-	..()
-	AddComponent(/datum/component/clothing_sanity_protection, NORMAL_MASK_SANITY_COEFF_BUFF)
 
 /obj/item/clothing/mask/horsehead
 	name = "horse head mask"
@@ -232,12 +194,10 @@
 	siemens_coefficient = 0.9
 
 /obj/item/clothing/mask/horsehead/New()
-	..()
-	// The horse mask doesn't cause voice changes by default, the wizard spell changes the flag as necessary
-	say_messages = list("NEEIIGGGHHHH!", "NEEEIIIIGHH!", "NEIIIGGHH!", "HAAWWWWW!", "HAAAWWW!")
-	say_verbs = list("whinnies", "neighs", "says")
-	AddComponent(/datum/component/clothing_sanity_protection, NORMAL_MASK_SANITY_COEFF_BUFF)
-
+    ..()
+    // The horse mask doesn't cause voice changes by default, the wizard spell changes the flag as necessary
+    say_messages = list("NEEIIGGGHHHH!", "NEEEIIIIGHH!", "NEIIIGGHH!", "HAAWWWWW!", "HAAAWWW!")
+    say_verbs = list("whinnies", "neighs", "says")
 
 /obj/item/clothing/mask/ai
 	name = "camera MIU"
@@ -274,16 +234,22 @@
 // Bandanas below
 /obj/item/clothing/mask/bandana
 	name = "black bandana"
-	desc = "A fine bandana with nanotech lining. Can be worn on the head or face."
-	flags_inv = HIDEFACE
-	slot_flags = SLOT_MASK|SLOT_HEAD
-	body_parts_covered = FACE
+	//SYZYGY Edit Start
+	desc = "A fine bandana with nanotech lining."
+	flags_inv = null	//Now ears and hair show through it
+	slot_flags = SLOT_HEAD | SLOT_MASK
+	body_parts_covered = HEAD|FACE
+	item_icons = list(
+		slot_head_str = 'icons/mob/head.dmi',
+		slot_wear_mask_str = 'icons/mob/mask.dmi'		)
+	//SYZYGY Edit end
 	icon_state = "bandblack"
 	item_state = "bandblack"
 	item_flags = FLEXIBLEMATERIAL
 	w_class = ITEM_SIZE_SMALL
 	price_tag = 20
-
+	rarity_value = 18.2
+//SYZYGY Edit - Renabling this
 /obj/item/clothing/mask/bandana/equipped(var/mob/user, var/slot)
 	switch(slot)
 		if(slot_wear_mask) //Mask is the default for all the settings
@@ -296,6 +262,7 @@
 			icon_state = "[initial(icon_state)]_up"
 
 	return ..()
+//SYZYG Edit end
 
 /obj/item/clothing/mask/bandana/red
 	name = "red bandana"
@@ -342,12 +309,3 @@
 	desc = "A fine black bandana with nanotech lining and a skull emblem. Can be worn on the head or face."
 	icon_state = "bandskull"
 	item_state = "bandskull"
-
-/obj/item/clothing/mask/gnome
-	name = "tactical beard"
-	desc = "The fancy looking beard."
-	icon_state = "gnome_beard"
-	item_state = "gnome_beard"
-	flags_inv = HIDEFACE
-	body_parts_covered = 0
-	style = STYLE_HIGH

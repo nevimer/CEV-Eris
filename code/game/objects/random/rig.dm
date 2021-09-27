@@ -10,11 +10,11 @@
 	has_postspawn = TRUE
 
 /obj/spawner/rig/post_spawn(list/spawns)
-	for (var/obj/item/rig/module in spawns)
+	for (var/obj/item/weapon/rig/module in spawns)
 		var/cnd = rand(40,80)
 		module.lose_modules(cnd)
-		module.misconfigure(cnd)
-		module.sabotage_tank()
+		//module.misconfigure(cnd) Occulus YEET. This is going to make_old()
+		//module.sabotage_tank() Occulus YEET. This is going to make_old()
 
 /obj/spawner/rig/low_chance
 	name = "low chance random rig suit"

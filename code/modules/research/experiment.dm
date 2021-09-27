@@ -1,5 +1,5 @@
 // Contains everything related to earning research points
-#define AUTOPSY_WEAPON_PAMT rand(1,5) * 20 // 50-100 points for random weapon
+#define AUTOPSY_WEAPON_PAMT rand(5,10) * 100 // 500-1000 points for random weapon Occulus Edit
 #define ARTIFACT_PAMT rand(5,10) * 1000 // 5000-10000 points for random artifact
 
 GLOBAL_LIST_EMPTY(explosion_watcher_list)
@@ -10,7 +10,7 @@ GLOBAL_LIST_EMPTY(explosion_watcher_list)
 	var/static/list/tech_points = list(
 		TECH_MATERIAL = 200,
 		TECH_ENGINEERING = 250,
-		TECH_PLASMA = 500,
+		TECH_PHORON = 500,
 		TECH_POWER = 300,
 		TECH_BLUESPACE = 1000,
 		TECH_BIO = 300,
@@ -48,13 +48,13 @@ GLOBAL_LIST_EMPTY(explosion_watcher_list)
 	// Points for each symptom level, from 1 to 5
 	var/static/list/level_to_points = list(200,500,1000,2500,10000)
 	// Points for special slime cores
-	var/static/list/core_points = list(
-		/obj/item/slime_extract/grey = 100,
-		/obj/item/slime_extract/gold = 2000,
-		/obj/item/slime_extract/adamantine = 3000,
-		/obj/item/slime_extract/bluespace = 5000,
-		/obj/item/slime_extract/rainbow = 10000
-	)
+	var/static/list/core_points = list( //Occulus Edit Start
+		/obj/item/slime_extract/grey = 200,
+		/obj/item/slime_extract/gold = 4000,
+		/obj/item/slime_extract/adamantine = 6000,
+		/obj/item/slime_extract/bluespace = 10000,
+		/obj/item/slime_extract/rainbow = 20000
+	) //Occulus Edit End
 
 /*
 /datum/experiment_data/proc/ConvertReqString2List(list/source_list)
@@ -68,7 +68,7 @@ GLOBAL_LIST_EMPTY(explosion_watcher_list)
 	var/list/temp_tech = I.origin_tech
 	var/item_tech_points = 0
 	var/has_new_tech = FALSE
-	var/is_board = istype(I, /obj/item/electronics/circuitboard)
+	var/is_board = istype(I, /obj/item/weapon/electronics/circuitboard)
 
 	for(var/T in temp_tech)
 		if(tech_points[T])
@@ -140,7 +140,7 @@ GLOBAL_LIST_EMPTY(explosion_watcher_list)
 		if(core in saved_slimecores)
 			continue
 
-		var/reward = 1000
+		var/reward = 2000 //Occulus Edit
 		if(core in core_points)
 			reward = core_points[core]
 		points += reward
@@ -210,7 +210,7 @@ GLOBAL_LIST_EMPTY(explosion_watcher_list)
 			if(power > saved_power_level)
 				RD.files.experiments.saved_best_explosion = power
 
-			RD.files.adjust_research_points(calculated_research_points)
+			RD.files.research_points += calculated_research_points
 
 	if(calculated_research_points > 0)
 		autosay("Detected explosion with power level [power], received [calculated_research_points] research points", name ,"Science")
@@ -252,15 +252,15 @@ GLOBAL_LIST_EMPTY(explosion_watcher_list)
 /obj/item/device/science_tool/afterattack(obj/O, mob/living/user)
 	var/scanneddata = 0
 
-	if(istype(O,/obj/item/paper/autopsy_report))
-		var/obj/item/paper/autopsy_report/report = O
+	if(istype(O,/obj/item/weapon/paper/autopsy_report))
+		var/obj/item/weapon/paper/autopsy_report/report = O
 		for(var/datum/autopsy_data/W in report.autopsy_data)
 			if(!(W.weapon in scanned_autopsy_weapons))
 				scanneddata += 1
 				scanned_autopsy_weapons += W.weapon
 
-	if(istype(O, /obj/item/paper/artifact_info))
-		var/obj/item/paper/artifact_info/report = O
+	if(istype(O, /obj/item/weapon/paper/artifact_info))
+		var/obj/item/weapon/paper/artifact_info/report = O
 		if(report.artifact_type)
 			for(var/list/artifact in scanned_artifacts)
 				if(artifact["type"] == report.artifact_type && artifact["first_effect"] == report.artifact_first_effect && artifact["second_effect"] == report.artifact_second_effect)
@@ -274,8 +274,8 @@ GLOBAL_LIST_EMPTY(explosion_watcher_list)
 			))
 			scanneddata += 1
 
-	if(istype(O, /obj/item/paper/virus_report))
-		var/obj/item/paper/virus_report/report = O
+	if(istype(O, /obj/item/weapon/paper/virus_report))
+		var/obj/item/weapon/paper/virus_report/report = O
 		for(var/symptom in report.symptoms)
 			if(!scanned_symptoms[symptom])
 				scanneddata += 1
@@ -303,7 +303,7 @@ GLOBAL_LIST_EMPTY(explosion_watcher_list)
 	datablocks = 0
 
 
-/obj/item/computer_hardware/hard_drive/portable/research_points
+/obj/item/weapon/computer_hardware/hard_drive/portable/research_points
 	disk_name = "research data"
 	icon_state = "onestar"
 	spawn_tags = SPAWN_TAG_RESEARCH_POINTS
@@ -311,12 +311,12 @@ GLOBAL_LIST_EMPTY(explosion_watcher_list)
 	var/min_points = 2000
 	var/max_points = 10000
 
-/obj/item/computer_hardware/hard_drive/portable/research_points/install_default_files()
+/obj/item/weapon/computer_hardware/hard_drive/portable/research_points/install_default_files()
 	..()
 	var/datum/computer_file/binary/research_points/F = new(size = rand(min_points / 1000, max_points / 1000))
 	store_file(F)
 
-/obj/item/computer_hardware/hard_drive/portable/research_points/rare
+/obj/item/weapon/computer_hardware/hard_drive/portable/research_points/rare
 	min_points = 10000
 	max_points = 20000
 	rarity_value = 60

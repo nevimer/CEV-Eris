@@ -1,7 +1,7 @@
 /datum/storyteller/healer
 	config_tag = "healer"
 	name = "The Healer"
-	welcome = "Welcome to CEV Eris! We hope you enjoy your stay!"
+	welcome = "Welcome to CEV Northern Light! We hope you enjoy your stay!"
 	description = "Peaceful and relaxed storyteller who will try to help the crew a little."
 
 	gain_mult_mundane = 1.2
@@ -17,5 +17,5 @@
 	EVENT_LEVEL_MUNDANE = 0, //Mundane
 	EVENT_LEVEL_MODERATE = 0, //Moderate
 	EVENT_LEVEL_MAJOR = 0, //Major
-	EVENT_LEVEL_ROLESET = 90 //Roleset
+	EVENT_LEVEL_ROLESET = 40 //Roleset
 	)

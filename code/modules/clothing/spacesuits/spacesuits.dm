@@ -21,7 +21,7 @@
 		rad = 50
 	)
 	flags_inv = HIDEMASK|HIDEEARS|HIDEEYES|HIDEFACE|BLOCKHAIR
-	body_parts_covered = HEAD|FACE|EYES|EARS
+	body_parts_covered = HEAD|FACE|EYES
 	cold_protection = HEAD
 	min_cold_protection_temperature = SPACE_HELMET_MIN_COLD_PROTECTION_TEMPERATURE
 	heat_protection = HEAD
@@ -79,7 +79,7 @@
 	gas_transfer_coefficient = 0.01
 	permeability_coefficient = 0.02
 	item_flags = STOPPRESSUREDAMAGE|THICKMATERIAL|COVER_PREVENT_MANIPULATION
-	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
+	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS|HANDS|FEET
 	matter = list(MATERIAL_PLASTIC = 30, MATERIAL_STEEL = 10)
 	slowdown = 1
 	armor = list(

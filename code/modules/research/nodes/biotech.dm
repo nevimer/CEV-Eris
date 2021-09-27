@@ -75,7 +75,7 @@
 	required_tech_levels = list()
 	cost = 400
 
-	unlocks_designs = list(	/datum/design/research/circuit/biogenerator,
+	unlocks_designs = list(	//datum/design/research/circuit/biogenerator, OCCULUS EDIT. Comments out the non-Mekhane Biogenerator for lore reasons
 							/datum/design/research/item/weapon/flora_gun)
 
 /datum/technology/portable_chemistry
@@ -258,6 +258,7 @@
 							/datum/design/research/item/mechfab/prosthesis_moebius/groin
 							)
 
+/*	SYZYGY EDIT - no thanks
 /datum/technology/mind_biotech
 	name = "Mind Biotech"
 	desc = "Experimental biotechnology that explores the inner workings of sentient minds"
@@ -273,3 +274,4 @@
 	cost = 3000
 
 	unlocks_designs = list(	/datum/design/research/circuit/mindswapper)
+*/

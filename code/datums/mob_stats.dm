@@ -14,11 +14,6 @@
 	holder = null
 	return ..()
 
-/datum/stat_holder/proc/addTempStat(statName, Value, timeDelay, id = null)
-	var/datum/stat/S = stat_list[statName]
-	S.addModif(timeDelay, Value, id)
-	SEND_SIGNAL(holder, COMSIG_STAT, S.name, S.getValue(), S.getValue(TRUE))
-
 /datum/stat_holder/proc/removeTempStat(statName, id)
 	if(!id)
 		crash_with("no id passed to removeTempStat(")
@@ -34,7 +29,6 @@
 /datum/stat_holder/proc/changeStat(statName, Value)
 	var/datum/stat/S = stat_list[statName]
 	S.changeValue(Value)
-	SEND_SIGNAL(holder, COMSIG_STAT, S.name, S.getValue(), S.getValue(TRUE))
 
 /datum/stat_holder/proc/setStat(statName, Value)
 	var/datum/stat/S = stat_list[statName]
@@ -43,11 +37,7 @@
 /datum/stat_holder/proc/getStat(statName, pure = FALSE)
 	if (!islist(statName))
 		var/datum/stat/S = stat_list[statName]
-		if(holder)
-			SEND_SIGNAL(holder, COMSIG_STAT, S.name, S.getValue(), S.getValue(TRUE))
 		return S ? S.getValue(pure) : 0
-	else
-		log_debug("passed list to getStat()")
 
 //	Those are accept list of stats
 //	Compound stat checks.
@@ -116,12 +106,10 @@
 
 /// The main, public proc to add a perk to a mob. Accepts a path or a stringified path.
 /datum/stat_holder/proc/addPerk(perkType)
-	. = FALSE
 	if(!getPerk(perkType))
 		var/datum/perk/P = new perkType
 		perks += P
 		P.assign(holder)
-		. = TRUE
 
 
 /// The main, public proc to remove a perk from a mob. Accepts a path or a stringified path.
@@ -152,6 +140,11 @@
 	var/value = STAT_VALUE_DEFAULT
 	var/list/mods = list()
 
+
+/datum/stat_holder/proc/addTempStat(statName, Value, timeDelay, id = null)
+	var/datum/stat/S = stat_list[statName]
+	S.addModif(timeDelay, Value, id)
+
 /datum/stat/proc/addModif(delay, affect, id)
 	for(var/elem in mods)
 		var/datum/stat_mod/SM = elem
@@ -177,8 +170,21 @@
 		if(SM.id == id)
 			return SM
 
-/datum/stat/proc/changeValue(affect)
-	value = value + affect
+/datum/stat/proc/changeValue(affect)//Occulus Edit start: Softcaps
+	var/affectover
+	if(value+affect > 80)
+		if(value > 80)
+			value = round(value+(affect*0.25))
+		else
+			affectover = (value+affect-80)*0.25
+			value= round((80+affectover))
+	else if(value+affect > 60)
+		if(value > 60)
+			value = round(value+(affect*0.5))
+		else
+			affectover = (value+affect-60)*0.5
+			value = round((60+affectover))
+	else( value = value + affect)//Occulus Edit End
 
 /datum/stat/proc/getValue(pure = FALSE)
 	if(pure)

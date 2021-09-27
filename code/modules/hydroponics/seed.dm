@@ -51,6 +51,7 @@
 	var/splat_type = /obj/effect/decal/cleanable/fruit_smudge // Graffiti decal.
 	var/has_mob_product
 	var/force_layer
+	var/list/taste_tag = list(VEGETARIAN_FOOD,VEGAN_FOOD) //Occulus Edit: Adds flavor to fruit
 
 /datum/seed/New()
 
@@ -406,12 +407,12 @@
 
 	if(prob(5))
 		consume_gasses = list()
-		var/gas = pick("oxygen","nitrogen","plasma","carbon_dioxide")
+		var/gas = pick("oxygen","nitrogen","phoron","carbon_dioxide")
 		consume_gasses[gas] = rand(3,9)
 
 	if(prob(5))
 		exude_gasses = list()
-		var/gas = pick("oxygen","nitrogen","plasma","carbon_dioxide")
+		var/gas = pick("oxygen","nitrogen","phoron","carbon_dioxide")
 		exude_gasses[gas] = rand(3,9)
 
 	chems = list()
@@ -445,7 +446,7 @@
 			"cryptobiolin",
 			"dermaline",
 			"dexalin",
-			"plasma",
+			"phoron",
 			"synaptizine",
 			"impedrezene",
 			"hyronalin",

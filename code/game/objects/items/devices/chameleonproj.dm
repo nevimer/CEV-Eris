@@ -1,8 +1,3 @@
-#define CHAMELEON_MIN_PIXELS 32
-
-GLOBAL_LIST_INIT(champroj_blacklist, list(/obj/item/disk/nuclear))
-GLOBAL_LIST_INIT(champroj_whitelist, list())
-
 /obj/item/device/chameleon
 	name = "chameleon projector"
 	desc = "This is chameleion projector. Chose an item and activate projector. You're beautiful!"
@@ -15,13 +10,13 @@ GLOBAL_LIST_INIT(champroj_whitelist, list())
 	throw_range = 5
 	w_class = ITEM_SIZE_SMALL
 	origin_tech = list(TECH_COVERT = 4, TECH_MAGNET = 4)
-	suitable_cell = /obj/item/cell/small
+	suitable_cell = /obj/item/weapon/cell/small
 	spawn_blacklisted = TRUE
 	var/can_use = 1
 	var/obj/effect/dummy/chameleon/active_dummy
-	var/saved_item
-	var/saved_icon
-	var/saved_icon_state
+	var/saved_item = /obj/item/trash/cigbutt
+	var/saved_icon = 'icons/inventory/face/icon.dmi'
+	var/saved_icon_state = "cigbutt"
 	var/saved_overlays
 
 	var/tick_cost = 2 //how much charge is consumed per process tick from the cell
@@ -44,37 +39,16 @@ GLOBAL_LIST_INIT(champroj_whitelist, list())
 		toggle()
 
 /obj/item/device/chameleon/afterattack(atom/target, mob/user , proximity)
-	if (istype(target, /obj/item/storage)) return
+	if (istype(target, /obj/item/weapon/storage)) return
 	if(!proximity) return
 	if(!active_dummy)
-		if(scan_item(target))
+		if(istype(target,/obj/item) && !istype(target, /obj/item/weapon/disk/nuclear))
 			playsound(get_turf(src), 'sound/weapons/flash.ogg', 100, 1, -6)
 			to_chat(user, SPAN_NOTICE("Scanned [target]."))
 			saved_item = target.type
 			saved_icon = target.icon
 			saved_icon_state = target.icon_state
 			saved_overlays = target.overlays
-			return
-		to_chat(user, SPAN_WARNING("\The [target] is an invalid target."))
-
-/obj/item/device/chameleon/proc/scan_item(var/obj/item/I)
-	if(!istype(I))
-		return FALSE
-	if(GLOB.champroj_blacklist.Find(I.type))
-		return FALSE
-	if(GLOB.champroj_whitelist.Find(I.type))
-		return TRUE
-	var/icon/icon_to_check = icon(I.icon, I.icon_state, I.dir)
-	var/total_pixels = 0
-	for(var/y = 0 to icon_to_check.Width())
-		for(var/x = 0 to icon_to_check.Height())
-			if(icon_to_check.GetPixel(x, y))
-				total_pixels++
-	if(total_pixels < CHAMELEON_MIN_PIXELS)
-		GLOB.champroj_blacklist.Add(I.type)
-		return FALSE
-	GLOB.champroj_whitelist.Add(I.type)
-	return TRUE
 
 /obj/item/device/chameleon/proc/toggle()
 	if(!can_use || !saved_item) return

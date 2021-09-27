@@ -8,24 +8,24 @@
 /datum/storyevent/hivemind
 	id = "hivemind"
 	name = "Hivemind Invasion"
-	req_crew = 16
 
 
 	event_type = /datum/event/hivemind
-	event_pools = list(EVENT_LEVEL_MAJOR = POOL_THRESHOLD_MAJOR*0.9) //bit more common
+	event_pools = list(EVENT_LEVEL_MAJOR = POOL_THRESHOLD_MAJOR*0.80)
 	tags = list(TAG_COMMUNAL, TAG_DESTRUCTIVE, TAG_NEGATIVE, TAG_SCARY)
 //============================================
 
 /datum/event/hivemind
-	announceWhen	= 240
+	announceWhen	= 300
+	var/turf/start_location	// OCCULUS EDIT - moved from start()
 
 
 /datum/event/hivemind/announce()
-	level_eight_announcement() //Different announcement than blob or plants, so the crew doesn't need to struggle trying to figure out if it's blob, plants or hive
+	level_seven_announcement()
+	command_announcement.Announce("Abnormal biomechanical signatures detected in [get_area(start_location)]. All personnel are advised to proceed with caution.", "Anomaly Alert")	// OCCULUS EDIT - announce the room in which the hivemind core spawned
 
 
 /datum/event/hivemind/start()
-	var/turf/start_location
 	for(var/i=1 to 100)
 		var/area/A = random_ship_area(filter_players = TRUE, filter_maintenance = TRUE, filter_critical = TRUE)
 		start_location = A.random_space()

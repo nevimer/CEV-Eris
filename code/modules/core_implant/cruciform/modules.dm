@@ -1,10 +1,10 @@
-/datum/core_module/cruciform/implant_type = /obj/item/implant/core_implant/cruciform
+/datum/core_module/cruciform/implant_type = /obj/item/weapon/implant/core_implant/cruciform
 
 
 /datum/core_module/cruciform/red_light/install()
 	implant.icon_state = "cruciform_red"
-	implant.max_power += initial(implant.max_power) * 0.6
-	implant.power_regen += initial(implant.power_regen) * 0.15
+	implant.max_power += 30 //Occulus Edit: Revert
+	implant.power_regen += 0.25 //Occulus Edit: Revert
 	implant.restore_power(implant.max_power)
 
 	if(ishuman(implant.wearer))
@@ -13,8 +13,8 @@
 
 /datum/core_module/cruciform/red_light/uninstall()
 	implant.icon_state = "cruciform_green"
-	implant.max_power -= initial(implant.max_power) * 0.6
-	implant.power_regen -= initial(implant.power_regen) * 0.15
+	implant.max_power -= 30 //Occulus Edit: Revert
+	implant.power_regen -= 0.25 //Occulus Edit: Revert
 	implant.power = implant.max_power
 
 	if(ishuman(implant.wearer))
@@ -117,12 +117,12 @@
 
 /datum/core_module/activatable/cruciform/priest_convert/activate()
 	..()
-	var/obj/item/implant/core_implant/cruciform/C = implant
+	var/obj/item/weapon/implant/core_implant/cruciform/C = implant
 	C.make_priest()
 
 /datum/core_module/activatable/cruciform/priest_convert/uninstall()
 	..()
-	var/obj/item/implant/core_implant/cruciform/C = implant
+	var/obj/item/weapon/implant/core_implant/cruciform/C = implant
 	C.make_common()
 
 
@@ -149,7 +149,7 @@
 ///////////
 
 /datum/core_module/rituals/cruciform
-	implant_type = /obj/item/implant/core_implant/cruciform
+	implant_type = /obj/item/weapon/implant/core_implant/cruciform
 	var/list/ritual_types = list()
 
 /datum/core_module/rituals/cruciform/set_up()
@@ -163,24 +163,18 @@
 	ritual_types = list(/datum/ritual/cruciform/base,
 	/datum/ritual/targeted/cruciform/base,
 	/datum/ritual/group/cruciform,
-	/datum/ritual/cruciform/machines)
+	/datum/ritual/cruciform/occulus) // OCCULUS EDIT
+//	/datum/ritual/cruciform/machines - Eclipse edit
 
 /datum/core_module/rituals/cruciform/agrolyte
 	access = list(access_nt_agrolyte)
 	ritual_types = list(/datum/ritual/cruciform/agrolyte)
-
-/datum/core_module/rituals/cruciform/custodian
-	access = list(access_nt_custodian)
-	ritual_types = list(/datum/ritual/cruciform/custodian)
 
 /datum/core_module/rituals/cruciform/priest
 	access = list(access_nt_preacher, access_nt_custodian, access_nt_agrolyte)
 	ritual_types = list(/datum/ritual/cruciform/priest,
 	/datum/ritual/targeted/cruciform/priest)
 
-/datum/core_module/rituals/cruciform/priest/acolyte
-	ritual_types = list(/datum/ritual/cruciform/priest/acolyte,
-	/datum/ritual/targeted/cruciform/priest/acolyte)
 
 
 /datum/core_module/rituals/cruciform/inquisitor
@@ -190,14 +184,14 @@
 
 /datum/core_module/rituals/cruciform/inquisitor/install()
 	..()
-	implant.max_power += initial(implant.max_power)
-	implant.power_regen += initial(implant.power_regen) * 0.25
+	implant.max_power += 50 //Occulus Edit: Revert
+	implant.power_regen += 0.5 //Occulus Edit: Revert
 	implant.restore_power(implant.max_power)
 
 /datum/core_module/rituals/cruciform/inquisitor/uninstall()
 	..()
-	implant.max_power -= initial(implant.max_power)
-	implant.power_regen -= initial(implant.power_regen) * 0.25
+	implant.max_power -= 50 //Occulus Edit: Revert
+	implant.power_regen -= 0.5 //Occulus Edit: Revert
 	implant.power = implant.max_power
 
 

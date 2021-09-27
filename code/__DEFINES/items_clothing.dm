@@ -64,7 +64,7 @@
 #define CONDUCT            	0x2   	// Conducts electricity. (metal etc.)
 #define ON_BORDER          	0x4   	// Item has priority to check when entering or leaving.
 #define NOBLOODY           	0x8   	// Used for items if they don't want to get a blood overlay.
-#define PLASMAGUARD        	0x10 	// Does not get contaminated by plasma.
+#define PHORONGUARD        	0x10 	// Does not get contaminated by phoron.
 #define PROXMOVE           	0x20  	// Does this object require proximity checking in Enter()?
 #define SILENT				0x40 	// Sneaky shoes and silenced tools
 #define LOUD			    0x80 	// Loud as hell tools
@@ -121,20 +121,28 @@
 #define slot_head_str		"slot_head"
 #define slot_wear_suit_str	"slot_suit"
 #define slot_s_store_str    "slot_s_store"
+#define slot_wear_mask_str	"slot_wear_mask" //Syzygy Edit
+#define slot_belt_str		"slot_belt" //Occulus Edit
 
 // Bitflags for clothing parts.
 #define HEAD        0x1
 #define FACE        0x2
 #define EYES        0x4
-#define EARS        0x8
-#define UPPER_TORSO 0x10
-#define LOWER_TORSO 0x20
-#define LEG_LEFT    0x40
-#define LEG_RIGHT   0x80
-#define LEGS        0xC0    //  LEG_LEFT | LEG_RIGHT
-#define ARM_LEFT    0x400
-#define ARM_RIGHT   0x800
-#define ARMS        0xC00   //  ARM_LEFT | ARM_RIGHT
+#define UPPER_TORSO 0x8
+#define LOWER_TORSO 0x10
+#define LEG_LEFT    0x20
+#define LEG_RIGHT   0x40
+#define LEGS        0x60   //  LEG_LEFT | LEG_RIGHT
+#define FOOT_LEFT   0x80
+#define FOOT_RIGHT  0x100
+#define FEET        0x180  // FOOT_LEFT | FOOT_RIGHT
+#define ARM_LEFT    0x200
+#define ARM_RIGHT   0x400
+#define ARMS        0x600 //  ARM_LEFT | ARM_RIGHT
+#define HAND_LEFT   0x800
+#define HAND_RIGHT  0x1000
+#define HANDS       0x1800 // HAND_LEFT | HAND_RIGHT
+#define EARS		0x3000
 #define FULL_BODY   0xFFFF
 
 // Bitflags for the percentual amount of protection a piece of clothing which covers the body part offers.
@@ -143,11 +151,14 @@
 #define THERMAL_PROTECTION_HEAD        0.3
 #define THERMAL_PROTECTION_UPPER_TORSO 0.15
 #define THERMAL_PROTECTION_LOWER_TORSO 0.15
-#define THERMAL_PROTECTION_LEG_LEFT    0.1
-#define THERMAL_PROTECTION_LEG_RIGHT   0.1
-#define THERMAL_PROTECTION_ARM_LEFT    0.1
-#define THERMAL_PROTECTION_ARM_RIGHT   0.1
-
+#define THERMAL_PROTECTION_LEG_LEFT    0.075
+#define THERMAL_PROTECTION_LEG_RIGHT   0.075
+#define THERMAL_PROTECTION_FOOT_LEFT   0.025
+#define THERMAL_PROTECTION_FOOT_RIGHT  0.025
+#define THERMAL_PROTECTION_ARM_LEFT    0.075
+#define THERMAL_PROTECTION_ARM_RIGHT   0.075
+#define THERMAL_PROTECTION_HAND_LEFT   0.025
+#define THERMAL_PROTECTION_HAND_RIGHT  0.025
 // Pressure limits.
 #define  HAZARD_HIGH_PRESSURE 550 // This determines at what pressure the ultra-high pressure red icon is displayed. (This one is set as a constant)
 #define WARNING_HIGH_PRESSURE 325 // This determines when the orange pressure icon is displayed (it is 0.7 * HAZARD_HIGH_PRESSURE)

@@ -10,7 +10,7 @@
 	var/list/sheet_reagents = list(
 		/obj/item/stack/material/iron = "iron",
 		/obj/item/stack/material/uranium = "uranium",
-		/obj/item/stack/material/plasma = "plasma",
+		/obj/item/stack/material/phoron = "phoron",
 		/obj/item/stack/material/gold = "gold",
 		/obj/item/stack/material/silver = "silver",
 		/obj/item/stack/material/mhydrogen = "hydrogen",
@@ -26,7 +26,7 @@
 	if(default_deconstruction(I, user))
 		return
 	//Useability tweak for borgs
-	if (istype(I,/obj/item/gripper))
+	if (istype(I,/obj/item/weapon/gripper))
 		ui_interact(user)
 		return
 	return insert(I, user)
@@ -39,8 +39,8 @@
 		to_chat(user, "The machine cannot hold anymore items.")
 		return 1
 
-	if(istype(I,/obj/item/storage/bag/produce))
-		var/obj/item/storage/bag/produce/bag = I
+	if(istype(I,/obj/item/weapon/storage/bag/produce))
+		var/obj/item/weapon/storage/bag/produce/bag = I
 		var/failed = 1
 		for(var/obj/item/G in bag.contents)
 			if(!G.reagents || !G.reagents.total_volume)
@@ -74,6 +74,9 @@
 	I.forceMove(src)
 	holdingitems += I
 	SSnano.update_uis(src)
+	return 0
+
+/obj/machinery/reagentgrinder/attack_ai(mob/user as mob)
 	return 0
 
 /obj/machinery/reagentgrinder/attack_hand(mob/user)
@@ -157,30 +160,30 @@
 	layer = BELOW_OBJ_LAYER
 	density = FALSE
 	anchored = FALSE
-	circuit = /obj/item/electronics/circuitboard/reagentgrinder
+	circuit = /obj/item/weapon/electronics/circuitboard/reagentgrinder
 	nano_template = "grinder.tmpl"
 	var/inuse = 0
-	var/obj/item/reagent_containers/beaker = null
+	var/obj/item/weapon/reagent_containers/beaker = null
 
-/obj/item/electronics/circuitboard/reagentgrinder
+/obj/item/weapon/electronics/circuitboard/reagentgrinder
 	name = T_BOARD("reagent grinder")
 	board_type = "machine"
 	build_path = /obj/machinery/reagentgrinder/portable
 	origin_tech = list(TECH_BIO = 1)
 	req_components = list(
-		/obj/item/stock_parts/manipulator = 2
+		/obj/item/weapon/stock_parts/manipulator = 2
 	)
 
 /obj/machinery/reagentgrinder/portable/Initialize()
 	. = ..()
-	beaker = new /obj/item/reagent_containers/glass/beaker/large(src)
+	beaker = new /obj/item/weapon/reagent_containers/glass/beaker/large(src)
 
 /obj/machinery/reagentgrinder/portable/on_update_icon()
 	icon_state = "juicer"+num2text(!isnull(beaker))
 	return
 
 /obj/machinery/reagentgrinder/portable/insert(obj/item/I, mob/user)
-	if(istype(I, /obj/item/reagent_containers) && I.is_open_container() && !beaker)
+	if(istype(I, /obj/item/weapon/reagent_containers) && I.is_open_container() && !beaker)
 		if(I.loc == user)
 			user.remove_from_mob(I)
 		I.forceMove(src)
@@ -218,14 +221,6 @@
 	beaker = null
 	update_icon()
 
-/obj/machinery/reagentgrinder/portable/AltClick(mob/living/user)
-	if(user.incapacitated())
-		to_chat(user, SPAN_WARNING("You can't do that right now!"))
-		return
-	if(!in_range(src, user))
-		return
-	src.detach()
-
 /obj/machinery/reagentgrinder/portable/proc/grind()
 	power_change()
 	if(stat & (NOPOWER|BROKEN))
@@ -259,19 +254,19 @@
 	icon = 'icons/obj/machines/grinder.dmi'
 	icon_state = "grinder"
 	reagent_flags = NO_REACT
-	circuit = /obj/item/electronics/circuitboard/industrial_grinder
+	circuit = /obj/item/weapon/electronics/circuitboard/industrial_grinder
 	limit = 25
 	nano_template = "industrial_grinder.tmpl"
 
-/obj/item/electronics/circuitboard/industrial_grinder
+/obj/item/weapon/electronics/circuitboard/industrial_grinder
 	name = T_BOARD("industrial grinder")
 	board_type = "machine"
 	build_path = /obj/machinery/reagentgrinder/industrial
 	origin_tech = list(TECH_BIO = 1)
 	rarity_value = 10
 	req_components = list(
-		/obj/item/stock_parts/manipulator = 2,
-		/obj/item/stock_parts/scanning_module = 1,
+		/obj/item/weapon/stock_parts/manipulator = 2,
+		/obj/item/weapon/stock_parts/scanning_module = 1,
 	)
 
 /obj/machinery/reagentgrinder/industrial/Initialize()
@@ -304,7 +299,7 @@
 	return 1
 
 /obj/machinery/reagentgrinder/industrial/proc/bottle(id)
-	var/obj/item/reagent_containers/glass/bottle/P = new(loc)
+	var/obj/item/weapon/reagent_containers/glass/bottle/P = new(loc)
 
 	if(!reagents.trans_id_to(P, id, 60))
 		qdel(P)
@@ -331,7 +326,7 @@
 
 
 
-/obj/item/storage/makeshift_grinder
+/obj/item/weapon/storage/makeshift_grinder
 	name = "makeshift grinder"
 	desc = "Mortar and pestle to grind ingridients."
 	icon = 'icons/obj/machines/chemistry.dmi'
@@ -344,11 +339,11 @@
 	var/amount_per_transfer_from_this = 10
 	var/possible_transfer_amounts = list(5,10,30,60)
 
-/obj/item/storage/makeshift_grinder/Initialize(mapload, ...)
+/obj/item/weapon/storage/makeshift_grinder/Initialize(mapload, ...)
 	. = ..()
 	create_reagents(60)
 
-/obj/item/storage/makeshift_grinder/attack_self(mob/user)
+/obj/item/weapon/storage/makeshift_grinder/attack_self(mob/user)
 	var/time_to_finish = 60 - (40 * user.stats.getMult(STAT_TGH, STAT_LEVEL_ADEPT))
 	var/datum/repeating_sound/toolsound = new/datum/repeating_sound(8,time_to_finish,0.15, src, 'sound/effects/impacts/thud2.ogg', 50, 1)
 	user.visible_message(SPAN_NOTICE("[user] grind contents of \the [src]."), SPAN_NOTICE("You starting to grind contents of \the [src]."))
@@ -360,7 +355,7 @@
 			toolsound.stop()
 			toolsound = null
 
-/obj/item/storage/makeshift_grinder/proc/grind()
+/obj/item/weapon/storage/makeshift_grinder/proc/grind()
 	// Sanity check.
 	if (!reagents || (reagents.total_volume >= reagents.maximum_volume))
 		return
@@ -393,15 +388,15 @@
 			if (reagents.total_volume >= reagents.maximum_volume)
 				break
 
-/obj/item/storage/makeshift_grinder/attackby(obj/item/I, mob/user)
-	if(istype(I, /obj/item/reagent_containers))
-		var/obj/item/reagent_containers/container = I
+/obj/item/weapon/storage/makeshift_grinder/attackby(obj/item/I, mob/user)
+	if(istype(I, /obj/item/weapon/reagent_containers))
+		var/obj/item/weapon/reagent_containers/container = I
 		if(!container.standard_pour_into(user, src)) . = ..()
 	else if (LAZYLEN(I.reagents)) . = ..()
 	else to_chat(user, SPAN_NOTICE("\icon[I] \the [I] seems that it is not suitable for a \icon[src] [src]."))
 	update_icon()
 
-/obj/item/storage/makeshift_grinder/afterattack(atom/target, mob/user, flag)
+/obj/item/weapon/storage/makeshift_grinder/afterattack(atom/target, mob/user, flag)
 	// Ensure we don't splash beakers and similar containers.
 	if(user.a_intent == I_HURT)
 		if(!istype(target))
@@ -421,8 +416,8 @@
 		return TRUE
 	else
 		if(!target.is_refillable())
-			if(istype(target, /obj/item/reagent_containers))
-				var/obj/item/reagent_containers/container = target
+			if(istype(target, /obj/item/weapon/reagent_containers))
+				var/obj/item/weapon/reagent_containers/container = target
 				container.is_closed_message(user)
 				return TRUE
 			// Otherwise don't care about splashing.
@@ -442,7 +437,7 @@
 		to_chat(user, SPAN_NOTICE("You transfer [trans] units of the solution to [target]."))
 	update_icon()
 
-/obj/item/storage/makeshift_grinder/verb/set_APTFT() //set amount_per_transfer_from_this
+/obj/item/weapon/storage/makeshift_grinder/verb/set_APTFT() //set amount_per_transfer_from_this
 	set name = "Set transfer amount"
 	set category = "Object"
 	set src in range(0)
@@ -450,7 +445,7 @@
 	if(N)
 		amount_per_transfer_from_this = N
 
-/obj/item/storage/makeshift_grinder/examine(mob/user)
+/obj/item/weapon/storage/makeshift_grinder/examine(mob/user)
 	if(!..(user, 2))
 		return
 	if(contents.len)
@@ -459,7 +454,7 @@
 		to_chat(user, SPAN_NOTICE("It's filled with [reagents.total_volume]/[reagents.maximum_volume] units of reagents."))
 
 
-/obj/item/storage/makeshift_grinder/on_update_icon()
+/obj/item/weapon/storage/makeshift_grinder/on_update_icon()
 	. = ..()
 	cut_overlays()
 	if(reagents.total_volume)

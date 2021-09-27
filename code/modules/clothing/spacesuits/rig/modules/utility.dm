@@ -1,6 +1,6 @@
 /* Contains:
  * /obj/item/rig_module/device
- * /obj/item/rig_module/device/plasmacutter
+ * /obj/item/rig_module/device/phoroncutter
  * /obj/item/rig_module/device/healthscanner
  * /obj/item/rig_module/device/drill
  * /obj/item/rig_module/device/orescanner
@@ -24,7 +24,6 @@
 	selectable = 1
 	toggleable = 0
 	disruptive = 0
-	bad_type = /obj/item/rig_module/device
 
 
 	var/device_type
@@ -52,7 +51,7 @@
 	rarity_value = 10
 
 
-	device_type = /obj/item/tool/pickaxe/diamonddrill/rig
+	device_type = /obj/item/weapon/tool/pickaxe/diamonddrill/rig
 
 /obj/item/rig_module/device/anomaly_scanner
 	name = "hardsuit anomaly scanner"
@@ -89,7 +88,7 @@
 	usable = 1
 	engage_string = "Configure RCD"
 
-	device_type = /obj/item/rcd/mounted
+	device_type = /obj/item/weapon/rcd/mounted
 	rarity_value = 20
 
 /obj/item/rig_module/device/New()
@@ -336,7 +335,7 @@
 	interface_desc = "An inbuilt EVA maneuvering system that runs off the rig air supply."
 	rarity_value = 2
 	spawn_tags = SPAWN_TAG_RIG_MODULE_COMMON
-	var/obj/item/tank/jetpack/rig/jets
+	var/obj/item/weapon/tank/jetpack/rig/jets
 
 /obj/item/rig_module/maneuvering_jets/engage()
 	if(!..())
@@ -452,21 +451,23 @@
 /obj/item/rig_module/autodoc/commercial
 	autodoc_type = /datum/autodoc/capitalist_autodoc
 
+
 /obj/item/rig_module/cape
 	name = "cape"
 	desc = "A cape designed to be attached to hardsuits."
-
+  
 	interface_name = "Hardsuit Cape"
 	interface_desc = "A generic cape for a hardsuit."
 	rarity_value = 80
 
 /obj/item/rig_module/cape/te
-	name = "technomancer cape"
-	desc = "A tough regal cape, imprinted with the emblem of the Technomancer League."
+	name = "engineering cape"
+	desc = "A tough regal cape, imprinted with a large wrench emblem."
 	suit_overlay_active = "cape_te"
 	suit_overlay_inactive = "cape_te"
 	suit_overlay_mob_only = 1
 
-	interface_name = "Technomancer Cape"
+	interface_name = "Engineering Cape"
 	interface_desc = "A grand yet hardy cape."
 	rarity_value = 100
+

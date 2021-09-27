@@ -11,7 +11,8 @@
 
 /obj/structure/reagent_dispensers/coolanttank/bullet_act(var/obj/item/projectile/Proj)
 	if(Proj.get_structure_damage())
-		explode()
+		if(!istype(Proj ,/obj/item/projectile/beam/lastertag) && !istype(Proj ,/obj/item/projectile/beam/practice) )
+			explode()
 
 /obj/structure/reagent_dispensers/coolanttank/ex_act()
 	explode()
@@ -26,9 +27,10 @@
 		S.start()
 
 	var/datum/gas_mixture/env = src.loc.return_air()
-	if(env)
-		env.add_thermal_energy(reagents.total_volume * -5000)
-
+	if(env)//Occulus Edit start
+		var/removed_heat = (reagents.total_volume * 6000)
+		env.add_thermal_energy(-removed_heat)
+//Occulus Edit end
 	sleep(10)
 	if(src)
 		qdel(src)

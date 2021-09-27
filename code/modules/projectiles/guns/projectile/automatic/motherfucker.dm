@@ -1,11 +1,11 @@
-/obj/item/gun/projectile/automatic/motherfucker
+/obj/item/weapon/gun/projectile/automatic/motherfucker
 	name = "HM Motherfucker .35 \"Punch Hole\""
 	desc = "A 6 barrel, pump action carbine, shakes like the devil. but will turn anything in a 90º from you in swiss cheese."
 	icon = 'icons/obj/guns/projectile/motherfucker.dmi'
-	icon_state = "motherfucker"
+	icon_state = "motherfucker"//evan, temp icon
 	item_state = "motherfucker"
 	w_class = ITEM_SIZE_HUGE
-	force = WEAPON_FORCE_DANGEROUS
+	force = WEAPON_FORCE_ROBUST
 	slot_flags = SLOT_BACK
 	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2)
 	caliber = CAL_PISTOL
@@ -28,18 +28,18 @@
 	var/recentpumpmsg = 0
 	var/pumped = FALSE
 
-/obj/item/gun/projectile/automatic/motherfucker/attack_self(mob/living/user)
+/obj/item/weapon/gun/projectile/automatic/motherfucker/attack_self(mob/living/user)
 	if(world.time >= recentpumpmsg + 10)
 		recentpumpmsg = world.time
 		playsound(user, 'sound/weapons/shotgunpump.ogg', 60, 1)
 		pumped = TRUE
 
-/obj/item/gun/projectile/automatic/motherfucker/special_check(mob/user)
+/obj/item/weapon/gun/projectile/automatic/motherfucker/special_check(mob/user)
 	if(!pumped)
 		to_chat(user, SPAN_WARNING("You can't fire [src] without pumping it "))
 		return FALSE
 	return ..()
 
-/obj/item/gun/projectile/automatic/motherfucker/handle_post_fire(mob/user)
+/obj/item/weapon/gun/projectile/automatic/motherfucker/handle_post_fire(mob/user)
 	..()
 	pumped = FALSE

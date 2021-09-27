@@ -13,6 +13,9 @@
 	active_power_usage = 400
 	var/make_glasswalls_after_creation = FALSE
 
+	circuit = /obj/item/weapon/electronics/circuitboard/neotheology/bioreactor_platform
+
+
 /obj/machinery/multistructure/bioreactor_part/platform/Initialize()
 	. = ..()
 	update_icon()
@@ -37,7 +40,7 @@
 				var/hazard_protection = victim.getarmor(null, ARMOR_BIO)
 				var/damage = CLONE_DAMAGE_PER_TICK - (CLONE_DAMAGE_PER_TICK * (hazard_protection/100))
 				victim.apply_damage(damage, CLONE, used_weapon = "Biological")
-				
+
 				if(prob(10))
 					playsound(loc, 'sound/effects/bubbles.ogg', 45, 1)
 				if(victim.health <= -victim.maxHealth)
@@ -113,7 +116,7 @@
 			to_chat(M, SPAN_NOTICE("Your remains have been dissolved and reused. Your crew respawn time is reduced by 10 minutes."))
 			M << 'sound/effects/magic/blind.ogg'  //Play this sound to a player whenever their respawn time gets reduced
 			M.set_respawn_bonus("CORPSE_DISSOLVING", 10 MINUTES)
-		
+
 	qdel(object)
 	//now let's add some dirt to the glass
 	for(var/obj/structure/window/reinforced/bioreactor/glass in loc)
@@ -193,17 +196,17 @@
 	..()
 	switch(contamination_level)
 		if(1)
-			to_chat(user, SPAN_NOTICE("There are a few stains on it. Except this, [src] looks pretty clean."))
+			to_chat(user, SPAN_NOTICE("There are a few stains on it. Otherwise, [src] looks pretty clean."))
 		if(2)
-			to_chat(user, SPAN_NOTICE("You see a sign of biomatter on this [src]. Better to clean it up."))
+			to_chat(user, SPAN_NOTICE("You can see some biomatter on [src]. It should probably be cleaned soon."))
 		if(3)
-			to_chat(user, SPAN_WARNING("This [src] has clear signs and stains of biomatter."))
+			to_chat(user, SPAN_WARNING("The [src] is pretty dirty, with many signs of biomass and a number of stains."))
 		if(4)
-			to_chat(user, SPAN_WARNING("You see a high amount of biomatter on \the [src]. It's dirty as hell."))
+			to_chat(user, SPAN_WARNING("You see a large amount of biomatter clinging on \the [src]. It's dirty as hell."))
 		if(5)
-			to_chat(user, SPAN_WARNING("Now it's hard to see what's inside. Better to clean this [src]."))
+			to_chat(user, SPAN_WARNING("There's enough biomass clinging on to block your view of the inside of [src]."))
 		else
-			to_chat(user, SPAN_NOTICE("This [src] is so clean, that you can see your reflection. Is that something green at your teeth?"))
+			to_chat(user, SPAN_NOTICE("This [src] is so clean, that you can see your reflection. Is that something green in your teeth?"))
 
 
 /obj/structure/window/reinforced/bioreactor/on_update_icon()
@@ -223,16 +226,16 @@
 	contamination_level += amount
 	if(contamination_level >= max_contamination_lvl)
 		contamination_level = max_contamination_lvl
-		opacity = FALSE
+		opacity = TRUE //Occulus Fix: Eris doesn't understand < or >
 	if(contamination_level <= 0)
 		contamination_level = 0
-		opacity = TRUE
+		opacity = FALSE//Occulus Fix: Eris doesn't understand < or >
 	update_icon()
 
 
 /obj/structure/window/reinforced/bioreactor/attackby(var/obj/item/I, var/mob/user)
-	if(istype(I, /obj/item/mop) || istype(I, /obj/item/soap))
-		if(istype(I, /obj/item/mop))
+	if(istype(I, /obj/item/weapon/mop) || istype(I, /obj/item/weapon/soap))
+		if(istype(I, /obj/item/weapon/mop))
 			if(I.reagents && !I.reagents.total_volume)
 				to_chat(user, SPAN_WARNING("Your [I] is dry!"))
 				return

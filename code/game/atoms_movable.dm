@@ -10,7 +10,9 @@
 	var/thrower
 	var/turf/throw_source
 	var/throw_speed = 2
+	var/icon_scale = 1 // Used to scale icons up or down in update_transform().
 	var/throw_range = 7
+	var/icon_rotation = 0 // Used to rotate icons in update_transform()
 	var/moved_recently = 0
 	var/mob/pulledby
 	var/item_state // Used to specify the item state for the on-mob overlays.
@@ -19,11 +21,10 @@
 
 	//spawn_values
 	var/price_tag = 0 // The item price in credits. atom/movable so we can also assign a price to animals and other things.
-	var/surplus_tag = FALSE //If true, attempting to export this will net you a greatly reduced amount of credits, but we don't want to affect the actual price tag for selling to others.
 	var/spawn_tags
 	var/rarity_value = 1 //min:1
 	var/spawn_frequency = 0 //min:0
-	var/accompanying_object	//path or text "obj/item,/obj/item/device"
+	var/accompanying_object	//path or text "obj/item/weapon,/obj/item/device"
 	var/prob_aditional_object = 100
 	var/spawn_blacklisted = FALSE
 	var/bad_type //path
@@ -241,15 +242,15 @@
 			a = get_area(src.loc)
 
 	//done throwing, either because it hit something or it finished moving
-	src.throwing = 0
-	src.thrower = null
-	src.throw_source = null
-
 	var/turf/new_loc = get_turf(src)
 	if(new_loc)
 		if(isobj(src))
 			src.throw_impact(new_loc,speed)
 		new_loc.Entered(src)
+	src.throwing = 0
+	src.thrower = null
+	src.throw_source = null
+
 
 //Overlays
 /atom/movable/overlay
@@ -403,7 +404,7 @@
 /atom/movable/proc/onTransitZ(old_z, new_z)//uncomment when something is receiving this signal
 	/*SEND_SIGNAL(src, COMSIG_MOVABLE_Z_CHANGED, old_z, new_z)
 	for(var/atom/movable/AM in src) // Notify contents of Z-transition. This can be overridden IF we know the items contents do not care.
-		AM.onTransitZ(old_z,new_z)*/
+		AM.onTransitZ(old_z,new_z)*/ 
 
 /mob/living/proc/update_z(new_z) // 1+ to register, null to unregister
 	if (registered_z != new_z)
@@ -416,6 +417,24 @@
 // if this returns true, interaction to turf will be redirected to src instead
 /atom/movable/proc/preventsTurfInteractions()
 	return FALSE
+
+
+
+/atom/movable/proc/update_transform()
+	var/matrix/M = matrix()
+	M.Scale(icon_scale)
+	M.Turn(icon_rotation)
+	src.transform = M
+
+// Use this to set the object's scale.
+/atom/movable/proc/adjust_scale(new_scale)
+	icon_scale = new_scale
+	update_transform()
+
+/atom/movable/proc/adjust_rotation(new_rotation)
+	icon_rotation = new_rotation
+	update_transform()
+
 
 ///Sets the anchored var and returns if it was sucessfully changed or not.
 /atom/movable/proc/set_anchored(anchorvalue)

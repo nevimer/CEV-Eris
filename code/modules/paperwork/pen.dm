@@ -9,7 +9,7 @@
 /*
  * Pens
  */
-/obj/item/pen
+/obj/item/weapon/pen
 	desc = "It's a normal black ink pen."
 	name = "pen"
 	icon = 'icons/obj/bureaucracy.dmi'
@@ -26,22 +26,22 @@
 	var/colour = "black"	//what colour the ink is!
 
 
-/obj/item/pen/blue
+/obj/item/weapon/pen/blue
 	desc = "It's a normal blue ink pen."
 	icon_state = "pen_blue"
 	colour = "blue"
 
-/obj/item/pen/red
+/obj/item/weapon/pen/red
 	desc = "It's a normal red ink pen."
 	icon_state = "pen_red"
 	colour = "red"
 
-/obj/item/pen/multi
+/obj/item/weapon/pen/multi
 	desc = "It's a pen with multiple colors of ink!"
 	var/selectedColor = 1
 	var/colors = list("black","blue","red")
 
-/obj/item/pen/multi/attack_self(mob/user)
+/obj/item/weapon/pen/multi/attack_self(mob/user)
 	if(++selectedColor > 3)
 		selectedColor = 1
 
@@ -54,13 +54,13 @@
 
 	to_chat(user, SPAN_NOTICE("Changed color to '[colour].'"))
 
-/obj/item/pen/invisible
+/obj/item/weapon/pen/invisible
 	desc = "It's an invisble pen marker."
 	icon_state = "pen"
 	colour = "white"
 
 
-/obj/item/pen/attack(mob/M, mob/user)
+/obj/item/weapon/pen/attack(mob/M, mob/user)
 	if(!ismob(M))
 		return
 	to_chat(user, SPAN_WARNING("You stab [M] with the pen."))
@@ -74,17 +74,17 @@
  * Reagent pens
  */
 
-/obj/item/pen/reagent
+/obj/item/weapon/pen/reagent
 	reagent_flags = REFILLABLE | DRAINABLE
 	slot_flags = SLOT_BELT
 	origin_tech = list(TECH_MATERIAL = 2, TECH_COVERT = 5)
 	spawn_blacklisted = TRUE
 
-/obj/item/pen/reagent/New()
+/obj/item/weapon/pen/reagent/New()
 	..()
 	create_reagents(30)
 
-/obj/item/pen/reagent/attack(mob/living/M, mob/user)
+/obj/item/weapon/pen/reagent/attack(mob/living/M, mob/user)
 
 	if(!istype(M))
 		return
@@ -101,11 +101,11 @@
 /*
  * Sleepy Pens
  */
-/obj/item/pen/reagent/sleepy
+/obj/item/weapon/pen/reagent/sleepy
 	desc = "It's a black ink pen with a sharp point and a carefully engraved \"Waffle Co.\""
 	origin_tech = list(TECH_MATERIAL = 2, TECH_COVERT = 5)
 
-/obj/item/pen/reagent/sleepy/New()
+/obj/item/weapon/pen/reagent/sleepy/New()
 	..()
 	reagents.add_reagent("chloralhydrate", 22)	//Used to be 100 sleep toxin//30 Chloral seems to be fatal, reducing it to 22./N
 
@@ -113,10 +113,10 @@
 /*
  * Parapens
  */
-/obj/item/pen/reagent/paralysis
+/obj/item/weapon/pen/reagent/paralysis
 	origin_tech = "materials=2;syndicate=5"
 
-/obj/item/pen/reagent/paralysis/New()
+/obj/item/weapon/pen/reagent/paralysis/New()
 	..()
 	reagents.add_reagent("zombiepowder", 10)
 	reagents.add_reagent("cryptobiolin", 15)
@@ -124,11 +124,11 @@
 /*
  * Chameleon pen
  */
-/obj/item/pen/chameleon
+/obj/item/weapon/pen/chameleon
 	var/signature = ""
 	spawn_blacklisted = TRUE
 
-/obj/item/pen/chameleon/attack_self(mob/user)
+/obj/item/weapon/pen/chameleon/attack_self(mob/user)
 	/*
 	// Limit signatures to official crew members
 	var/personnel_list[] = list()
@@ -142,13 +142,13 @@
 	*/
 	signature = sanitize(input("Enter new signature. Leave blank for 'Anonymous'", "New Signature", signature))
 
-/obj/item/pen/proc/get_signature(var/mob/user)
+/obj/item/weapon/pen/proc/get_signature(var/mob/user)
 	return (user && user.real_name) ? user.real_name : "Anonymous"
 
-/obj/item/pen/chameleon/get_signature(var/mob/user)
+/obj/item/weapon/pen/chameleon/get_signature(var/mob/user)
 	return signature ? signature : "Anonymous"
 
-/obj/item/pen/chameleon/verb/set_colour()
+/obj/item/weapon/pen/chameleon/verb/set_colour()
 	set name = "Change Pen Colour"
 	set category = "Object"
 
@@ -182,7 +182,7 @@
  * Crayons
  */
 
-/obj/item/pen/crayon
+/obj/item/weapon/pen/crayon
 	name = "crayon"
 	desc = "A colourful crayon. Please refrain from eating it or putting it in your nose."
 	icon = 'icons/obj/crayons.dmi'

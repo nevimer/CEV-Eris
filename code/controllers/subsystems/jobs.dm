@@ -12,6 +12,7 @@ SUBSYSTEM_DEF(job)
 	var/list/unassigned = list()			//Players who need jobs
 	var/list/job_debug = list()				//Debug info
 	var/list/job_mannequins = list()				//Cache of icons for job info window
+	var/list/whitelisted_jobs = list()		//eclipse addition - whitelisted jobs
 
 /datum/controller/subsystem/job/Initialize(start_timeofday)
 	if(!occupations.len)
@@ -19,7 +20,7 @@ SUBSYSTEM_DEF(job)
 		LoadJobs("config/jobs.txt")
 	return ..()
 
-/datum/controller/subsystem/job/proc/SetupOccupations(faction = "CEV Eris")
+/datum/controller/subsystem/job/proc/SetupOccupations(faction = "CEV Northern Light")
 	occupations.Cut()
 	occupations_by_name.Cut()
 	for(var/J in subtypesof(/datum/job))
@@ -28,6 +29,41 @@ SUBSYSTEM_DEF(job)
 			continue
 		occupations += job
 		occupations_by_name[job.title] = job
+
+		///// OCCULUS EDIT START /////
+		// Allow alt titles to get paid.
+		// This has the side effect of ALSO listing alt titles under their proper department instead of misc.
+
+		if(job.alt_titles)
+			for(var/alt_title in job.alt_titles)
+				occupations_by_name[alt_title] = job
+
+		///// OCCULUS EDIT END /////
+
+		// // // BEGIN ECLIPSE EDITS // // //
+		//Rationale: Job whitelisting setup.
+		//I would have preferred to have this before var/J got filtered into job.* but it was causing compiler errors. Alas.
+		//wgatever it workys
+		if(job.manual_whitelist != WHITELIST_MANUAL_OFF)		//if we don't have the whitelist manually disabled for this job, we run through the checks.
+			if(job.manual_whitelist == WHITELIST_MANUAL_ON)			//Admin wants this whitelisted for whatever reason.
+				job.whitelist_only = TRUE
+				whitelisted_jobs |= job
+			//Whitelist job based on configuration files.
+			if(job.wl_config_heads && config.wl_heads)		//Heads of Staff
+				job.whitelist_only = TRUE
+				whitelisted_jobs |= job
+			if(job.wl_config_sec && config.wl_security)		//Security
+				job.whitelist_only = TRUE
+				whitelisted_jobs |= job
+			if(job.wl_config_borgs && config.wl_silicons)		//Silicons
+				job.whitelist_only = TRUE
+				whitelisted_jobs |= job
+			/*		//Uncomment in event of admin-only rank failure.
+			if(job.wl_admin_only)		//Admin-only jobs.
+				job.whitelist_only = TRUE
+				whitelisted_jobs |= job
+			*/
+		// // // END ECLIPSE EDITS // // //
 
 	if(!occupations.len)
 		to_chat(world, SPAN_WARNING("Error setting up jobs, no job datums found!"))
@@ -54,6 +90,10 @@ SUBSYSTEM_DEF(job)
 			return FALSE
 		if(jobban_isbanned(player, rank))
 			return FALSE
+		// // // eclipse edit: job whitelisting // // //
+		if(!is_job_whitelisted(player, rank))
+			return FALSE
+		//v // //end eclipse edit // // //
 
 		var/position_limit = job.total_positions
 		if(!latejoin)
@@ -62,6 +102,8 @@ SUBSYSTEM_DEF(job)
 			Debug("Player: [player] is now Rank: [rank], JCP:[job.current_positions], JPL:[position_limit]")
 			player.mind.assigned_role = rank
 			player.mind.assigned_job = job
+			if(job.alt_titles)	// Occulus edit: gib alt titles
+				player.mind.role_alt_title = player.client.prefs.GetPlayerAltTitle(job)	// Occulus edit: gib alt titles pls
 			unassigned -= player
 			job.current_positions++
 			return TRUE
@@ -79,6 +121,9 @@ SUBSYSTEM_DEF(job)
 	Debug("Running FOC, Job: [job], Level: [level], Flag: [flag]")
 	var/list/candidates = list()
 	for(var/mob/new_player/player in unassigned)
+		if(!is_job_whitelisted(player, job.title))		//eclipse edit this iteration: whitelist
+			Debug("FOC whitelist failed, Player: [player]")
+			continue
 		if(jobban_isbanned(player, job.title))
 			Debug("FOC isbanned failed, Player: [player]")
 			continue
@@ -111,13 +156,17 @@ SUBSYSTEM_DEF(job)
 		if(job.is_restricted(player.client.prefs))
 			continue
 
+		if(!is_job_whitelisted(player, job.title))		//eclipse edit this iteration: whitelist
+			Debug("GRJ whitelist failed, Player: [player], Job: [job.title]")
+			continue
+
 		if(jobban_isbanned(player, job.title))
 			Debug("GRJ isbanned failed, Player: [player], Job: [job.title]")
 			continue
 
 		var/datum/category_item/setup_option/core_implant/I = player.client.prefs.get_option("Core implant")
 		// cant be Neotheology without a cruciform
-		if(job.department == DEPARTMENT_CHURCH && istype(I.implant_type,/obj/item/implant/core_implant/cruciform))
+		if(job.department == DEPARTMENT_CHURCH && istype(I.implant_type,/obj/item/weapon/implant/core_implant/cruciform))
 			continue
 		if((job.current_positions < job.spawn_positions) || job.spawn_positions == -1)
 			Debug("GRJ Random job given, Player: [player], Job: [job]")
@@ -191,6 +240,8 @@ SUBSYSTEM_DEF(job)
 		var/mob/new_player/candidate = pick(candidates)
 		AssignRole(candidate, command_position)
 
+		//eclipse todo: add a whitelist sanity check in here somewhere
+
 
 /** Proc DivideOccupations
  *  fills var "assigned_role" for all ready players.
@@ -261,6 +312,10 @@ SUBSYSTEM_DEF(job)
 				/*if(!job || SSticker.mode.disabled_jobs.Find(job.title) )
 					continue
 				*/
+				if(!is_job_whitelisted(player, job.title))		//eclipse edit this iteration: whitelist
+					Debug("DO whitelist failed, Player: [player], Job:[job.title]")
+					continue
+
 				if(jobban_isbanned(player, job.title))
 					Debug("DO isbanned failed, Player: [player], Job:[job.title]")
 					continue
@@ -319,7 +374,17 @@ SUBSYSTEM_DEF(job)
 		//Equip job items and language stuff
 		job.setup_account(H)
 
-		job.equip(H, flavor ? flavor.title : H.mind ? H.mind.role_alt_title : "")
+// OCCULUS EDIT  START - minor refactor to make it such that only vagabonds get random job titles on their ID
+
+		if(H.mind)	// Is there a mind associated with the target?
+			if(H.mind.role_alt_title == "Vagabond")	// Is the target a vagabond?
+				job.equip(H, flavor ? flavor.title : "")	// If so, give their ID a random flavor title just like vagabonds should have
+			else
+				job.equip(H, H.mind ? H.mind.role_alt_title : "")	// If not, give them whatever their alt title is. If they do not have one, don't change anything at all.
+		else
+			job.equip(H)	// In case there is no mind associated with the target (Maybe the player DC'd while spawning in?), just give them what they should spawn with anyways without changing anything.
+
+// OECCULUS EDIT END - minor refactor to make it such that only vagabonds get random job titles on their ID
 
 		//loadout items.
 		if(spawn_in_storage)
@@ -362,7 +427,7 @@ SUBSYSTEM_DEF(job)
 	var/alt_title = null
 	if(H.mind)
 		H.mind.assigned_role = rank
-	//	alt_title = H.mind.role_alt_title
+		alt_title = H.mind.role_alt_title	// OCCULUS EDIT: Allow alt. title to be shown in the blurb
 
 		switch(rank)
 			if("Robot")
@@ -399,13 +464,13 @@ SUBSYSTEM_DEF(job)
 			var/obj/item/clothing/glasses/G = H.glasses
 			G.prescription = 1
 
-	var/obj/item/implant/core_implant/C = H.get_core_implant()
+	var/obj/item/weapon/implant/core_implant/C = H.get_core_implant()
 	if(C)
 		C.install_default_modules_by_job(job)
 		C.access.Add(job.cruciform_access)
 
-	var/obj/item/oddity/secdocs/D
-	if(D.inv_spawn_count > 0 && prob(5) && !(locate(/obj/item/oddity/secdocs) in H.get_contents()))
+	var/obj/item/weapon/oddity/secdocs/D
+	if(D.inv_spawn_count > 0 && prob(5) && !(locate(/obj/item/weapon/oddity/secdocs) in H.get_contents()))
 		D = new
 		if(H.equip_to_storage(D))
 			--D.inv_spawn_count
@@ -493,9 +558,13 @@ SUBSYSTEM_DEF(job)
 		var/level4 = 0 //never
 		var/level5 = 0 //banned
 		var/level6 = 0 //account too young
+		var/level7 = 0 //not whitelisted <--eclipse add
 		for(var/mob/new_player/player in GLOB.player_list)
 			if(!(player.ready && player.mind && !player.mind.assigned_role))
 				continue //This player is not ready
+			if(jobban_isbanned(player, job.title))		//eclipse edit this iteration: whitelist
+				level7++
+				continue
 			if(jobban_isbanned(player, job.title))
 				level5++
 				continue
@@ -507,7 +576,7 @@ SUBSYSTEM_DEF(job)
 				level3++
 			else level4++ //not selected
 
-		tmp_str += "HIGH=[level1]|MEDIUM=[level2]|LOW=[level3]|NEVER=[level4]|BANNED=[level5]|YOUNG=[level6]|-"
+		tmp_str += "HIGH=[level1]|MEDIUM=[level2]|LOW=[level3]|NEVER=[level4]|BANNED=[level5]|YOUNG=[level6]|WHITELIST=[level7]|-"		//eclipse edit: whitelist
 
 
 /**

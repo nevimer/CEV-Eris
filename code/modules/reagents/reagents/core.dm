@@ -1,5 +1,5 @@
 /datum/reagent/organic/blood
-	data = new/list("donor" = null, "viruses" = null, "species" = SPECIES_HUMAN, "blood_DNA" = null, "blood_type" = null, "blood_colour" = "#A10808", "resistances" = null, "trace_chem" = null, "antibodies" = list(), "carrion" = null)
+	data = new/list("donor" = null, "viruses" = null, "species" = "Human", "blood_DNA" = null, "blood_type" = null, "blood_colour" = "#A10808", "resistances" = null, "trace_chem" = null, "antibodies" = list(), "carrion" = null)
 	name = "Blood"
 	id = "blood"
 	reagent_state = LIQUID
@@ -30,6 +30,10 @@
 		return TRUE
 	if(!data["donor"] || istype(data["donor"], /mob/living/carbon/human))
 		blood_splatter(T, src, 1)
+	else if(istype(data["donor"], /mob/living/carbon/alien))
+		var/obj/effect/decal/cleanable/blood/B = blood_splatter(T, src, 1)
+		if(B)
+			B.blood_DNA["UNKNOWN DNA STRUCTURE"] = "X*"
 	return TRUE
 
 /datum/reagent/organic/blood/affect_ingest(mob/living/carbon/M, alien, effect_multiplier)
@@ -118,8 +122,8 @@
 	return TRUE
 
 /datum/reagent/water/touch_obj(obj/O)
-	if(istype(O, /obj/item/reagent_containers/food/snacks/monkeycube))
-		var/obj/item/reagent_containers/food/snacks/monkeycube/cube = O
+	if(istype(O, /obj/item/weapon/reagent_containers/food/snacks/monkeycube))
+		var/obj/item/weapon/reagent_containers/food/snacks/monkeycube/cube = O
 		if(!cube.wrapped)
 			cube.Expand()
 

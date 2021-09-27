@@ -1,4 +1,4 @@
-/obj/item/disk
+/obj/item/weapon/disk
 	name = "disk"
 	icon = 'icons/obj/discs.dmi'
 	icon_state = "data-red"
@@ -11,26 +11,26 @@
 
 //The return of data disks?? Just for transferring between genetics machine/cloning machine.
 //TO-DO: Make the genetics machine accept them.
-/obj/item/disk/data
+/obj/item/weapon/disk/data
 	name = "Cloning Data Disk"
 	icon_state = "data-purple"
 	var/datum/dna2/record/buf
 	var/read_only = FALSE //Well,it's still a floppy disk
 
-/obj/item/disk/data/New()
+/obj/item/weapon/disk/data/New()
 	..()
 	var/diskcolor = pick("red","blue","green","purple","black")
 	icon_state = "data-[diskcolor]"
 
-/obj/item/disk/data/proc/initializeDisk()
+/obj/item/weapon/disk/data/proc/initializeDisk()
 	buf = new
 	buf.dna=new
 
-/obj/item/disk/data/attack_self(mob/user as mob)
+/obj/item/weapon/disk/data/attack_self(mob/user as mob)
 	read_only = !read_only
 	to_chat(user, "You flip the write-protect tab to [read_only ? "protected" : "unprotected"].")
 
-/obj/item/disk/data/examine(mob/user)
+/obj/item/weapon/disk/data/examine(mob/user)
 	..(user)
 	to_chat(user, text("The write-protect tab is set to [read_only ? "protected" : "unprotected"]."))
 	return
@@ -38,11 +38,11 @@
 
 // Subtypes
 
-/obj/item/disk/data/demo
+/obj/item/weapon/disk/data/demo
 	name = "data disk - 'God Emperor of Mankind'"
 	read_only = TRUE
 
-/obj/item/disk/data/demo/New()
+/obj/item/weapon/disk/data/demo/New()
 	..()
 	initializeDisk()
 	buf.types=DNA2_BUF_UE|DNA2_BUF_UI
@@ -54,11 +54,11 @@
 	//buf.dna.UI=list(0x0C8,0x0C8,0x0C8,0x0C8,0x0C8,0x0C8,0x000,0x000,0x000,0x000,0x161,0xFBD,0xDEF) // Farmer Jeff
 	buf.dna.UpdateUI()
 
-/obj/item/disk/data/monkey
+/obj/item/weapon/disk/data/monkey
 	name = "data disk - 'Mr. Muggles'"
 	read_only = TRUE
 
-/obj/item/disk/data/monkey/New()
+/obj/item/weapon/disk/data/monkey/New()
 	..()
 	initializeDisk()
 	buf.types=DNA2_BUF_SE
@@ -72,13 +72,12 @@
  *	Diskette Box
  */
 
-/obj/item/storage/box/disks
+/obj/item/weapon/storage/box/disks
 	name = "Diskette Box"
-	icon = 'icons/obj/storage/boxes.dmi'
-	icon_state = "box"
+	icon_state = "disk_kit"
 	initial_amount = 7
-	spawn_type = /obj/item/disk/data
+	spawn_type = /obj/item/weapon/disk/data
 
-/obj/item/storage/box/disks/populate_contents()
+/obj/item/weapon/storage/box/disks/populate_contents()
 	for(var/i in 1 to initial_amount)
 		new spawn_type(src)

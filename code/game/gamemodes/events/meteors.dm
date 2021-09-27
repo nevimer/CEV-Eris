@@ -190,8 +190,15 @@
 	var/Me = pickweight(meteortypes)
 	var/obj/effect/meteor/M = new Me(pickedstart)
 	M.dest = pickedgoal
-	spawn(0)
-		walk_towards(M, M.dest, 1)
+	///// OCCULUS EDIT BEGIN
+	// 3 is the actual number for RUNLEVEL_GAME -- adjusting the Runlevel code
+	// to change it to 4 was met with unforeseen consequences
+	if (Master.current_runlevel >= 3)
+		spawn(0)
+			walk_towards(M, M.dest, 1)
+	else
+		message_admins("A meteor attempted to spawn, but the round has not started.")
+	///// OCCULUS EDIT END
 	return
 
 /proc/spaceDebrisStartLoc(startSide, Z)
@@ -318,7 +325,7 @@
 	pass_flags = PASSTABLE
 	var/heavy = 0
 	var/z_original
-	var/meteordrop = /obj/item/ore/iron
+	var/meteordrop = /obj/item/weapon/ore/iron
 	var/dropamt = 1
 
 	var/move_count = 0
@@ -326,7 +333,7 @@
 	var/turf/hit_location //used for reporting hit locations. The meteor may be deleted and its location nulled by report time
 
 /obj/effect/meteor/proc/get_shield_damage()
-	return max(((max(hits, 2)) * (heavy + 1) * rand(100, 140)) / hitpwr , 0)
+	return max(((max(hits, 2)) * (heavy + 1) * rand(20, 28)) / hitpwr , 0)//Occulus edit
 
 /obj/effect/meteor/New()
 	..()
@@ -383,7 +390,7 @@
 /obj/effect/meteor/ex_act()
 	return
 
-/obj/effect/meteor/attackby(obj/item/W as obj, mob/user as mob, params)
+/obj/effect/meteor/attackby(obj/item/weapon/W as obj, mob/user as mob, params)
 	var/tool_type = W.get_tool_type(user, list(QUALITY_DIGGING, QUALITY_EXCAVATION), src)
 	if(tool_type & QUALITY_DIGGING | QUALITY_EXCAVATION)
 		if(W.use_tool(user, src, WORKTIME_NORMAL, tool_type, FAILCHANCE_VERY_EASY,  required_stat = STAT_ROB))
@@ -427,7 +434,7 @@
 	hits = 1
 	hitpwr = 3
 	dropamt = 1
-	meteordrop = /obj/item/ore/glass
+	meteordrop = /obj/item/weapon/ore/glass
 
 //Medium-sized
 /obj/effect/meteor/medium
@@ -456,7 +463,7 @@
 	icon_state = "flaming"
 	hits = 5
 	heavy = 1
-	meteordrop = /obj/item/ore/plasma
+	meteordrop = /obj/item/weapon/ore/phoron
 
 /obj/effect/meteor/flaming/meteor_effect()
 	..()
@@ -467,7 +474,7 @@
 	name = "glowing meteor"
 	icon_state = "glowing"
 	heavy = 1
-	meteordrop = /obj/item/ore/uranium
+	meteordrop = /obj/item/weapon/ore/uranium
 
 /obj/effect/meteor/irradiated/meteor_effect()
 	..()
@@ -479,19 +486,19 @@
 	name = "golden meteor"
 	icon_state = "glowing"
 	desc = "Shiny! But also deadly."
-	meteordrop = /obj/item/ore/gold
+	meteordrop = /obj/item/weapon/ore/gold
 
 /obj/effect/meteor/silver
 	name = "silver meteor"
 	icon_state = "glowing_blue"
 	desc = "Shiny! But also deadly."
-	meteordrop = /obj/item/ore/silver
+	meteordrop = /obj/item/weapon/ore/silver
 
 /obj/effect/meteor/emp
 	name = "conducting meteor"
 	icon_state = "glowing_blue"
 	desc = "Hide your floppies!"
-	meteordrop = /obj/item/ore/osmium
+	meteordrop = /obj/item/weapon/ore/osmium
 	dropamt = 2
 
 /obj/effect/meteor/emp/meteor_effect()
@@ -511,7 +518,7 @@
 	hits = 10
 	hitpwr = 1
 	heavy = 1
-	meteordrop = /obj/item/ore/diamond	// Probably means why it penetrates the hull so easily before exploding.
+	meteordrop = /obj/item/weapon/ore/diamond	// Probably means why it penetrates the hull so easily before exploding.
 
 /obj/effect/meteor/tunguska/meteor_effect()
 	..()

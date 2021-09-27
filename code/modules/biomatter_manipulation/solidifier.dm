@@ -2,13 +2,13 @@
 //This machine converts liquid biomatter to solid one(sheets)
 //Working with this also required bio protection cloths
 
-#define BIOMATTER_PER_SHEET 		1
+#define BIOMATTER_PER_SHEET 		10
 #define CONTAINER_PIXEL_OFFSET 		6
 #define BIOMATTER_SHEETS_PER_TIME  5 // X sheets per 2 seconds
 
 /obj/machinery/biomatter_solidifier
 	name = "biomatter solidifier"
-	desc = "A Neotheology machine that converts liquid biomatter into the solid."
+	desc = "A NanoTrasen machine that converts liquid biomatter into the solid."
 	icon = 'icons/obj/machines/simple_nt_machines.dmi'
 	icon_state = "solidifier"
 	density = TRUE
@@ -18,6 +18,7 @@
 	active_power_usage = 300
 	reagent_flags = TRANSPARENT
 
+	circuit = /obj/item/weapon/electronics/circuitboard/neotheology/solidifier
 	var/active = FALSE
 	var/port_dir = SOUTH
 	var/obj/structure/reagent_dispensers/biomatter/container

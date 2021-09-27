@@ -31,13 +31,13 @@
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|ARMS
 
 /obj/item/clothing/under/rank/preacher
-	desc = "Ceremonial garb of NeoTheologian preachers."
+	desc = "Ceremonial garb of Mekhane preachers."
 	name = "preacher vestments"
 	icon_state = "preacher"
 	item_state = "w_suit"
 
 /obj/item/clothing/under/rank/acolyte
-	desc = "Ceremonial garb of NeoTheologian disciples."
+	desc = "Ceremonial garb of Mekhane disciples."
 	name = "acolyte vestments"
 	icon_state = "acolyte"
 	item_state = "acolyte"
@@ -74,8 +74,8 @@
 	item_state = "clown"
 
 /obj/item/clothing/under/rank/first_officer
-	desc = "It's a jumpsuit worn by someone who works in the position of \"First Officer\"."
-	name = "First Officer's jumpsuit"
+	desc = "It's a jumpsuit worn by a person with the title \"Head of Personnel\"."
+	name = "head of personnel's jumpsuit"
 	icon_state = "hop"
 	item_state = "b_suit"
 

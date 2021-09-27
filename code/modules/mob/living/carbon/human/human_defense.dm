@@ -32,7 +32,7 @@ meteor_act
 	if(P.can_embed() && (check_absorb < 2))
 		var/armor = getarmor_organ(organ, ARMOR_BULLET)
 		if(prob(20 + max(P.damage_types[BRUTE] - armor, -10)))
-			var/obj/item/material/shard/shrapnel/SP = new()
+			var/obj/item/weapon/material/shard/shrapnel/SP = new()
 			SP.name = (P.name != "shrapnel")? "[P.name] shrapnel" : "shrapnel"
 			SP.desc = "[SP.desc] It looks like it was fired from [P.shot_from]."
 			SP.loc = organ
@@ -97,9 +97,9 @@ meteor_act
 //	No siemens coefficient calculations now, it's all done with armor "Energy" protection stat
 
 	switch (def_zone)
-		if(BP_L_ARM, BP_R_ARM)
+		if(BP_L_HAND, BP_R_HAND)
 			var/c_hand
-			if (def_zone == BP_L_ARM)
+			if (def_zone == BP_L_HAND)
 				c_hand = l_hand
 			else
 				c_hand = r_hand
@@ -164,11 +164,11 @@ meteor_act
 	for(var/gear in protective_gear)
 		if(gear && istype(gear ,/obj/item/clothing))
 			var/obj/item/clothing/C = gear
-			if(istype(C) && C.body_parts_covered & def_zone.body_part && C.armor)
-				if(C.armor.vars[type] > protection)
-					protection = C.armor.vars[type]
+			if(istype(C) && C.body_parts_covered & def_zone.body_part)
+				if(C.armor.getRating(type) > protection)
+					protection = C.armor.getRating(type)
 
-	var/obj/item/shield/shield = has_shield()
+	var/obj/item/weapon/shield/shield = has_shield()
 
 	if(shield)
 		protection += shield.armor[type]
@@ -202,7 +202,7 @@ meteor_act
 	return 0
 
 /mob/living/carbon/human/proc/has_shield()
-	for(var/obj/item/shield/shield in list(l_hand, r_hand))
+	for(var/obj/item/weapon/shield/shield in list(l_hand, r_hand))
 		if(!shield) continue
 		return shield
 	return FALSE
@@ -258,6 +258,18 @@ meteor_act
 
 	if(effective_force > 10 || effective_force >= 5 && prob(33))
 		forcesay(hit_appends)	//forcesay checks stat already
+	if((I.damtype == BRUTE || I.damtype == HALLOSS) && prob(25 + (effective_force * 2)))
+		if(!stat && !(has_shield()))
+			if(headcheck(hit_zone))
+				//Harder to score a stun but if you do it lasts a bit longer
+				if(prob(effective_force))
+					visible_message(SPAN_DANGER("[src] [species.knockout_message]"))
+					apply_effect(20, PARALYZE, getarmor(hit_zone, ARMOR_MELEE) )
+			else
+				//Easier to score a stun but lasts less time
+				if(prob(effective_force + 10))
+					visible_message(SPAN_DANGER("[src] has been knocked down!"))
+					apply_effect(6, WEAKEN, getarmor(hit_zone, ARMOR_MELEE) )
 
 		//Apply blood
 		if(!((I.flags & NOBLOODY)||(I.item_flags & NOBLOODY)))
@@ -350,8 +362,6 @@ meteor_act
 			return
 
 		O.throwing = 0		//it hit, so stop moving
-		/// Get hit with glass shards , your fibers are on them now, or with a rod idk.
-		O.add_fibers(src)
 
 		var/obj/item/organ/external/affecting = get_organ(zone)
 		var/hit_area = affecting.name
@@ -412,7 +422,7 @@ meteor_act
 					src.anchored = TRUE
 					src.pinned += O
 
-/mob/living/carbon/human/embed(var/obj/O, var/def_zone)
+/mob/living/carbon/human/embed(var/obj/O, var/def_zone=null)
 	if(!def_zone) ..()
 
 	var/obj/item/organ/external/affecting = get_organ(def_zone)
@@ -445,8 +455,8 @@ meteor_act
 	if(damtype != BURN && damtype != BRUTE) return
 
 	// The rig might soak this hit, if we're wearing one.
-	if(back && istype(back,/obj/item/rig))
-		var/obj/item/rig/rig = back
+	if(back && istype(back,/obj/item/weapon/rig))
+		var/obj/item/weapon/rig/rig = back
 		rig.take_hit(damage)
 
 	// We may also be taking a suit breach.
@@ -466,6 +476,8 @@ meteor_act
 		"lower_torso" = THERMAL_PROTECTION_LOWER_TORSO,
 		"legs" = THERMAL_PROTECTION_LEG_LEFT + THERMAL_PROTECTION_LEG_RIGHT,
 		"arms" = THERMAL_PROTECTION_ARM_LEFT + THERMAL_PROTECTION_ARM_RIGHT,
+		"feet" = THERMAL_PROTECTION_FOOT_LEFT + THERMAL_PROTECTION_FOOT_RIGHT,
+		"hands" = THERMAL_PROTECTION_HAND_LEFT + THERMAL_PROTECTION_HAND_RIGHT
 		)
 
 	for(var/obj/item/clothing/C in src.get_equipped_items())
@@ -481,6 +493,10 @@ meteor_act
 			perm_by_part["legs"] *= C.permeability_coefficient
 		if(C.body_parts_covered & ARMS)
 			perm_by_part["arms"] *= C.permeability_coefficient
+		if(C.body_parts_covered & HANDS)
+			perm_by_part["hands"] *= C.permeability_coefficient
+		if(C.body_parts_covered & FEET)
+			perm_by_part["feet"] *= C.permeability_coefficient
 
 	for(var/part in perm_by_part)
 		perm += perm_by_part[part]

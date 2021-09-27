@@ -2,7 +2,7 @@
 	name = "exosuit fabricator"
 	desc = "A machine used for construction of robots and exosuits."
 	icon_state = "mechfab"
-	circuit = /obj/item/electronics/circuitboard/mechfab
+	circuit = /obj/item/weapon/electronics/circuitboard/mechfab
 
 	build_type = MECHFAB
 	queue_max = 12
@@ -12,8 +12,6 @@
 	have_disk = FALSE
 	have_reagents = FALSE
 	have_recycling = FALSE
-
-	low_quality_print = FALSE
 
 	special_actions = list(
 		list("action" = "sync", "name" = "Sync with R&D console", "icon" = "refresh")

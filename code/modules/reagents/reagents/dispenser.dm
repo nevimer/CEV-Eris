@@ -12,15 +12,15 @@
 	M.adjustToxLoss(effect_multiplier * 0.3)
 
 /datum/reagent/acetone/touch_obj(obj/O)	//I copied this wholesale from ethanol and could likely be converted into a shared proc. ~Techhead
-	if(istype(O, /obj/item/paper))
-		var/obj/item/paper/paperaffected = O
+	if(istype(O, /obj/item/weapon/paper))
+		var/obj/item/weapon/paper/paperaffected = O
 		paperaffected.clearpaper()
 		to_chat(usr, "The solution dissolves the ink on the paper.")
 		return
-	if(istype(O, /obj/item/book))
+	if(istype(O, /obj/item/weapon/book))
 		if(volume < 5)
 			return
-		var/obj/item/book/affectedbook = O
+		var/obj/item/weapon/book/affectedbook = O
 		affectedbook.dat = null
 		to_chat(usr, "<span class='notice'>The solution dissolves the ink on the book.</span>")
 	return
@@ -116,24 +116,17 @@
 	if(istype(L))
 		L.adjust_fire_stacks(amount / 15)
 
-/datum/reagent/ethanol/on_mob_add(mob/living/L)
-	..()
-	SEND_SIGNAL(L, COMSIG_CARBON_HAPPY, src, MOB_ADD_DRUG)
-
-/datum/reagent/ethanol/on_mob_delete(mob/living/L)
-	..()
-	SEND_SIGNAL(L, COMSIG_CARBON_HAPPY, src, MOB_DELETE_DRUG)
-
 /datum/reagent/ethanol/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
 	M.adjustToxLoss(0.2 * toxicity * (issmall(M) ? effect_multiplier * 2 : effect_multiplier))
-	M.add_chemical_effect(CE_PAINKILLER, max(35 - (strength / 2), 1))	//Vodka 32.5 painkiller, beer 15
+	M.add_chemical_effect(CE_PAINKILLER, max(55-strength, 1))
+	return//Occulus Edit Yote rightous life
 
 /datum/reagent/ethanol/affect_ingest(mob/living/carbon/M, alien, effect_multiplier)
 	M.adjustNutrition(nutriment_factor * (issmall(M) ? effect_multiplier * 2 : effect_multiplier))
 	M.add_chemical_effect(CE_ALCOHOL, 1)
 
 //Tough people can drink a lot
-	var/tolerance = max(10, strength + M.stats.getStat(STAT_TGH))
+	var/tolerance = max(10, strength + (M.stats.getStat(STAT_TGH)/2))//Halved toughness impact on tolerence
 
 	if(M.stats.getPerk(/datum/perk/sommelier))
 		tolerance *= 10
@@ -173,18 +166,18 @@
 		M.adjust_hallucination(halluci, halluci)
 
 	apply_sanity_effect(M, effect_multiplier)
-	SEND_SIGNAL(M, COMSIG_CARBON_HAPPY, src, ON_MOB_DRUG)
+//	SEND_SIGNAL(M, COMSIG_CARBON_HAPPY, src, ON_MOB_DRUG) Occulus Nobody likes Neotheo
 
 /datum/reagent/ethanol/touch_obj(obj/O)
-	if(istype(O, /obj/item/paper))
-		var/obj/item/paper/paperaffected = O
+	if(istype(O, /obj/item/weapon/paper))
+		var/obj/item/weapon/paper/paperaffected = O
 		paperaffected.clearpaper()
 		to_chat(usr, "The solution dissolves the ink on the paper.")
 		return
-	if(istype(O, /obj/item/book))
+	if(istype(O, /obj/item/weapon/book))
 		if(volume < 5)
 			return
-		var/obj/item/book/affectedbook = O
+		var/obj/item/weapon/book/affectedbook = O
 		affectedbook.dat = null
 		to_chat(usr, "<span class='notice'>The solution dissolves the ink on the book.</span>")
 	return
@@ -329,7 +322,7 @@
 				remove_self(volume)
 				return
 			else if(volume > meltdose)
-				H << "<span class='danger'>Your [H.head] melts away!</span>"
+				to_chat(H, "<span class='danger'>Your [H.head] melts away!</span>")
 				qdel(H.head)
 				H.update_inv_head(1)
 				H.update_hair(1)
@@ -343,7 +336,7 @@
 				remove_self(volume)
 				return
 			else if(volume > meltdose)
-				H << "<span class='danger'>Your [H.wear_mask] melts away!</span>"
+				to_chat(H, "<span class='danger'>Your [H.wear_mask] melts away!</span>")
 				qdel(H.wear_mask)
 				H.update_inv_wear_mask(1)
 				H.update_hair(1)
@@ -356,7 +349,7 @@
 				H << "<span class='danger'>Your [H.glasses] partially protect you from the acid!</span>"
 				volume /= 2
 			else if(volume > meltdose)
-				H << "<span class='danger'>Your [H.glasses] melt away!</span>"
+				to_chat(H, "<span class='danger'>Your [H.glasses] melt away!</span>")
 				qdel(H.glasses)
 				H.update_inv_glasses(1)
 				remove_self(meltdose / 2)
@@ -420,10 +413,9 @@
 /datum/reagent/organic/sugar
 	name = "Sugar"
 	id = "sugar"
-	description = "The organic compound commonly known as table sugar and sometimes called saccharose. This white, odorless, crystalline powder has a pleasing, sweet taste. It is not a good idea to inject too much raw sugar into your bloodstream."
+	description = "The organic compound commonly known as table sugar and sometimes called saccharose. This white, odorless, crystalline powder has a pleasing, sweet taste."
 	taste_description = "sugar"
 	taste_mult = 1.8
-	overdose = 40
 	reagent_state = SOLID
 	color = "#FFFFFF"
 	glass_icon_state = "iceglass"
@@ -431,21 +423,8 @@
 	glass_desc = "The organic compound commonly known as table sugar and sometimes called saccharose. This white, odorless, crystalline powder has a pleasing, sweet taste."
 
 /datum/reagent/organic/sugar/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
-	M.adjustNutrition(1 * effect_multiplier)
+	M.adjustNutrition(4 * effect_multiplier)
 
-/datum/reagent/organic/sugar/overdose(mob/living/carbon/M, alien)
-	..()
-	M.add_side_effect("Headache", 11)
-	M.make_jittery(5)
-	M.add_chemical_effect(CE_PULSE, 2)
-	if(ishuman(M))
-		var/mob/living/carbon/human/H = M
-		var/obj/item/organ/internal/heart/L = H.random_organ_by_process(OP_HEART)
-		if(istype(L))
-			L.take_damage(1, 0)
-	if(prob(5))
-		M.emote(pick("twitch", "blink_r", "shiver"))
-	
 /datum/reagent/sulfur
 	name = "Sulfur"
 	id = "sulfur"

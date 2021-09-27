@@ -28,14 +28,9 @@
 	var/turf/T = get_turf(src)
 	T?.levelupdate()
 
-/obj/structure/reagent_dispensers/attackby(obj/item/W, mob/user)
-	if(istype(W, /obj/item/device/spy_bug))
-		user.drop_item()
-		W.loc = get_turf(src)
-
-	else if(W.is_refillable())
+/obj/structure/reagent_dispensers/attackby(obj/item/weapon/W, mob/user)
+	if(W.is_refillable())
 		return FALSE //so we can refill them via their afterattack.
-
 	else if(QUALITY_BOLT_TURNING in W.tool_qualities)
 		if(W.use_tool(user, src, WORKTIME_NEAR_INSTANT, QUALITY_BOLT_TURNING, FAILCHANCE_EASY,  required_stat = STAT_MEC))
 			src.add_fingerprint(user)
@@ -192,7 +187,7 @@
 			test.Shift(EAST,6)
 			add_overlays(test)
 
-	var/obj/item/tool/T = I
+	var/obj/item/weapon/tool/T = I
 	if(istype(T) && T.use_fuel_cost)
 		return 0
 
@@ -234,7 +229,7 @@
 
 /obj/structure/reagent_dispensers/fueltank/Move(NewLoc, Dir = 0, step_x = 0, step_y = 0, var/glide_size_override = 0)
 	if ((. = ..()) && modded)
-		leak_fuel(amount_per_transfer_from_this/10)
+		leak_fuel(amount_per_transfer_from_this/10.0)
 
 /obj/structure/reagent_dispensers/fueltank/proc/leak_fuel(amount)
 	if (reagents.total_volume == 0)
@@ -281,10 +276,10 @@
 
 
 /obj/structure/reagent_dispensers/cahorsbarrel
-	name = "NeoTheology Cahors barrel"
-	desc = "Barrel a day - keeps liver away."
+	name = "Saint's Wing Cahors barrel"
+	desc = "A barrel of sweet church wine used in rituals. Mekhanites keep the recipe a secret, making it a rather coveted drink."
 	icon_state = "barrel"
-	volume = 400
+	volume = 1000
 	starting_reagent = "ntcahors"
 	price_tag = 50
 	contents_cost = 950

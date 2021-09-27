@@ -10,6 +10,7 @@
 	item_state = "ass_jacket"
 	blood_overlay_type = "coat"
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|ARMS
+	rarity_value = 5
 	armor = list(
 		melee = 10,
 		bullet = 10,
@@ -26,6 +27,7 @@
 	item_state = "artist_armor"
 	blood_overlay_type = "armor"
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO
+	rarity_value = 0
 	armor = list(
 		melee = 5,
 		bullet = 0,
@@ -38,12 +40,13 @@
 
 //Guild Technician
 /obj/item/clothing/suit/storage/cargo_jacket
-	name = "guild technician jacket"
+	name = "union technician jacket"
 	desc = "Stylish jacket lined with pockets. It seems have a little protection from physical harm."
 	icon_state = "cargo_jacket"
 	item_state = "cargo_jacket"
 	blood_overlay_type = "coat"
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|ARMS
+	rarity_value = 5
 	armor = list(
 		melee = 10,
 		bullet = 10,
@@ -55,12 +58,13 @@
 
 //Quartermaster
 /obj/item/clothing/suit/storage/qm_coat
-	name = "guild merchant coat"
+	name = "union merchant coat"
 	desc = "An ideal choice for a smuggler. This coat seems have good impact resistance, and is made from resistant and expensive materials."
 	icon_state = "qm_coat"
 	item_state = "qm_coat"
 	blood_overlay_type = "coat"
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|ARMS
+	rarity_value = 25
 	armor = list(
 		melee = 30,
 		bullet = 20,
@@ -82,7 +86,7 @@
 	spawn_blacklisted = TRUE
 	extra_allowed = list(
 		/obj/item/seeds,
-		/obj/item/reagent_containers/glass/fertilizer,
+		/obj/item/weapon/reagent_containers/glass/bottle,//Occulus Edit
 		/obj/item/weedkiller
 	)
 
@@ -99,25 +103,6 @@
 	min_cold_protection_temperature = T0C - 20
 	siemens_coefficient = 0.7
 	spawn_blacklisted = TRUE
-
-//Captain
-/obj/item/clothing/suit/storage/captain
-	name = "captain's coat"
-	desc = "A very stylish black coat with fancy shoulder straps. Shows who the boss here."
-	icon_state = "captain"
-	item_state = "captain"
-	blood_overlay_type = "coat"
-	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
-	spawn_blacklisted = TRUE
-	armor = list(
-		melee = 25,
-		bullet = 20,
-		energy = 20,
-		bomb = 0,
-		bio = 0,
-		rad = 0
-	)
-	price_tag = 5000
 
 //Chaplain
 /obj/item/clothing/suit/storage/neotheology_jacket
@@ -155,8 +140,8 @@
 	)
 
 /obj/item/clothing/suit/storage/neotheosports
-	name = "neotheology sports jacket"
-	desc = "NeoTheology styled sports jacket to keep the faithful always on their feet."
+	name = "Mekhane sports jacket"
+	desc = "Mekhane styled sports jacket to keep the faithful always on their feet."
 	icon_state = "nt_sportsjacket"
 	item_state = "nt_sportsjacket"
 	body_parts_covered = UPPER_TORSO|ARMS
@@ -208,24 +193,26 @@
 	icon_state = "detective"
 	item_state = "det_suit"
 	blood_overlay_type = "coat"
-	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
+	body_parts_covered = UPPER_TORSO|LOWER_TORSO|ARMS
 	armor = list(
 		melee = 30,
-		bullet = 30,
-		energy = 30,
+		bullet = 20,
+		energy = 20,
 		bomb = 0,
 		bio = 0,
 		rad = 0
 	)
 	siemens_coefficient = 0.8
 	price_tag = 250
+	no_fibers = TRUE	// OCCULUS EDIT
 
 /obj/item/clothing/suit/storage/detective/ironhammer
 	name = "Inspector's armored trenchcoat"
-	desc = "Brown and armored trenchcoat, designed and created by Ironhammer Security. The coat is externally impact resistant - perfect for your next act of autodefenestration!"
+	desc = "Brown and armored trenchcoat, designed and created by Cobalt Aegis Security. The coat is externally impact resistant - perfect for your next act of autodefenestration!"
 	icon_state = "insp_coat"
 	item_state = "insp_coat"
 	blood_overlay_type = "coat"
+	rarity_value = 16.66
 
 //Engineering
 /obj/item/clothing/suit/storage/hazardvest
@@ -234,9 +221,10 @@
 	icon_state = "hazard"
 	item_state = "hazard"
 	blood_overlay_type = "armor"
-	extra_allowed = list(/obj/item/tool)
+	extra_allowed = list(/obj/item/weapon/tool)
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO
 	price_tag = 50
+	rarity_value = 8
 
 /obj/item/clothing/suit/storage/hazardvest/orange
 	icon_state = "hazard_orange"
@@ -249,7 +237,7 @@
 
 //Chief Engineer/Technomancer Exultant
 /obj/item/clothing/suit/storage/te_coat
-	name = "exultant coat"
+	name = "chief engineer coat"
 	desc = "A sturdy and proud crimson coat. Lightly armored, with some protection against radiation."
 	icon_state = "te_coat"
 	item_state = "te_coat"
@@ -275,6 +263,7 @@
 	blood_overlay_type = "coat"
 	body_parts_covered = UPPER_TORSO|ARMS
 	price_tag = 50
+	rarity_value = 5
 	armor = list(
 		melee = 10,
 		bullet = 0,
@@ -292,13 +281,13 @@
 	blood_overlay_type = "armor"
 	spawn_blacklisted = TRUE
 	extra_allowed = list(
-		/obj/item/tool/bonesetter,
-		/obj/item/tool/cautery,
-		/obj/item/tool/saw/circular,
-		/obj/item/tool/hemostat,
-		/obj/item/tool/retractor,
-		/obj/item/tool/scalpel,
-		/obj/item/tool/surgicaldrill,
+		/obj/item/weapon/tool/bonesetter,
+		/obj/item/weapon/tool/cautery,
+		/obj/item/weapon/tool/saw/circular,
+		/obj/item/weapon/tool/hemostat,
+		/obj/item/weapon/tool/retractor,
+		/obj/item/weapon/tool/scalpel,
+		/obj/item/weapon/tool/surgicaldrill,
 		/obj/item/stack/medical/advanced/bruise_pack
 	)
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO

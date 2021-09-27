@@ -77,22 +77,22 @@
 /datum/gear/uniform/security_skirt
 	display_name = "jumpskirt, operative"
 	path = /obj/item/clothing/under/rank/security/skirt
-	allowed_roles = list("Ironhammer Operative")
+	allowed_roles = list("Aegis Operative")
 
 /datum/gear/uniform/medspec_skirt
 	display_name = "jumpskirt, medical specialist"
 	path = /obj/item/clothing/under/rank/medspec/skirt
-	allowed_roles = list("Ironhammer Medical Specialist")
+	allowed_roles = list("Aegis Medical Specialist")
 
 /datum/gear/uniform/warden_skirt
 	display_name = "jumpskirt, warden"
 	path = /obj/item/clothing/under/rank/warden/skirt
-	allowed_roles = list("Ironhammer Gunnery Sergeant")
+	allowed_roles = list("Aegis Gunnery Sergeant")
 
 /datum/gear/uniform/hos_skirt
 	display_name = "jumpskirt, commander"
 	path = /obj/item/clothing/under/rank/ih_commander/skirt
-	allowed_roles = list("Ironhammer Commander")
+	allowed_roles = list("Aegis Commander")
 
 /*/datum/gear/uniform/skirt
 	display_name = "plaid skirt, blue"
@@ -163,25 +163,4 @@
 /*/datum/gear/uniform/uniform_hop
 	display_name = "uniform, HoP's dress"
 	path = /obj/item/clothing/under/dress/dress_hop
-	allowed_roles = list("First Officer")*/
-
-/datum/gear/uniform/soviet
-	display_name = "soviet uniform"
-	path = /obj/item/clothing/under/soviet
-
-/datum/gear/uniform/battledress_serb
-	display_name = "battle dress uniform, serbian"
-	path = /obj/item/clothing/under/serbiansuit
-
-/datum/gear/uniform/battledress_serb/New()
-	..()
-	var/battledress_serb = list(
-		"green"	=	/obj/item/clothing/under/serbiansuit,
-		"brown"	=	/obj/item/clothing/under/serbiansuit/brown,
-		"black"	=	/obj/item/clothing/under/serbiansuit/black
-	)
-	gear_tweaks += new /datum/gear_tweak/path(battledress_serb)
-
-/datum/gear/uniform/battledress_german
-	display_name = "battle dress uniform, oberth"
-	path = /obj/item/clothing/under/germansuit
+	allowed_roles = list("Head of Personnel")*/

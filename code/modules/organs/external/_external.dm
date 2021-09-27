@@ -18,6 +18,10 @@
 	spawn_tags = SPAWN_TAG_ORGAN_EXTERNAL
 	var/tally = 0
 
+	var/list/s_col                     // skin colour
+	var/s_col_blend = ICON_ADD         // How the skin colour is applied.
+	var/list/h_col                     // hair colour
+
 	// Strings
 	var/damage_state = "00"				// Modifier used for generating the on-mob damage overlay for this limb.
 	var/damage_msg = "\red You feel an intense pain"
@@ -38,11 +42,9 @@
 	var/force_icon			// Used to force override of species-specific limb icons (for prosthetics).
 	var/icon/mob_icon                  // Cached icon for use in mob overlays.
 	var/skin_tone			// Skin tone.
-	var/skin_col			// skin colour
-	var/hair_col
 
 	// Wound and structural data.
-	var/wound_update_accuracy = 1		// how often wounds should be updated, a higher number means less often
+	var/wound_update_accuracy = 3		// how often wounds should be updated, a higher number means less often Occulus Edit: only update wounds every 3 ticks (potential lag reduction)
 	var/list/wounds = list()			// wound datum list.
 	var/number_wounds = 0				// number of wounds, which is NOT wounds.len!
 	var/list/children = list()			// Sub-limbs.
@@ -56,7 +58,9 @@
 
 	var/list/drop_on_remove
 
-	var/obj/item/organ_module/active/module
+	var/list/markings = list()         // Markings (body_markings) to apply to the icon
+
+	var/obj/item/organ_module/active/module = null
 
 	// Joint/state stuff.
 	var/functions = NONE	// Functions performed by body part. Bitflag, see _defines/damage_organs.dm for possible values.
@@ -71,6 +75,8 @@
 
 	var/cavity_name = "cavity"				// Name of body part's cavity, displayed during cavity implant surgery
 	var/max_volume = ITEM_SIZE_SMALL	// Max w_class of cavity implanted items
+
+	var/gendered = FALSE
 
 	// Surgery vars.
 	var/open = 0
@@ -132,6 +138,7 @@
 	src.cavity_name = desc.cavity_name
 
 	src.functions = desc.functions
+	src.gendered = desc.gendered
 	if(desc.drop_on_remove)
 		src.drop_on_remove = desc.drop_on_remove.Copy()
 
@@ -175,8 +182,8 @@
 	for(var/atom/movable/implant in implants)
 		//large items and non-item objs fall to the floor, everything else stays
 		var/obj/item/I = implant
-		if(istype(I, /obj/item/implant))
-			var/obj/item/implant/Imp = I
+		if(istype(I, /obj/item/weapon/implant))
+			var/obj/item/weapon/implant/Imp = I
 			Imp.uninstall()
 			continue
 		if(istype(I) && I.w_class < ITEM_SIZE_NORMAL)
@@ -227,7 +234,7 @@
 		nerve = new /obj/item/organ/internal/nerve
 	else
 		nerve = new /obj/item/organ/internal/nerve/robotic
-
+	nerve.name += ", " + name//Occulus Edit, naming eris organs by BP
 	nerve?.replaced(src)
 
 /obj/item/organ/external/proc/make_muscles()
@@ -237,13 +244,14 @@
 	else
 		muscle = new /obj/item/organ/internal/muscle/robotic
 
+	muscle.name += ", " + name//Occulus Edit, naming eris organs by BP
 	muscle?.replaced(src)
 
 /obj/item/organ/external/proc/make_blood_vessels()
 	var/obj/item/organ/internal/blood_vessel/blood_vessel
 	if(nature < MODIFICATION_SILICON)	//No robotic blood vesseles
 		blood_vessel = new /obj/item/organ/internal/blood_vessel
-
+		blood_vessel.name += ", " + name//Occulus Edit, naming eris organs by BP
 	blood_vessel?.replaced(src)
 
 /obj/item/organ/external/proc/update_limb_efficiency()
@@ -280,7 +288,7 @@
 		if (2)
 			take_damage(5)
 		if (3)
-			take_damage(2)
+			take_damage(1)
 
 /obj/item/organ/external/attack_self(var/mob/user)
 	if(!contents.len)
@@ -311,8 +319,6 @@
 			to_chat(usr, SPAN_DANGER("There is \a [I] sticking out of it."))
 	return
 
-#define MAX_MUSCLE_SPEED -0.5
-
 /obj/item/organ/external/proc/get_tally()
 	if(is_broken() && !(status & ORGAN_SPLINTED))
 		. += 3
@@ -334,9 +340,7 @@
 	if(status & ORGAN_SPLINTED)
 		. += 0.5
 
-	var/muscle_eff = owner.get_specific_organ_efficiency(OP_MUSCLE, organ_tag)
-	muscle_eff = muscle_eff - (muscle_eff/(owner.get_specific_organ_efficiency(OP_NERVE, organ_tag)/100)) //Need more nerves to control those new muscles
-	. += max(-(muscle_eff/ 100)/4, MAX_MUSCLE_SPEED)
+	. += (-(limb_efficiency / 100 - 1) * 3)	//0 at 100 efficiency, -1.5 at 150, +1.5 at 50
 
 	. += tally
 
@@ -405,7 +409,7 @@ This function completely restores a damaged organ to perfect condition.
 
 	// remove embedded objects and drop them on the floor
 	for(var/obj/implanted_object in implants)
-		if(!istype(implanted_object,/obj/item/implant))	// We don't want to remove REAL implants. Just shrapnel etc.
+		if(!istype(implanted_object,/obj/item/weapon/implant))	// We don't want to remove REAL implants. Just shrapnel etc.
 			implanted_object.loc = get_turf(src)
 			implants -= implanted_object
 
@@ -481,6 +485,8 @@ This function completely restores a damaged organ to perfect condition.
 		last_dam = brute_dam + burn_dam
 	if(germ_level)
 		return 1
+	if(wounds)//Occulus Edit - Need this to process wound healing over time!
+		return 1//Occulus Edit - Need this to process wound healing over time!
 	return 0
 
 /obj/item/organ/external/Process()
@@ -629,7 +635,7 @@ Note that amputating the affected organ does in fact remove the infection from t
 
 	for(var/datum/wound/W in wounds)
 		// wounds can disappear after 10 minutes at the earliest
-		if(W.damage <= 0 && W.created + 10 * 10 * 60 <= world.time)
+		if(W.damage <= 0 && W.salved == 1 && W.bandaged == 1)//Occulus Edit: Wounds that have no damage, are salved, and are bandaged will disappear
 			wounds -= W
 			continue
 			// let the GC handle the deletion of the wound
@@ -755,12 +761,12 @@ Note that amputating the affected organ does in fact remove the infection from t
 		holder = owner
 	if(!holder)
 		return
-	if (holder.handcuffed && (body_part in list(ARM_LEFT, ARM_RIGHT)))
+	if (holder.handcuffed && (body_part in list(ARM_LEFT, ARM_RIGHT, HAND_LEFT, HAND_RIGHT)))
 		holder.visible_message(\
 			"\The [holder.handcuffed.name] falls off of [holder.name].",\
 			"\The [holder.handcuffed.name] falls off you.")
 		holder.drop_from_inventory(holder.handcuffed)
-	if (holder.legcuffed && (body_part in list(LEG_LEFT, LEG_RIGHT)))
+	if (holder.legcuffed && (body_part in list(FOOT_LEFT, FOOT_RIGHT, LEG_LEFT, LEG_RIGHT)))
 		holder.visible_message(\
 			"\The [holder.legcuffed.name] falls off of [holder.name].",\
 			"\The [holder.legcuffed.name] falls off you.")
@@ -884,7 +890,7 @@ Note that amputating the affected organ does in fact remove the infection from t
 		owner.visible_message("<span class='danger'>\The [W] sticks in the wound!</span>")
 	implants += W
 
-	if(!istype(W, /obj/item/material/shard/shrapnel))
+	if(!istype(W, /obj/item/weapon/material/shard/shrapnel))
 		embedded += W
 		owner.verbs += /mob/proc/yank_out_object
 
@@ -942,13 +948,14 @@ Note that amputating the affected organ does in fact remove the infection from t
 		if(W.internal && !open) continue // can't see internal wounds
 		var/this_wound_desc = W.desc
 
-		if(W.damage_type == BURN && W.salved)
-			this_wound_desc = "salved [this_wound_desc]"
+		if(W.salved)	// Always show salved wounds -- this is important for Jamini's incoming injury clearing PR
+		//if(W.damage_type == BURN && W.salved)
+			this_wound_desc = "<font color='F5793A'>salved</font> [this_wound_desc]" // OCCULUS EDIT: This is orange
 
 		if(W.bleeding())
-			this_wound_desc = "bleeding [this_wound_desc]"
+			this_wound_desc = "<b>bleeding</b> [this_wound_desc]"	// OCCULUS EDIT: bold 'bleeding'
 		else if(W.bandaged)
-			this_wound_desc = "bandaged [this_wound_desc]"
+			this_wound_desc = "<font color='6073B1'>bandaged</font> [this_wound_desc]" // OCCULUS EDIT: This is a somewhat light blue
 
 		if(W.germ_level > 600)
 			this_wound_desc = "badly infected [this_wound_desc]"
@@ -1022,6 +1029,20 @@ Note that amputating the affected organ does in fact remove the infection from t
 			conditions_list.Add(list(condition))
 
 	else if(BP_IS_ORGANIC(src))
+		if(brute_dam > 15)//Occulus Edit Start
+			condition = list(
+				"name" = "Blunt trauma",
+				"fix_name" = "Mend",
+				"step" = /datum/surgery_step/fix_brute
+			)
+			conditions_list.Add(list(condition))
+		if(burn_dam > 15)
+			condition = list(
+				"name" = "Charred flesh",
+				"fix_name" = "Mend",
+				"step" = /datum/surgery_step/fix_burn
+			)
+			conditions_list.Add(list(condition))//Occulus Edit End
 		if(status & ORGAN_BLEEDING)
 			condition = list(
 				"name" = "Bleeding",
@@ -1039,23 +1060,3 @@ Note that amputating the affected organ does in fact remove the infection from t
 			conditions_list.Add(list(condition))
 
 	return conditions_list
-
-/obj/item/organ/external/attackby(obj/item/A, mob/user, params)
-	if(A.has_quality(QUALITY_CUTTING))
-		if(!(user.a_intent == I_HURT))
-			return ..()
-		user.visible_message(SPAN_WARNING("[user] begins butchering \the [src]"), SPAN_WARNING("You begin butchering \the [src]"), SPAN_NOTICE("You hear meat being cut apart"), 5)
-		if(A.use_tool(user, src, WORKTIME_FAST, QUALITY_CUTTING, FAILCHANCE_EASY, required_stat = STAT_BIO))
-			on_butcher(A, user, get_turf(src))
-
-/obj/item/organ/external/proc/on_butcher(obj/item/A, mob/living/carbon/human/user, location_meat)
-	for(var/obj/item/organ/internal/muscle/placeholder in internal_organs)
-		var/meat = species?.meat_type // One day someone will make a species with no meat type.
-		if(!meat)
-			break
-		new meat(location_meat)
-		if(user.species == species)
-			user.sanity_damage += 5*((user.nutrition ? user.nutrition : 1)/user.max_nutrition)
-			to_chat(user, SPAN_NOTICE("You feel your [species.name]ity dismantling as you butcher the [src]")) // Human-ity , Monkey-ity , Slime-Ity
-	qdel(src)
-	

@@ -35,14 +35,19 @@
 	return TRUE
 
 /mob/living/simple_animal/hostile/megafauna/death(gibbed, var/list/force_grant)
-	..()
-	qdel(src)
+	if(health <= 0)
+		qdel(src)
+		return
 
 /mob/living/simple_animal/hostile/megafauna/gib()
-	qdel(src)
+	if(health <= 0)
+		qdel(src)
+		return
 
 /mob/living/simple_animal/hostile/megafauna/dust(just_ash, drop_items, force)
-	qdel(src)
+	if(health <= 0)
+		qdel(src)
+		return
 
 /mob/living/simple_animal/hostile/megafauna/AttackingTarget()
 	if(recovery_time >= world.time)
@@ -113,26 +118,26 @@
 	for(var/mob/M in range(10,src))
 		if(M.client)
 			shake_camera(M, 4, 3)
-	visible_message(SPAN_DANGER(pick("Prepare to die!", "JUSTICE", "Run!")))
+	visible_message(SPAN_DANGER(pick("JUDGING...", "THE HAND OF FATE DECIDES", "THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES THE SKIES "))) //occ modular edit
+	sleep(rand(megafauna_min_cooldown, megafauna_max_cooldown))
 
-/mob/living/simple_animal/hostile/megafauna/proc/spiral_shoot(negative = pick(TRUE, FALSE), rounds = 20)
-	set waitfor = 0
+/mob/living/simple_animal/hostile/megafauna/proc/spiral_shoot(negative = pick(TRUE, FALSE), counter_start = 8)
 	var/turf/start_turf = get_step(src, pick(GLOB.alldirs))
-	var/incvar = negative ? -1 : 1
-	var/dirpoint = 1
-	var/list/alldirs = GLOB.alldirs.Copy()
-	var/firedir = alldirs[dirpoint]
-	for(var/i = 0 to rounds)
-		shoot_projectile(start_turf, firedir)
-		dirpoint += incvar
-		if(dirpoint < 1)
-			dirpoint = alldirs.len
-		else if(dirpoint > alldirs.len)
-			dirpoint = 1
-		firedir = alldirs[dirpoint]
-		sleep(rand(1,3))
+	var/counter = counter_start
+	for(var/i in 1 to 80)
+		if(prob(35))
+			sleep(rand(1,3))
+		if(negative)
+			counter--
+		else
+			counter++
+		if(counter > 16)
+			counter = 1
+		if(counter < 1)
+			counter = 16
+		shoot_projectile(start_turf, counter * 22.5)
 
-/mob/living/simple_animal/hostile/megafauna/proc/shoot_projectile(turf/marker, var/dir)
+/mob/living/simple_animal/hostile/megafauna/proc/shoot_projectile(turf/marker)
 	if(!marker || marker == loc)
 		return
 	var/turf/startloc = get_turf(src)
@@ -140,7 +145,7 @@
 	P.firer = src
 	if(target)
 		P.original = target
-	P.launch(get_step(marker, dir))
+	P.launch( get_step(marker, pick(SOUTH, NORTH, WEST, EAST, SOUTHEAST, SOUTHWEST, NORTHEAST, NORTHWEST)) )
 
 /mob/living/simple_animal/hostile/megafauna/proc/random_shots()
 	ranged_cooldown = world.time + 30
@@ -148,7 +153,7 @@
 	for(var/T in RANGE_TURFS(12, U) - U)
 		if(prob(6))
 			sleep(rand(0,1))
-			shoot_projectile(T, pick(GLOB.alldirs))
+			shoot_projectile(T)
 
 /mob/living/simple_animal/hostile/megafauna/proc/wave_shots()
 	ranged_cooldown = world.time + 30

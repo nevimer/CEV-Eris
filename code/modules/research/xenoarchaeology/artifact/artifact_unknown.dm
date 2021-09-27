@@ -13,7 +13,7 @@
 #define TRIGGER_ENERGY 6
 #define TRIGGER_HEAT 7
 #define TRIGGER_COLD 8
-#define TRIGGER_PLASMA 9
+#define TRIGGER_PHORON 9
 #define TRIGGER_OXY 10
 #define TRIGGER_CO2 11
 #define TRIGGER_NITRO 12
@@ -91,7 +91,7 @@
 	//if either of our effects rely on environmental factors, work that out
 	var/trigger_cold = 0
 	var/trigger_hot = 0
-	var/trigger_plasma = 0
+	var/trigger_phoron = 0
 	var/trigger_oxy = 0
 	var/trigger_co2 = 0
 	var/trigger_nitro = 0
@@ -104,8 +104,8 @@
 			else if(env.temperature > 375)
 				trigger_hot = 1
 
-			if(env.gas["plasma"] >= 10)
-				trigger_plasma = 1
+			if(env.gas["phoron"] >= 10)
+				trigger_phoron = 1
 			if(env.gas["oxygen"] >= 10)
 				trigger_oxy = 1
 			if(env.gas["carbon_dioxide"] >= 10)
@@ -137,16 +137,16 @@
 		if(secondary_effect && secondary_effect.trigger == TRIGGER_HEAT && !secondary_effect.activated)
 			secondary_effect.ToggleActivate(0)
 
-	//PLASMA GAS ACTIVATION
-	if(trigger_plasma)
-		if(my_effect.trigger == TRIGGER_PLASMA && !my_effect.activated)
+	//PHORON GAS ACTIVATION
+	if(trigger_phoron)
+		if(my_effect.trigger == TRIGGER_PHORON && !my_effect.activated)
 			my_effect.ToggleActivate()
-		if(secondary_effect && secondary_effect.trigger == TRIGGER_PLASMA && !secondary_effect.activated)
+		if(secondary_effect && secondary_effect.trigger == TRIGGER_PHORON && !secondary_effect.activated)
 			secondary_effect.ToggleActivate(0)
 	else
-		if(my_effect.trigger == TRIGGER_PLASMA && my_effect.activated)
+		if(my_effect.trigger == TRIGGER_PHORON && my_effect.activated)
 			my_effect.ToggleActivate()
-		if(secondary_effect && secondary_effect.trigger == TRIGGER_PLASMA && !secondary_effect.activated)
+		if(secondary_effect && secondary_effect.trigger == TRIGGER_PHORON && !secondary_effect.activated)
 			secondary_effect.ToggleActivate(0)
 
 	//OXYGEN GAS ACTIVATION
@@ -210,8 +210,8 @@
 	if(secondary_effect && secondary_effect.effect == EFFECT_TOUCH && secondary_effect.activated)
 		secondary_effect.DoEffectTouch(user)
 
-/obj/machinery/artifact/attackby(obj/item/W, mob/living/user)
-	if (istype(W, /obj/item/reagent_containers))
+/obj/machinery/artifact/attackby(obj/item/weapon/W, mob/living/user)
+	if (istype(W, /obj/item/weapon/reagent_containers))
 		if(W.reagents.has_reagent("hydrogen", 1) || W.reagents.has_reagent("water", 1))
 			if(my_effect.trigger == TRIGGER_WATER)
 				my_effect.ToggleActivate()
@@ -222,7 +222,7 @@
 				my_effect.ToggleActivate()
 			if(secondary_effect && secondary_effect.trigger == TRIGGER_ACID && prob(25))
 				secondary_effect.ToggleActivate(0)
-		else if(W.reagents.has_reagent("plasma", 1) || W.reagents.has_reagent("thermite", 1))
+		else if(W.reagents.has_reagent("phoron", 1) || W.reagents.has_reagent("thermite", 1))
 			if(my_effect.trigger == TRIGGER_VOLATILE)
 				my_effect.ToggleActivate()
 			if(secondary_effect && secondary_effect.trigger == TRIGGER_VOLATILE && prob(25))
@@ -232,16 +232,17 @@
 				my_effect.ToggleActivate()
 			if(secondary_effect && secondary_effect.trigger == TRIGGER_TOXIN && prob(25))
 				secondary_effect.ToggleActivate(0)
-	else if(istype(W,/obj/item/melee/baton) && W:status ||\
-			istype(W,/obj/item/melee/energy) ||\
-			istype(W,/obj/item/card/emag) ||\
-			istype(W,/obj/item/tool/multitool))
+	else if(istype(W,/obj/item/weapon/melee/baton) && W:status ||\
+			istype(W,/obj/item/weapon/melee/energy) ||\
+			istype(W,/obj/item/weapon/card/emag) ||\
+			istype(W,/obj/item/weapon/tool/multitool) ||\
+			istype(W,/obj/item/weapon/tool/baton/stun)) //Occulus Edit
 		if (my_effect.trigger == TRIGGER_ENERGY)
 			my_effect.ToggleActivate()
 		if(secondary_effect && secondary_effect.trigger == TRIGGER_ENERGY && prob(25))
 			secondary_effect.ToggleActivate(0)
 
-	else if (istype(W,/obj/item/flame) && W:lit ||\
+	else if (istype(W,/obj/item/weapon/flame) && W:lit ||\
 			W.get_tool_type(user, list(QUALITY_WELDING), src))
 		if(my_effect.trigger == TRIGGER_HEAT)
 			my_effect.ToggleActivate()
@@ -300,8 +301,8 @@
 
 /obj/machinery/artifact/ex_act(severity)
 	switch(severity)
-		if(1) qdel(src)
-		if(2)
+		if(1.0) qdel(src)
+		if(2.0)
 			if (prob(50))
 				qdel(src)
 			else
@@ -309,7 +310,7 @@
 					my_effect.ToggleActivate()
 				if(secondary_effect && (secondary_effect.trigger == TRIGGER_FORCE || secondary_effect.trigger == TRIGGER_HEAT) && prob(25))
 					secondary_effect.ToggleActivate(0)
-		if(3)
+		if(3.0)
 			if (my_effect.trigger == TRIGGER_FORCE || my_effect.trigger == TRIGGER_HEAT)
 				my_effect.ToggleActivate()
 			if(secondary_effect && (secondary_effect.trigger == TRIGGER_FORCE || secondary_effect.trigger == TRIGGER_HEAT) && prob(25))

@@ -9,6 +9,7 @@
 		)
 	siemens_coefficient = 0.9
 	body_parts_covered = 0
+	rarity_value = 3.5
 	var/flipped = 0
 
 /obj/item/clothing/head/soft/dropped()
@@ -109,14 +110,14 @@
 // I H S //
 
 /obj/item/clothing/head/soft/sec2soft
-	name = "IH field cap"
-	initial_name = "IH field cap"
+	name = "Aegis field cap"
+	initial_name = "Aegis field cap"
 	desc = "It's a field cap for operatives."
 	icon_state = "sec2soft"
 
 /obj/item/clothing/head/soft/sarge2soft
-	name = "IH sergeant cap"
-	initial_name = "IH sergeant cap"
+	name = "Aegis sergeant cap"
+	initial_name = "Aegis sergeant cap"
 	desc = "It's a field cap for officers."
 	icon_state = "sargesoft"
 
@@ -124,6 +125,6 @@
 
 /obj/item/clothing/head/soft/medical
 	name = "medical cap"
-	desc = "Cap worn by moebius medical personnel, usually outside spacecraft."
+	desc = "Cap worn by medical personnel, usually outside spacecraft."
 	icon_state = "medcap"
 	item_state = "medcap"

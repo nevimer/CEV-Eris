@@ -19,7 +19,7 @@
 	var/max_health
 	var/burn_point
 	var/burning
-	var/hitsound = 'sound/weapons/genhit1.ogg'
+	var/hitsound
 	var/worksound
 	var/no_attack_log = 0			//If it's an item we don't want to log attack_logs with, set this to 1
 
@@ -50,7 +50,6 @@
 	var/permeability_coefficient = 1 // for chemicals/diseases
 	var/siemens_coefficient = 1 // for electrical admittance/conductance (electrocution checks and shit)
 	var/slowdown = 0 // How much clothing is slowing you down. Negative values speeds you up
-	var/slowdown_hold // How much holding an item slows you down.
 	var/datum/armor/armor // Ref to the armor datum
 	var/list/allowed = list() //suit storage stuff.
 	var/obj/item/device/uplink/hidden/hidden_uplink // All items can have an uplink hidden inside, just remember to add the triggers.
@@ -59,7 +58,8 @@
 
 	var/contained_sprite = FALSE //TRUE if object icon and related mob overlays are all in one dmi
 
-	var/icon_override  //Used to override hardcoded clothing dmis in human clothing proc.
+	var/icon_override = null  //Used to override hardcoded clothing dmis in human clothing proc.
+	var/icon_override_female = null  //SYZYGY EDIT - gendered icon_overrides
 
 	//** These specify item/icon overrides for _slots_
 
@@ -105,6 +105,8 @@
 			qdel(action)
 		hud_actions = null
 
+	screen_loc = null
+
 	return ..()
 
 /obj/item/get_fall_damage()
@@ -112,7 +114,7 @@
 
 /obj/item/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(1.0)
 			qdel(src)
 		if(2)
 			if(prob(50))
@@ -135,7 +137,7 @@
 
 	loc = T
 
-/obj/item/examine(user, distance = -1)
+/obj/item/examine(mob/user, var/distance = -1)
 	var/message
 	var/size
 	switch(w_class)
@@ -163,15 +165,27 @@
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
 		if(H.stats.getPerk(PERK_MARKET_PROF))
-			message += SPAN_NOTICE("\nThis item cost: [get_item_cost()][CREDITS]")
+			message += SPAN_NOTICE("\nThis item cost: [price_tag == null ? 0 : price_tag][CREDITS]")
 
 	return ..(user, distance, "", message)
 
 /obj/item/attack_hand(mob/user as mob)
-	if(pre_pickup(user))
-		pickup(user)
-		return TRUE
-	return FALSE
+	if (!user) return
+	if (hasorgans(user))
+		var/mob/living/carbon/human/H = user
+		var/obj/item/organ/external/temp = H.organs_by_name[BP_R_HAND]
+		if (user.hand)
+			temp = H.organs_by_name[BP_L_HAND]
+		if(temp && !temp.is_usable())
+			user << SPAN_NOTICE("You try to move your [temp.name], but cannot!")
+			return
+		if(!temp)
+			user << SPAN_NOTICE("You try to use your hand, but realize it is no longer attached!")
+			return
+	src.pickup(user)
+	if (istype(src.loc, /obj/item/weapon/storage))
+		var/obj/item/weapon/storage/S = src.loc
+		S.remove_from_storage(src)
 
 //	Places item in active hand and invokes pickup animation
 //	NOTE: This proc was created and replaced previous pickup() proc which is now called pre_pickup() as it makes more sense
@@ -186,7 +200,7 @@
 	add_hud_actions(target)
 
 /obj/item/attack_ai(mob/user as mob)
-	if(istype(loc, /obj/item/robot_module))
+	if(istype(loc, /obj/item/weapon/robot_module))
 		//If the item is part of a cyborg module, equip it
 		if(!isrobot(user))
 			return
@@ -194,7 +208,7 @@
 		R.activate_module(src)
 	//R.hud_used.update_robot_modules_display()
 
-/obj/item/proc/talk_into(mob/living/M, message, channel, verb = "says", datum/language/speaking = null, speech_volume)
+/obj/item/proc/talk_into(mob/living/M, message, channel, var/verb = "says", var/datum/language/speaking = null, var/speech_volume)
 	return
 
 /obj/item/proc/moved(mob/user as mob, old_loc as turf)
@@ -203,15 +217,11 @@
 // Called whenever an object is moved out of a mob's equip slot. Possibly into another slot, possibly to elsewhere
 // Linker proc: mob/proc/prepare_for_slotmove, which is referenced in proc/handle_item_insertion and obj/item/attack_hand.
 // This exists so that dropped() could exclusively be called when an item is dropped.
-/obj/item/proc/on_slotmove(mob/user)
+/obj/item/proc/on_slotmove(var/mob/user)
 	if(wielded)
 		unwield(user)
 	if(zoom)
 		zoom(user)
-	if(get_equip_slot() in unworn_slots)
-		SEND_SIGNAL(src, COMSIG_CLOTH_DROPPED, user)
-		if(user)
-			SEND_SIGNAL(user, COMSIG_CLOTH_DROPPED, src)
 
 
 //	Called before an item is picked up (loc is not yet changed)
@@ -221,12 +231,12 @@
 	return TRUE
 
 // called when this item is removed from a storage item, which is passed on as S. The loc variable is already set to the new destination before this is called.
-/obj/item/proc/on_exit_storage(obj/item/storage/the_storage)
+/obj/item/proc/on_exit_storage(obj/item/weapon/storage/the_storage)
 	SEND_SIGNAL(the_storage, COMSIG_STORAGE_TAKEN, src, the_storage)
 	return
 
 // called when this item is added into a storage item, which is passed on as S. The loc variable is already set to the storage item.
-/obj/item/proc/on_enter_storage(obj/item/storage/the_storage)
+/obj/item/proc/on_enter_storage(obj/item/weapon/storage/the_storage)
 	SEND_SIGNAL(the_storage, COMSIG_STORAGE_INSERTED, src, the_storage)
 	return
 
@@ -275,7 +285,7 @@
 //If a negative value is returned, it should be treated as a special return value for bullet_act() and handled appropriately.
 //For non-projectile attacks this usually means the attack is blocked.
 //Otherwise should return 0 to indicate that the attack is not affected in any way.
-/obj/item/proc/handle_shield(mob/user, damage, atom/damage_source = null, mob/attacker = null, def_zone = null, attack_text = "the attack")
+/obj/item/proc/handle_shield(mob/user, var/damage, atom/damage_source = null, mob/attacker = null, var/def_zone = null, var/attack_text = "the attack")
 	return 0
 
 /obj/item/proc/get_loc_turf()
@@ -375,7 +385,7 @@
 	if(!..())
 		return 0
 
-	if(istype(src, /obj/item/melee/energy))
+	if(istype(src, /obj/item/weapon/melee/energy))
 		return
 
 	if((flags & NOBLOODY)||(item_flags & NOBLOODY))
@@ -431,9 +441,7 @@ modules/mob/mob_movement.dm if you move you will be zoomed out
 modules/mob/living/carbon/human/life.dm if you die, you will be zoomed out.
 */
 //Looking through a scope or binoculars should /not/ improve your periphereal vision. Still, increase viewsize a tiny bit so that sniping isn't as restricted to NSEW
-/obj/item/proc/zoom(tileoffset = 14,viewsize = 9) //tileoffset is client view offset in the direction the user is facing. viewsize is how far out this thing zooms. 7 is normal view
-	if(!usr)
-		return
+/obj/item/proc/zoom(var/tileoffset = 14,var/viewsize = 9) //tileoffset is client view offset in the direction the user is facing. viewsize is how far out this thing zooms. 7 is normal view
 
 	var/devicename
 
@@ -529,7 +537,8 @@ modules/mob/living/carbon/human/life.dm if you die, you will be zoomed out.
 
 	for(var/A in hud_actions)
 		var/obj/item/action = A
-		action.update_icon()
+		if(action)
+			action.update_icon()
 
 /obj/item/proc/refresh_upgrades()
 	return

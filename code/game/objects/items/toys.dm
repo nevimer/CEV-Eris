@@ -54,7 +54,7 @@
 	return
 
 /obj/item/toy/balloon/attackby(obj/O, mob/user)
-	if(istype(O, /obj/item/reagent_containers/glass))
+	if(istype(O, /obj/item/weapon/reagent_containers/glass))
 		if(O.reagents)
 			if(O.reagents.total_volume < 1)
 				to_chat(user, "The [O] is empty.")
@@ -332,7 +332,7 @@
 
 /obj/item/toy/waterflower/afterattack(atom/A as mob|obj, mob/user)
 
-	if (istype(A, /obj/item/storage/backpack ))
+	if (istype(A, /obj/item/weapon/storage/backpack ))
 		return
 
 	else if (locate (/obj/structure/table, src.loc))
@@ -495,12 +495,12 @@
 
 /obj/item/toy/figure/serbian
 	name = "mercenary figurine"
-	desc = "A curiously unbranded figurine, the olive drab a popular pick for many independent Serbian mercenary outfits. Rocket launcher not included."
+	desc = "A curiously unbranded figurine, the olive drab a popular pick for many independent mercenary outfits. Rocket launcher not included."
 	icon_state = "serbian"
 
 /obj/item/toy/figure/acolyte
 	name = "acolyte figurine"
-	desc = "Church of NeoTheology \"New Faith Life\" brand figurine of an acolyte, hooded both physically and spiritually from that which would lead them astray."
+	desc = "Church of Mekhane \"New Faith Life\" brand figurine of an acolyte, hooded both physically and spiritually from that which would lead them astray."
 	icon_state = "acolyte"
 
 /obj/item/toy/figure/carrion
@@ -517,8 +517,8 @@
 
 /obj/item/toy/figure/vagabond
 	name = "vagabond figurine"
-	desc = "An Aster's \"Space Life\" brand figurine showcasing the form of a random deplorable, wearing one of the ship's uniforms, and an orange bandana. \
-	Must of been custom-made to commemorate the Eris' doomed voyage."
+	desc = "A \"Space Life\" brand figurine showcasing the form of a random deplorable, wearing one of the ship's uniforms, and an orange bandana. \
+	Must have been custom-made to commemorate the Northern Light's doomed voyage."
 	icon_state = "vagabond"
 
 /obj/item/toy/figure/rooster
@@ -545,7 +545,7 @@
 
 /obj/item/toy/figure/shitcurity
 	name = "shitcurity officer figurine"
-	desc = "An Aster's \"Space Life\" brand figurine of a classic redshirt of \"Nanotrasen's finest\". Their belly distends out into an obvious beer gut, revealing no form of manufacturer bias what-so-ever. \
+	desc = "A \"Space Life\" brand figurine of a classic redshirt of \"Nanotrasen's finest\". Their belly distends out into an obvious beer gut, revealing no form of manufacturer bias what-so-ever. \
 	\"I joined just to kill people.\""
 	icon_state = "shitcurity"
 
@@ -590,7 +590,7 @@
 
 /obj/structure/plushie/drone
 	name = "plush drone"
-	desc = "A plushie of a happy drone! It appears to be smiling, and has a small tag which reads \"I.H.S. Atomos Gift Shop\"."
+	desc = "A plushie of a happy drone! It appears to be smiling, and has a small tag which reads \"N.D.V. Icarus Gift Shop\"."
 	icon_state = "droneplushie"
 	phrase = "Beep boop!"
 
@@ -605,12 +605,6 @@
 	desc = "A plushie of a popular industrious cleaning robot! If it could feel emotions, it would love you."
 	icon_state = "beepskyplushie"
 	phrase = "Ping!"
-
-/obj/structure/plushie/fumo
-	name = "Fumo"
-	desc = "A plushie of a....?."
-	icon_state = "fumoplushie"
-	phrase = "I just don't think about losing."
 
 //Small plushies.
 /obj/item/toy/plushie
@@ -662,7 +656,7 @@
 	attack_verb = list("attacked", "slashed", "stabbed", "poked")
 	spawn_tags = SPAWN_TAG_TOY_WEAPON
 
-/obj/item/inflatable_duck
+/obj/item/weapon/inflatable_duck
 	name = "inflatable duck"
 	desc = "No bother to sink or swim when you can just float!"
 	icon_state = "inflatable"

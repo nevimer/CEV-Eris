@@ -90,9 +90,9 @@
 	T.amount = starting_funds
 	if(!source_db)
 		//set a random date, time and location some time over the past few decades
-		T.date = "[num2text(rand(1,31))] [pick("January","February","March","April","May","June","July","August","September","October","November","December")], 25[rand(10,56)]"
+		T.date = "[num2text(rand(1,31))] [pick("January","February","March","April","May","June","July","August","September","October","November","December")], 24[rand(10,30)]"
 		T.time = "[rand(0,24)]:[rand(11,59)]"
-		T.source_terminal = "Asters Guild Banking Terminal #[rand(111,1111)]"
+		T.source_terminal = "Free Trade Union Banking Terminal #[rand(111,1111)]"
 
 		M.account_number = rand(11111, 99999)
 	else
@@ -106,7 +106,7 @@
 		//create a sealed package containing the account details
 		var/obj/item/smallDelivery/P = new /obj/item/smallDelivery(source_db.loc)
 
-		var/obj/item/paper/R = new /obj/item/paper(P)
+		var/obj/item/weapon/paper/R = new /obj/item/weapon/paper(P)
 		P.wrapped = R
 		R.name = "Account information: [M.owner_name]"
 		R.info = "<b>Account details (confidential)</b><br><hr><br>"
@@ -123,7 +123,7 @@
 		stampoverlay.icon_state = "paper_stamp-cent"
 		if(!R.stamped)
 			R.stamped = new
-		R.stamped += /obj/item/stamp
+		R.stamped += /obj/item/weapon/stamp
 		R.add_overlays(stampoverlay)
 		R.stamps += "<HR><i>This paper has been stamped by the Accounts Database.</i>"
 
@@ -138,7 +138,7 @@
 	var/datum/money_account/D = get_account(attempt_account_number)
 	if (D)
 		//create a transaction log entry
-		var/datum/transaction/T = new(-amount, target_name, purpose, terminal_id)
+		var/datum/transaction/T = new(amount*-1, target_name, purpose, terminal_id)
 		return T.apply_to(D)
 
 	return FALSE
@@ -171,7 +171,6 @@
 
 		//The transaction to give the money
 		var/datum/transaction/T2 = new(amount, source.get_name(), purpose, terminal_id)
-		SEND_SIGNAL(source, COMSIG_TRANSATION, source, target, amount)
 		return T2.apply_to(target)
 
 	return FALSE

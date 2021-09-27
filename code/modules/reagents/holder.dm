@@ -25,12 +25,6 @@
 				continue
 			GLOB.chemical_reagents_list[D.id] = D
 
-/datum/reagents/proc/get_price()
-	var/price = 0
-	for(var/datum/reagent/R in reagent_list)
-		price += R.volume * R.price_per_unit
-	return price
-
 /datum/reagents/proc/get_average_reagents_state()
 	var/solid = 0
 	var/liquid = 0
@@ -72,7 +66,7 @@
 	return maximum_volume - total_volume
 
 /datum/reagents/proc/get_master_reagent() // Returns reference to the reagent with the biggest volume.
-	var/the_reagent
+	var/the_reagent = null
 	var/the_volume = 0
 
 	for(var/datum/reagent/A in reagent_list)
@@ -83,7 +77,7 @@
 	return the_reagent
 
 /datum/reagents/proc/get_master_reagent_name() // Returns the name of the reagent with the biggest volume.
-	var/the_name
+	var/the_name = null
 	var/the_volume = 0
 	for(var/datum/reagent/A in reagent_list)
 		if(A.volume > the_volume)
@@ -93,7 +87,7 @@
 	return the_name
 
 /datum/reagents/proc/get_master_reagent_id() // Returns the id of the reagent with the biggest volume.
-	var/the_id
+	var/the_id = null
 	var/the_volume = 0
 	for(var/datum/reagent/A in reagent_list)
 		if(A.volume > the_volume)
@@ -381,7 +375,6 @@
 		return trans_to_holder(target, amount, multiplier, copy)
 	else if(istype(target, /atom))
 		var/atom/A = target
-		touch(A)
 		if(ismob(target))
 			return splash_mob(target, amount, multiplier, copy)
 		if(isturf(target))
@@ -573,11 +566,6 @@
 		var/amt = list_reagents[r_id]
 		add_reagent(r_id, amt, data)
 
-/datum/reagents/proc/get_reagents()
-	. = list()
-	for(var/datum/reagent/current in reagent_list)
-		. += "[current.name] ([current.volume])"
-	return english_list(., "EMPTY", "", ", ", ", ")
 
 /proc/get_chem_id(chem_name)
 	for(var/X in GLOB.chemical_reagents_list)

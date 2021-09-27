@@ -27,6 +27,8 @@
 	var/pipes_opened = FALSE
 	var/pipes_cleanness = 100
 
+	circuit = /obj/item/weapon/electronics/circuitboard/neotheology/bioreactor_biotank
+
 
 /obj/machinery/multistructure/bioreactor_part/biotank_platform/Initialize()
 	. = ..()
@@ -47,13 +49,13 @@
 		return
 	switch(get_dirtiness_level())
 		if(DIRT_LVL_LOW)
-			to_chat(user, SPAN_NOTICE("Pipes are weared a bit, it's slightly dirty. You see a signs of biomass inside these pipes."))
+			to_chat(user, SPAN_NOTICE("The pipes are slightly dirty, you can see signs of biomass clinging to the walls of the pipes."))
 		if(DIRT_LVL_MEDIUM)
-			to_chat(user, SPAN_WARNING("It's very dirty. Solid biomass block atleast half of space inside the pipes. Better to clean it up."))
+			to_chat(user, SPAN_WARNING("You can see solid chunks of biomass blocking a significant part of the pipes."))
 		if(DIRT_LVL_HIGH)
-			to_chat(user, SPAN_WARNING("You see a high amount of biomass. Pipes are fully blocked. You need to clean this first if you want bioreactor to work."))
+			to_chat(user, SPAN_WARNING("The pipes are completely blocked by biomass. It'd be a bad idea to try and run the bioreactor without cleaning them."))
 		else
-			to_chat(user, SPAN_NOTICE("Pipes looks clean."))
+			to_chat(user, SPAN_NOTICE("The pipes look clean."))
 
 
 /obj/machinery/multistructure/bioreactor_part/biotank_platform/on_update_icon()
@@ -70,7 +72,7 @@
 
 
 /obj/machinery/multistructure/bioreactor_part/biotank_platform/attackby(var/obj/item/I, var/mob/user)
-	if(istype(I, /obj/item/mop))
+	if(istype(I, /obj/item/weapon/mop))
 		var/dirtiness_lvl = get_dirtiness_level()
 		to_chat(user, SPAN_NOTICE("You begin cleaning pipes with [I]... O-of, what a smell!"))
 		if(do_after(user, CLEANING_TIME * dirtiness_lvl, src))
@@ -90,7 +92,6 @@
 
 /obj/machinery/multistructure/bioreactor_part/biotank_platform/proc/take_amount(new_amount)
 	biotank.reagents.add_reagent("biomatter", new_amount)
-	GLOB.biomatter_neothecnology_amt += new_amount
 
 
 //Pipe wearout. Wearout var - is amount of 'dirt' that will be applied to our pipes

@@ -1,19 +1,14 @@
 /* Drugs */
 /datum/reagent/drug
 	reagent_type = "Drug"
-	sanity_gain = 0.5
-
-/datum/reagent/drug/on_mob_add(mob/living/L)
-	..()
-	SEND_SIGNAL(L, COMSIG_CARBON_HAPPY, src, MOB_ADD_DRUG)
 
 /datum/reagent/drug/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
 	if(sanity_gain && ishuman(M))
 		var/mob/living/carbon/human/H = M
 		H.sanity.onDrug(src, effect_multiplier)
-	SEND_SIGNAL(M, COMSIG_CARBON_HAPPY, src, ON_MOB_DRUG)
+//	SEND_SIGNAL(M, COMSIG_CARBON_HAPPY, src, ON_MOB_DRUG)	//This is a Individual Objectives thing
 
-/datum/reagent/drug/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
+/*/datum/reagent/drug/affect_blood(mob/living/carbon/M, alien, effect_multiplier) Occulus We havea better cult start
 	if(sanity_gain && ishuman(M))
 		var/mob/living/carbon/human/H = M
 		H.sanity.onDrug(src, effect_multiplier)
@@ -27,7 +22,7 @@
 
 /datum/reagent/drug/on_mob_delete(mob/living/L)
 	..()
-	SEND_SIGNAL(L, COMSIG_CARBON_HAPPY, src, MOB_DELETE_DRUG)
+	SEND_SIGNAL(L, COMSIG_CARBON_HAPPY, src, MOB_DELETE_DRUG) Occulus Hahahaha No end*/
 
 /datum/reagent/drug/space_drugs
 	name = "Space drugs"
@@ -209,7 +204,7 @@
 /datum/reagent/drug/nicotine/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
 	..()
 	M.add_chemical_effect(CE_PULSE, 1)
-	M.add_chemical_effect(CE_PAINKILLER, 5)
+	M.add_chemical_effect(CE_PAINKILLER, 5 * effect_multiplier)
 	if(M.stats.getPerk(PERK_CHAINGUN_SMOKER))
 		M.add_chemical_effect(CE_ANTITOX, 5 * effect_multiplier)
 		M.heal_organ_damage(0.1 * effect_multiplier, 0.1 * effect_multiplier)
@@ -235,8 +230,6 @@
 	withdrawal_threshold = 10
 	nerve_system_accumulations = 55
 	reagent_type = "Drug/Stimulator"
-	sanity_gain = 0
-
 
 /datum/reagent/drug/hyperzine/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
 	..()

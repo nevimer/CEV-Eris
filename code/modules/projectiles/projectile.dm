@@ -74,12 +74,6 @@
 	var/muzzle_type
 	var/tracer_type
 	var/impact_type
-	var/luminosity_range
-	var/luminosity_power
-	var/luminosity_color
-	var/luminosity_ttl
-	var/obj/effect/attached_effect
-	var/proj_sound
 
 	var/proj_color //If defined, is used to change the muzzle, tracer, and impact icon colors through Blend()
 
@@ -148,14 +142,10 @@
 
 // generate impact effect
 /obj/item/projectile/proc/on_impact(atom/A)
-    impact_effect(effect_transform)
-    if(luminosity_ttl && attached_effect)
-        spawn(luminosity_ttl)
-        qdel(attached_effect)
-
-    if(!ismob(A))
-        playsound(src, hitsound_wall, 50, 1, -2)
-    return
+	impact_effect(effect_transform)
+	if(!ismob(A))
+		playsound(src, hitsound_wall, 50, 1, -2)
+	return
 
 //Checks if the projectile is eligible for embedding. Not that it necessarily will.
 /obj/item/projectile/proc/can_embed()
@@ -183,7 +173,7 @@
 		p_y = text2num(mouse_control["icon-y"])
 
 //called to launch a projectile
-/obj/item/projectile/proc/launch(atom/target, target_zone, x_offset=0, y_offset=0, angle_offset=0, proj_sound)
+/obj/item/projectile/proc/launch(atom/target, target_zone, x_offset=0, y_offset=0, angle_offset=0)
 	var/turf/curloc = get_turf(src)
 	var/turf/targloc = get_turf(target)
 	if (!istype(targloc) || !istype(curloc))
@@ -195,9 +185,6 @@
 		qdel(src)
 		return FALSE
 
-	if(proj_sound)
-		playsound(proj_sound)
-
 	original = target
 	def_zone = target_zone
 
@@ -208,20 +195,13 @@
 	return FALSE
 
 //called to launch a projectile from a gun
-/obj/item/projectile/proc/launch_from_gun(atom/target, mob/user, obj/item/gun/launcher, target_zone, x_offset=0, y_offset=0, angle_offset)
+/obj/item/projectile/proc/launch_from_gun(atom/target, mob/user, obj/item/weapon/gun/launcher, target_zone, x_offset=0, y_offset=0, angle_offset)
 	if(user == target) //Shooting yourself
 		user.bullet_act(src, target_zone)
 		qdel(src)
 		return FALSE
 
-	loc = get_turf(user)
-
-	if(iscarbon(user))
-		var/mob/living/carbon/human/blanker = user
-		if(blanker.can_multiz_pb && (!isturf(target)))
-			loc = get_turf(blanker.client.eye)
-			if(!(loc.Adjacent(target)))
-				loc = get_turf(blanker)
+	loc = get_turf(user) //move the projectile out into the world
 
 	firer = user
 	shot_from = launcher.name
@@ -274,8 +254,6 @@
 			else
 				def_zone = ran_zone(def_zone,spread)
 				result = target_mob.bullet_act(src, def_zone)
-			if(prob(base_miss_chance[def_zone] * ((100 - (aim_hit_chance * 2)) / 100)))	//For example: the head has a base 45% chance to not get hit, if the shooter has 50 vig the chance to miss will be reduced by 50% to 22.5%
-				result = PROJECTILE_FORCE_MISS
 
 	if(result == PROJECTILE_FORCE_MISS)
 		if(!silenced)
@@ -351,7 +329,7 @@
 		var/mob/M = A
 		if(isliving(A))
 			//if they have a neck grab on someone, that person gets hit instead
-			var/obj/item/grab/G = locate() in M
+			var/obj/item/weapon/grab/G = locate() in M
 			if(G && G.state >= GRAB_NECK)
 				visible_message(SPAN_DANGER("\The [M] uses [G.affecting] as a shield!"))
 				if(Bump(G.affecting, TRUE))
@@ -440,7 +418,6 @@
 			first_step = FALSE
 		else if(!bumped)
 			tracer_effect(effect_transform)
-			luminosity_effect()
 
 		if(!hitscan)
 			sleep(step_delay)	//add delay between movement iterations if it's not a hitscan weapon
@@ -508,16 +485,6 @@
 				P.activate(step_delay)	//if not a hitscan projectile, remove after a single delay
 			else
 				P.activate()
-
-/obj/item/projectile/proc/luminosity_effect()
-    if (!location)
-        return
-    
-    if(attached_effect)
-        attached_effect.Move(src.loc)
-
-    else if(luminosity_range && luminosity_power && luminosity_color)
-        attached_effect = new /obj/effect/effect/light(src.loc, luminosity_range, luminosity_power, luminosity_color)
 
 /obj/item/projectile/proc/impact_effect(var/matrix/M)
 	//This can happen when firing inside a wall, safety check

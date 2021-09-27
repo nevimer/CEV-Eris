@@ -1,13 +1,13 @@
-/obj/item/pack/spaceball
+/obj/item/weapon/pack/spaceball
 	name = "\improper Spaceball booster pack"
 	desc = "Officially licensed to take your money."
 	icon_state = "card_pack_spaceball"
 
-/obj/item/pack/spaceball/Initialize(mapload, ...)
+/obj/item/weapon/pack/spaceball/Initialize(mapload, ...)
 	. = ..()
 	var/datum/playingcard/P
 	var/i
-	var/year = 544 + text2num(time2text(world.timeofday, "YYYY"))
+	var/year = 244 + text2num(time2text(world.timeofday, "YYYY"))
 	for(i=0;i<5;i++)
 		P = new()
 		if(prob(1))

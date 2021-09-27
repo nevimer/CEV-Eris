@@ -1,5 +1,5 @@
 /obj/effect/overmap/ship/eris
-	name = "CEV Eris"
+	name = "CEV Northern Light"
 	fore_dir = NORTH
 	vessel_mass = 300
 	default_delay = 20 SECONDS
@@ -45,6 +45,11 @@
 		"nav_deck4_aquila",
 		"nav_bridge_aquila"
 	)*/
+
+/obj/effect/overmap/ship/eris/Initialize()
+	.=..()
+	if(name == "CEV Northern Light")	//Syzygy edit - to make this work with our ship name
+		ships[eris] = src
 
 /obj/effect/overmap/ship/eris/Process()
 	overmap_event_handler.scan_loc(src, loc, can_scan()) // Eris uses its sensors to scan nearby events

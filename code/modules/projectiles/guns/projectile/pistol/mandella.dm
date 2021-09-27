@@ -1,4 +1,4 @@
-/obj/item/gun/projectile/mandella
+/obj/item/weapon/gun/projectile/mandella
 	name = "OR HG .25 CS \"Mandella\""
 	desc = "A rugged, robust operator handgun with inbuilt silencer. Chambered in rifle caseless ammunition, this time-tested handgun is \
 			your absolute choise if you need to take someone down silently, as it's deadly, produces no sound and leaves no traces. \
@@ -8,7 +8,7 @@
 	icon_state = "mandella"
 	item_state = "mandella"
 	w_class = ITEM_SIZE_NORMAL
-	can_dual = TRUE
+	can_dual = 1
 	silenced = TRUE
 
 	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2)
@@ -25,7 +25,7 @@
 	spawn_tags = SPAWN_TAG_FS_PROJECTILE
 
 
-/obj/item/gun/projectile/mandella/on_update_icon()
+/obj/item/weapon/gun/projectile/mandella/on_update_icon()
 	..()
 
 	var/iconstring = initial(icon_state)
@@ -38,6 +38,6 @@
 
 	icon_state = iconstring
 
-/obj/item/gun/projectile/mandella/Initialize()
+/obj/item/weapon/gun/projectile/mandella/Initialize()
 	. = ..()
 	update_icon()

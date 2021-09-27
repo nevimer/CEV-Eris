@@ -7,6 +7,7 @@
 	item_flags = NOSLIP
 	slowdown = SHOES_SLOWDOWN + 1
 	species_restricted = null
+	rarity_value = 20
 
 /obj/item/clothing/shoes/jackboots
 	name = "jackboots"
@@ -17,6 +18,7 @@
 	armor = list(melee = 15, bullet = 0, energy = 10, bomb = 0, bio = 25, rad = 0)
 	siemens_coefficient = 0.6
 	can_hold_knife = TRUE
+	rarity_value = 14.3
 
 /obj/item/clothing/shoes/jackboots/ironhammer
 	icon_state = "jackboots_ironhammer"
@@ -26,6 +28,7 @@
 	name = "Oberth Republic boots"
 	desc = "A pair of brown boots."
 	icon_state = "jackboots_german"
+	rarity_value = 66.6
 
 /obj/item/clothing/shoes/jackboots/neotheology
 	name = "custodian's jackboots"
@@ -45,14 +48,15 @@
 	item_state = "reinforced"
 	armor = list(melee = 15, bullet = 0, energy = 10, bomb = 0, bio = 0, rad = 0)
 	siemens_coefficient = 0.5
+	rarity_value = 14.3
 
 /obj/item/clothing/shoes/reinforced/ironhammer
 	icon_state = "reinforced_ironhammer"
 	spawn_blacklisted = TRUE
 
 /obj/item/clothing/shoes/reinforced/medical
-	name = "moebius reinforced shoes"
-	desc = "Slightly reinforced shoes for moebius medical personnel."
+	name = "reinforced medic's shoes"
+	desc = "Slightly reinforced shoes for medical personnel."
 	icon_state = "reinforced_moebius"
 	item_state = "reinforced_moebius"
 	spawn_blacklisted = TRUE
@@ -65,6 +69,7 @@
 	siemens_coefficient = 0
 	armor = list(melee = 10, bullet = 0, energy = 10, bomb = 0, bio = 0, rad = 0)
 	can_hold_knife = TRUE
+	rarity_value = 50
 
 /obj/item/clothing/shoes/artist_shoes
 	name = "Pointy Shoes"

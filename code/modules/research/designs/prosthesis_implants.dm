@@ -16,30 +16,48 @@
 /datum/design/research/item/mechfab/prosthesis/l_leg
 	build_path = /obj/item/organ/external/robotic/l_leg
 
+
+/datum/design/research/item/mechfab/prosthesis/r_hand
+	build_path = /obj/item/organ/external/robotic/r_hand
+
+/datum/design/research/item/mechfab/prosthesis/l_hand
+	build_path = /obj/item/organ/external/robotic/l_hand
+
+/datum/design/research/item/mechfab/prosthesis/r_foot
+	build_path = /obj/item/organ/external/robotic/r_foot
+
+/datum/design/research/item/mechfab/prosthesis/l_foot
+	build_path =  /obj/item/organ/external/robotic/l_foot
+
+
+
 /datum/design/research/item/mechfab/prosthesis/groin
 	build_path = /obj/item/organ/external/robotic/groin
+
+/datum/design/research/item/mechfab/prosthesis/chest
+	build_path = /obj/item/organ/external/robotic/chest
+
+/datum/design/research/item/mechfab/prosthesis/head
+	build_path = /obj/item/organ/external/robotic/head
 
 //Upgraded prosthesis ========================
 /datum/design/research/item/mechfab/prosthesis_moebius
 	category = CAT_PROSTHESIS
 
 /datum/design/research/item/mechfab/prosthesis_moebius/r_arm
-	build_path = /obj/item/organ/external/robotic/moebius/reinforced/r_arm
+	build_path = /obj/item/organ/external/robotic/moebius/r_arm
 
 /datum/design/research/item/mechfab/prosthesis_moebius/l_arm
-	build_path = /obj/item/organ/external/robotic/moebius/reinforced/l_arm
+	build_path = /obj/item/organ/external/robotic/moebius/l_arm
 
 /datum/design/research/item/mechfab/prosthesis_moebius/r_leg
-	build_path = /obj/item/organ/external/robotic/moebius/reinforced/r_leg
+	build_path = /obj/item/organ/external/robotic/moebius/r_leg
 
 /datum/design/research/item/mechfab/prosthesis_moebius/l_leg
-	build_path = /obj/item/organ/external/robotic/moebius/reinforced/l_leg
+	build_path = /obj/item/organ/external/robotic/moebius/l_leg
 
 /datum/design/research/item/mechfab/prosthesis_moebius/groin
-	build_path = /obj/item/organ/external/robotic/moebius/reinforced/groin
-
-/datum/design/research/item/mechfab/prosthesis_moebius/head
-	build_path = /obj/item/organ/external/robotic/moebius/reinforced/head
+	build_path = /obj/item/organ/external/robotic/moebius/groin
 
 //Modules ====================================
 
@@ -65,7 +83,7 @@
 
 /datum/design/research/item/mechfab/modules/multitool/engineer
 	build_path = /obj/item/organ_module/active/simple/engineer
-	name = "Embedded Technomancer multitool"
+	name = "Embedded engineer's multitool"
 
 /datum/design/research/item/mechfab/modules/multitool/miner
 	build_path = /obj/item/organ_module/active/multitool/miner
@@ -79,10 +97,10 @@
 
 /datum/design/research/item/implant/chemical
 	name = "chemical"
-	build_path = /obj/item/implantcase/chem
+	build_path = /obj/item/weapon/implantcase/chem
 	sort_string = "MFAAA"
 
 /datum/design/research/item/implant/freedom
 	name = "freedom"
-	build_path = /obj/item/implantcase/freedom
+	build_path = /obj/item/weapon/implantcase/freedom
 	sort_string = "MFAAB"

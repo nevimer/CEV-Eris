@@ -51,7 +51,7 @@
 	Command
 **************/
 /datum/department/command
-	name = "CEV Eris Command"
+	name = "CEV Northern Light Command"
 	id = DEPARTMENT_COMMAND
 	/*
 	The command account is the ship account. It is the master account that retainer departments are paid from,
@@ -69,16 +69,18 @@
 	Retainers
 **************/
 //These departments are paid out of ship funding
-/datum/department/ironhammer
-	name = "Ironhammer Mercenary Company"
-	id = DEPARTMENT_SECURITY
 
+//Eclipse Edit: Engineering - moved in-house
 /datum/department/technomancers
-	name = "Technomancer League"
+	name = "CEV Northern Light Engineering"
 	id = DEPARTMENT_ENGINEERING
 
+/datum/department/ironhammer
+	name = "Cobalt Aegis Security Mercenary Company"
+	id = DEPARTMENT_SECURITY
+
 /datum/department/civilian
-	name = "CEV Eris Civic"
+	name = "CEV Northern Light Civic"
 	id = DEPARTMENT_CIVILIAN
 	account_budget = 2000
 	//Now for the club
@@ -89,20 +91,20 @@
 *******************/
 //Departments subsidised by an external organisation. These pay their own employees
 /datum/department/moebius_medical
-	name = "Moebius Corp: Medical Division"
+	name = "NanoTrasen: Medical Division"
 	id = DEPARTMENT_MEDICAL
 	funding_type = FUNDING_EXTERNAL
-	funding_source = "Moebius Corp."
+	funding_source = "NanoTrasen."
 
 /datum/department/moebius_research
-	name = "Moebius Corp: Research Division"
+	name = "NanoTrasen: Research Division"
 	id = DEPARTMENT_SCIENCE
 	account_budget = 5000 //For buying materials and components and things of scientific value
 	funding_type = FUNDING_EXTERNAL
-	funding_source = "Moebius Corp."
+	funding_source = "NanoTrasen."
 
 /datum/department/church
-	name = "Church of NeoTheology"
+	name = "Children of Mekhane"
 	id = DEPARTMENT_CHURCH
 	account_budget = 4500 //each Neotheo has a wage of 900, this is enough to pay 5 paychecks before needing more cash
 	funding_type = FUNDING_NONE //The church on eris has no external funding. This further reinforces the theory that everyone on the CEV Eris is a reject of their factions
@@ -111,11 +113,11 @@
 
 
 /******************
-	Independant
+	Independent
 *******************/
 //Self funds and pays wages out of its earnings
 /datum/department/guild
-	name = "Asters Merchant Guild"
+	name = "Free Trade Union"
 	id = DEPARTMENT_GUILD
 
 	/*

@@ -1,4 +1,4 @@
-/obj/item/camera_assembly
+/obj/item/weapon/camera_assembly
 	name = "camera assembly"
 	desc = "A pre-fabricated security camera kit, ready to be assembled and mounted to a surface."
 	icon = 'icons/obj/monitors.dmi'
@@ -9,7 +9,7 @@
 	matter = list(MATERIAL_STEEL = 2, MATERIAL_GLASS = 3)
 
 	//	Motion, EMP-Proof, X-Ray
-	var/list/obj/item/possible_upgrades = list(/obj/item/device/assembly/prox_sensor, /obj/item/stack/material/osmium, /obj/item/stock_parts/scanning_module)
+	var/list/obj/item/possible_upgrades = list(/obj/item/device/assembly/prox_sensor, /obj/item/stack/material/osmium, /obj/item/weapon/stock_parts/scanning_module)
 	var/list/upgrades = list()
 	var/camera_name
 	var/camera_network
@@ -22,7 +22,7 @@
 				4 = Screwdriver panel closed and is fully built (you cannot attach upgrades)
 	*/
 
-/obj/item/camera_assembly/attackby(obj/item/I, mob/living/user)
+/obj/item/weapon/camera_assembly/attackby(obj/item/I, mob/living/user)
 
 	var/list/usable_qualities = list()
 	if(state == 0 || state == 1)
@@ -75,7 +75,7 @@
 		if(QUALITY_SCREW_DRIVING)
 			if(state == 3)
 				if(I.use_tool(user, src, WORKTIME_FAST, tool_type, FAILCHANCE_VERY_EASY, required_stat = STAT_MEC))
-					var/input = sanitize(input(usr, "Which networks would you like to connect this camera to? Separate networks with a comma. No Spaces!\nFor example: CEV Eris,Security,Secret", "Set Network", camera_network ? camera_network : NETWORK_CEV_ERIS))
+					var/input = sanitize(input(usr, "Which networks would you like to connect this camera to? Separate networks with a comma. No Spaces!\nFor example: CEV_Northern_Light,Security,Secret", "Set Network", camera_network ? camera_network : NETWORK_CEV_ERIS))
 					if(!input)
 						to_chat(usr, "No input found please hang up and try your call again.")
 						return
@@ -147,12 +147,12 @@
 
 	..()
 
-/obj/item/camera_assembly/on_update_icon()
+/obj/item/weapon/camera_assembly/on_update_icon()
 	if(anchored)
 		icon_state = "camera1"
 	else
 		icon_state = "cameracase"
 
-/obj/item/camera_assembly/attack_hand(mob/user as mob)
+/obj/item/weapon/camera_assembly/attack_hand(mob/user as mob)
 	if(!anchored)
 		..()

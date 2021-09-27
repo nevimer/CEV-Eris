@@ -32,35 +32,6 @@
 	if(prob(25))
 		parent.release_restraints()
 
-/obj/item/organ/internal/bone/get_actions()
-	var/list/actions_list = list()
-	if(BP_IS_ROBOTIC(src))
-		if(parent.status & ORGAN_BROKEN)
-			actions_list.Add(list(list(
-				"name" = "Mend break",
-				"organ" = "\ref[src]",
-				"step" = /datum/surgery_step/robotic/fix_bone
-			)))
-	else
-		actions_list.Add(list(list(
-			"name" = (parent.status & ORGAN_BROKEN) ? "Mend" : "Break",
-			"organ" = "\ref[src]",
-			"step" = (parent.status & ORGAN_BROKEN) ? /datum/surgery_step/mend_bone : /datum/surgery_step/break_bone
-		)))
-		if(parent.status & ORGAN_BROKEN)
-			actions_list.Add(list(list(
-					"name" = "Reinforce",
-					"organ" = "\ref[src]",
-					"step" = /datum/surgery_step/reinforce_bone
-				)))
-		actions_list.Add(list(list(
-				"name" = "Replace",
-				"organ" = "\ref[src]",
-				"step" = /datum/surgery_step/replace_bone
-			)))
-
-	return actions_list
-
 /obj/item/organ/internal/bone/proc/mend()
 	parent.status &= ~ORGAN_BROKEN
 	parent.status &= ~ORGAN_SPLINTED
@@ -99,6 +70,18 @@
 	icon_state = "left_arm"
 	parent_organ_base = BP_L_ARM
 
+/obj/item/organ/internal/bone/r_hand
+	name = "right carpals"
+	icon_state = "right_arm"
+	organ_tag = BP_B_R_HAND
+	parent_organ_base = BP_R_HAND
+
+/obj/item/organ/internal/bone/l_hand
+	name = "left carpals"
+	icon_state = "left_arm"
+	organ_tag = BP_B_L_HAND
+	parent_organ_base = BP_L_HAND
+
 /obj/item/organ/internal/bone/r_leg
 	name = "right femur"
 	icon_state = "right_leg"
@@ -110,6 +93,18 @@
 	icon_state = "left_leg"
 	parent_organ_base = BP_L_LEG
 	force = WEAPON_FORCE_PAINFUL
+
+/obj/item/organ/internal/bone/r_foot
+	name = "right tibia"
+	icon_state = "right_leg"
+	organ_tag = BP_B_R_FOOT
+	parent_organ_base = BP_R_FOOT
+
+/obj/item/organ/internal/bone/l_foot
+	name = "left tibia"
+	icon_state = "left_leg"
+	organ_tag = BP_B_L_FOOT
+	parent_organ_base = BP_L_FOOT
 
 //Robotic limb variants
 /obj/item/organ/internal/bone/chest/robotic
@@ -142,6 +137,18 @@
 	nature = MODIFICATION_SILICON
 	matter = list(MATERIAL_STEEL = 2, MATERIAL_PLASTIC = 2)
 
+/obj/item/organ/internal/bone/r_hand/robotic
+	name = "right hand frame"
+	icon_state = "metal_right_arm"
+	nature = MODIFICATION_SILICON
+	matter = list(MATERIAL_STEEL = 2, MATERIAL_PLASTIC = 2)
+
+/obj/item/organ/internal/bone/l_hand/robotic
+	name = "left hand frame"
+	icon_state = "metal_left_arm"
+	nature = MODIFICATION_SILICON
+	matter = list(MATERIAL_STEEL = 2, MATERIAL_PLASTIC = 2)
+
 /obj/item/organ/internal/bone/r_leg/robotic
 	name = "right leg frame"
 	icon_state = "metal_right_leg"
@@ -150,6 +157,18 @@
 
 /obj/item/organ/internal/bone/l_leg/robotic
 	name = "left leg frame"
+	icon_state = "metal_left_leg"
+	nature = MODIFICATION_SILICON
+	matter = list(MATERIAL_STEEL = 2, MATERIAL_PLASTIC = 2)
+
+/obj/item/organ/internal/bone/r_foot/robotic
+	name = "right foot frame"
+	icon_state = "metal_right_leg"
+	nature = MODIFICATION_SILICON
+	matter = list(MATERIAL_STEEL = 2, MATERIAL_PLASTIC = 2)
+
+/obj/item/organ/internal/bone/l_foot/robotic
+	name = "left foot frame"
 	icon_state = "metal_left_leg"
 	nature = MODIFICATION_SILICON
 	matter = list(MATERIAL_STEEL = 2, MATERIAL_PLASTIC = 2)

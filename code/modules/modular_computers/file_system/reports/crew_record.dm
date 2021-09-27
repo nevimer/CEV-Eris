@@ -24,15 +24,16 @@ GLOBAL_VAR_INIT(arrest_security_status, "Arrest")
 
 /datum/computer_file/report/crew_record/proc/load_from_mob(var/mob/living/carbon/human/H)
 	if(istype(H))
-		if(H.job == "Vagabond") // As stowaways, Vagabond do not show up on the crew manifest.
+		if(H.mind.role_alt_title == "Vagabond") // As stowaways, Vagabond do not show up on the crew manifest.	// OCCULUS EDIT - vagabond fix
 			GLOB.all_crew_records.Remove(src)
 			return
-		photo_front = getFlatIcon(H, SOUTH, always_use_defdir = 1)
-		photo_side = getFlatIcon(H, WEST, always_use_defdir = 1)
+	if(istype(H))
+		photo_front = getFlatIcon(H, SOUTH)
+		photo_side = getFlatIcon(H, WEST)
 	else
 		var/mob/living/carbon/human/dummy/mannequin/dummy = new()
-		photo_front = getFlatIcon(dummy, SOUTH, always_use_defdir = 1)
-		photo_side = getFlatIcon(dummy, WEST, always_use_defdir = 1)
+		photo_front = getFlatIcon(dummy, SOUTH)
+		photo_side = getFlatIcon(dummy, WEST)
 		qdel(dummy)
 
 	// Add education, honorifics, etc.
@@ -53,6 +54,7 @@ GLOBAL_VAR_INIT(arrest_security_status, "Arrest")
 	set_department(H ? GetDepartment(H) : "Unset")
 	set_job(H ? GetAssignment(H) : "Unset")
 	set_sex(H ? gender2text(H.get_sex()) : "Unset")
+	set_pronouns(H ? H.identifying_gender : "Unset") // OCCULUS EDIT - adjusting for gender rework
 	set_age(H ? H.age : 30)
 	set_status(GLOB.default_physical_status)
 
@@ -60,9 +62,9 @@ GLOBAL_VAR_INIT(arrest_security_status, "Arrest")
 	set_account((H && H.mind) ? H.mind.initial_account.account_number : "000000")
 
 	// TODO: enable after baymed
-	//set_species(H ? H.get_species() : SPECIES_HUMAN)
+	set_species(H ? H.get_species() : SPECIES_HUMAN)	//OCCULUS EDIT: ENABLED
 
-	set_species(SPECIES_HUMAN)
+	//set_species("Human")	//OCCULUS EDIT: DISABLED
 	//set_branch(H ? (H.char_branch && H.char_branch.name) : "None")
 	//set_rank(H ? (H.char_rank && H.char_rank.name) : "None")
 
@@ -203,6 +205,7 @@ FIELD_SHORT("Name", name, null, access_change_ids)
 FIELD_SHORT("Department", department, null, access_change_ids)
 FIELD_SHORT("Job", job, null, access_change_ids)
 FIELD_LIST("Sex", sex, record_genders(), null, access_change_ids)
+FIELD_SHORT("Pronouns", pronouns, null, access_change_ids) // OCCULUS EDIT - adjusting for gender rework
 FIELD_NUM("Age", age, null, access_change_ids)
 FIELD_LIST_EDIT("Status", status, GLOB.physical_statuses, null, access_moebius)
 

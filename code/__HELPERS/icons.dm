@@ -654,12 +654,12 @@ proc
 			return GLOB.initialTypeIcon[path]
 		else
 			var/atom/A = new path()
-			GLOB.initialTypeIcon[path] = getFlatIcon(A, defdir, deficon, defstate, defblend, always_use_defdir)
+			GLOB.initialTypeIcon[path] = getFlatIcon(A, defdir, deficon, defstate, defblend)
 			qdel(A)
 			return GLOB.initialTypeIcon[path]
 
 	// Creates a single icon from a given /atom or /image.  Only the first argument is required.
-	getFlatIcon(image/A, defdir=2, deficon=null, defstate="", defblend=BLEND_DEFAULT, always_use_defdir = 0)
+/*	getFlatIcon(image/A, defdir=2, deficon=null, defstate="", defblend=BLEND_DEFAULT, always_use_defdir = 0)
 		// We start with a blank canvas, otherwise some icon procs crash silently
 		var/icon/flat = icon('icons/effects/effects.dmi', "icon_state"="nothing") // Final flattened icon
 		if(!A)
@@ -823,7 +823,7 @@ proc
 		if(A.alpha < 255)
 			flat.Blend(rgb(255, 255, 255, A.alpha), ICON_MULTIPLY)
 
-		return icon(flat, "", SOUTH)
+		return icon(flat, "", SOUTH) */
 
 	getIconMask(atom/A)//By yours truly. Creates a dynamic mask for a mob/whatever. /N
 		var/icon/alpha_mask = new(A.icon, A.icon_state)//So we want the default icon and icon state of A.

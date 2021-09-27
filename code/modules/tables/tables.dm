@@ -102,17 +102,17 @@ var/list/custom_table_appearance = list(
 		var/mob/living/L = mover
 		if(L.weakened)
 			return 1
-	return ..()	
+	return ..()
 
 /obj/structure/table/examine(mob/user)
 	. = ..()
 	if(health < maxhealth)
 		switch(health / maxhealth)
-			if(0 to 0.5)
+			if(0.0 to 0.5)
 				to_chat(user, SPAN_WARNING("It looks severely damaged!"))
 			if(0.25 to 0.5)
 				to_chat(user, SPAN_WARNING("It looks damaged!"))
-			if(0.5 to 1)
+			if(0.5 to 1.0)
 				to_chat(user, SPAN_NOTICE("It has a few scrapes and dents."))
 
 /obj/structure/table/attackby(obj/item/I, mob/user)
@@ -131,6 +131,8 @@ var/list/custom_table_appearance = list(
 	switch(tool_type)
 
 		if(QUALITY_SCREW_DRIVING)
+			if(user.a_intent == I_HELP)//Occulus Edit
+				return ..()
 			if(reinforced)
 				if(I.use_tool(user, src, WORKTIME_FAST, tool_type, FAILCHANCE_EASY,  required_stat = STAT_MEC))
 					remove_reinforced(I, user)
@@ -141,10 +143,12 @@ var/list/custom_table_appearance = list(
 			return
 
 		if(QUALITY_PRYING)
+			if(user.a_intent == I_HELP)//Occulus Edit
+				return ..()
 			if(custom_appearance)
-				if(custom_appearance[5] && !reinforced)
+				/*if(custom_appearance[5] && !reinforced) SYZYGY Edit - This was preventing people from modifying the bar tables at all. Fixed!
 					to_chat(user, SPAN_WARNING("This type of design can't be applied to simple tables. Reinforce it first."))
-					return
+					return*/
 				if(I.use_tool(user, src, WORKTIME_NORMAL, tool_type, FAILCHANCE_EASY,  required_stat = STAT_MEC))
 					user.visible_message(
 						SPAN_NOTICE("\The [user] removes the carpet from \the [src]."),
@@ -158,6 +162,8 @@ var/list/custom_table_appearance = list(
 			return
 
 		if(QUALITY_WELDING)
+			if(user.a_intent == I_HELP)//Occulus Edit
+				return ..()
 			if(health < maxhealth)
 				if(I.use_tool(user, src, WORKTIME_FAST, tool_type, FAILCHANCE_EASY,  required_stat = STAT_MEC))
 					user.visible_message(SPAN_NOTICE("\The [user] repairs some damage to \the [src]."),SPAN_NOTICE("You repair some damage to \the [src]."))
@@ -165,6 +171,8 @@ var/list/custom_table_appearance = list(
 			return
 
 		if(QUALITY_BOLT_TURNING)
+			if(user.a_intent == I_HELP)//Occulus Edit
+				return ..()
 			if(!reinforced && !custom_appearance)
 				if(material)
 					if(I.use_tool(user, src, WORKTIME_FAST, tool_type, FAILCHANCE_EASY,  required_stat = STAT_MEC))
@@ -290,7 +298,7 @@ var/list/custom_table_appearance = list(
 /obj/structure/table/proc/remove_material(obj/item/I, mob/user)
 	material = common_material_remove(user, material, 20, "plating", "bolts")
 
-// Returns a list of /obj/item/material/shard objects that were created as a result of this table's breakage.
+// Returns a list of /obj/item/weapon/material/shard objects that were created as a result of this table's breakage.
 // Used for !fun! things such as embedding shards in the faces of tableslammed people.
 
 // The repeated
@@ -300,7 +308,7 @@ var/list/custom_table_appearance = list(
 
 /obj/structure/table/proc/break_to_parts(full_return = 0)
 	var/list/shards = list()
-	var/obj/item/material/shard/S = null
+	var/obj/item/weapon/material/shard/S = null
 	if(reinforced)
 		if(reinforced.stack_type && (full_return || prob(20)))
 			reinforced.place_sheet(loc)

@@ -103,7 +103,7 @@
 	var/turf/T = get_step(src,exhaust_dir)
 	if(T)
 		T.assume_air(removed)
-		new/obj/effect/engine_exhaust(T, exhaust_dir, air_contents.check_combustability() && air_contents.temperature >= PLASMA_MINIMUM_BURN_TEMPERATURE)
+		new/obj/effect/engine_exhaust(T, exhaust_dir, air_contents.check_combustability() && air_contents.temperature >= PHORON_MINIMUM_BURN_TEMPERATURE)
 
 /obj/machinery/atmospherics/unary/engine/proc/calculate_thrust(datum/gas_mixture/propellant, used_part = 1)
 	return round(sqrt(propellant.get_mass() * used_part * air_contents.return_pressure()/100),0.1)
@@ -126,13 +126,13 @@
 	spawn(20)
 		qdel(src)
 
-/obj/item/electronics/circuitboard/unary_atmos/engine
+/obj/item/weapon/electronics/circuitboard/unary_atmos/engine
 	name = T_BOARD("gas thruster")
 	icon_state = "mcontroller"
 	build_path = /obj/machinery/atmospherics/unary/engine/
 	origin_tech = list(TECH_POWER = 1, TECH_ENGINEERING = 2)
 	req_components = list(
 							/obj/item/stack/cable_coil = 2,
-							/obj/item/stock_parts/matter_bin = 1,
-							/obj/item/stock_parts/capacitor = 1,
+							/obj/item/weapon/stock_parts/matter_bin = 1,
+							/obj/item/weapon/stock_parts/capacitor = 1,
 							/obj/item/pipe = 2)

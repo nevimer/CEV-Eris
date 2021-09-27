@@ -1,4 +1,4 @@
-/obj/item/gun/projectile/shotgun/bojevic
+/obj/item/weapon/gun/projectile/shotgun/bojevic
 	name = "SA SG \"Bojevic\""
 	desc = "Semi-auto, half polymer, all serbian. \
 			It's magazine-fed shotgun designed for close quarters combat, nicknamed 'Striker' by boarding parties. \
@@ -21,7 +21,7 @@
 	cocked_sound = 'sound/weapons/guns/interact/ltrifle_cock.ogg'
 	damage_multiplier = 0.8
 	penetration_multiplier = 1.4 // this is not babies first gun. It's a Serb-level weapon.
-	recoil_buildup = 7.4 // at least somewhat controllable
+	recoil_buildup = 15 // at least somewhat controllable
 	one_hand_penalty = 20 //automatic shotgun level
 
 					//while also preserving ability to shoot as fast as you can click and maintain recoil good enough
@@ -30,7 +30,7 @@
 		SEMI_AUTO_NODELAY
 		)
 
-/obj/item/gun/projectile/shotgun/bojevic/on_update_icon()
+/obj/item/weapon/gun/projectile/shotgun/bojevic/on_update_icon()
 	..()
 
 	var/iconstring = initial(icon_state)
@@ -38,10 +38,6 @@
 
 	cut_overlays()
 	icon_state = "[initial(icon_state)]"
-
-	if(wielded)
-		itemstring += "_doble"
-
 	if(ammo_magazine)
 		add_overlays("m12[ammo_magazine.ammo_color]")
 		itemstring += "_mag"
@@ -52,6 +48,6 @@
 	icon_state = iconstring
 	set_item_state(itemstring)
 
-/obj/item/gun/projectile/shotgun/bojevic/Initialize()
+/obj/item/weapon/gun/projectile/shotgun/bojevic/Initialize()
 	. = ..()
 	update_icon()

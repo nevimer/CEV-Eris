@@ -64,7 +64,7 @@
 	data += "Heads: [heads] "
 	if(debug_mode)
 		data += "<a href='?src=\ref[src];edit_heads=1'>\[EDIT\]</a>"
-	data += "<br>Ironhammer: [sec] "
+	data += "<br>Cobalt Aegis Security: [sec] "
 	if(debug_mode)
 		data += "<a href='?src=\ref[src];edit_sec=1'>\[EDIT\]</a>"
 	data += "<br>Technomancers: [eng] "
@@ -264,6 +264,8 @@
 		var/pooltype = href_list["modify_points"]
 		var/add_points = input("Pool [pooltype] currently has [round(points[pooltype], 0.01)]. How many do you wish to add? Enter a negative value to subtract points","Altering Points",eng) as num
 		modify_points(add_points, pooltype)
+		message_admins("[key_name(usr)] added [add_points] points to the [pooltype] pool.") //Occulus Edit: Logging
+		log_admin("[key_name(usr)] added [add_points] points to the [pooltype] pool.") //Occulus Edit: Logging
 
 	storyteller_panel()
 

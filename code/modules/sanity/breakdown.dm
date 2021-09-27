@@ -13,8 +13,8 @@
 	var/end_time
 	var/delay //delay time before it occurs, or updates. it must be used manually.
 
-	var/finished = FALSE //if the objectives were fulfilled.
-	var/insight_reward	//Amount of isight for fulfilling the objectives.
+	var/finished = FALSE //if the objetives were fulfilled.
+	var/insight_reward	//Amount of isight for fulfilling the objetives.
 	var/is_negative = FALSE
 
 	var/restore_sanity_pre
@@ -51,6 +51,19 @@
 /datum/breakdown/proc/occur()
 	occur_animation()
 	holder.owner.playsound_local(get_turf(holder.owner), breakdown_sound, 100)
+	//Occulus Edit Start - Occultists gain madness here
+	for(var/mob/living/carbon/human/viewer in view(holder.owner, 7))
+		if(viewer.mind)
+			if(player_is_antag_id(viewer.mind, ROLE_OCCULTIST))
+				var/madnessgain
+				if(viewer == holder.owner)
+					madnessgain = 1
+				else
+					madnessgain = 4
+				var/obj/item/organ/internal/brain/occultist/B = viewer.random_organ_by_process(BP_BRAIN_CULTIST)
+				if(B)
+					B.madnesspoints += madnessgain
+	//Occulus edit end... for now
 	if(holder.owner.head && istype(holder.owner.head, /obj/item/clothing/head/mindreader))
 		var/obj/item/clothing/head/mindreader/MR = holder.owner.head
 		MR.extract_memory(holder.owner)

@@ -2,7 +2,7 @@
 	id = ROLE_MERCENARY
 	bantype = ROLE_MERCENARY
 	faction_id = FACTION_SERBS
-	role_text = "Serbian Mercenary"
+	role_text = "Mercenary"
 	welcome_text = WELCOME_SERBS
 	antaghud_indicator = "hudoperative"
 	landmark_id = "mercenary-spawn"
@@ -12,7 +12,7 @@
 	access_external_airlocks,
 	access_maint_tunnels) //Mercs get maintenance access on eris, because being an antag without it is hell
 	//They got forged assistant IDs or somesuch
-	id_type = /obj/item/card/id/merc
+	id_type = /obj/item/weapon/card/id/merc
 
 
 	appearance_editor = FALSE
@@ -37,15 +37,8 @@
 	//Put on the fatigues. Armor not included, they equip that manually from the merc base
 	var/decl/hierarchy/outfit/O = outfit_by_type(/decl/hierarchy/outfit/antagonist/mercenary/casual)
 	O.equip(L)
-
-	//Set their language, This also adds it to their list
-	L.set_default_language(LANGUAGE_SERBIAN)
-
-	//Normal mercs can't speak common
-	L.remove_language(LANGUAGE_COMMON)
-
 	//And we'll give them a random serbian name to start off with
-	var/datum/language/lang = all_languages[LANGUAGE_SERBIAN]
+	var/datum/language/lang = all_languages[LANGUAGE_MERC]
 	lang.set_random_name(L)
 
 	//the missingg parrt was antag's stats!
@@ -59,10 +52,10 @@
 	..()
 
 
-/obj/item/card/id/merc
+/obj/item/weapon/card/id/merc
 	icon_state = "syndicate"
 
-/obj/item/card/id/merc/Initialize(mapload)
+/obj/item/weapon/card/id/merc/Initialize(mapload)
 	. = ..()
 	access = list(access_mercenary,//This access governs their ship and base
 	access_external_airlocks,
@@ -70,4 +63,4 @@
 
 
 
-#undef WELCOME_SERBS
+// #undef WELCOME_SERBS This needs commented out

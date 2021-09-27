@@ -7,7 +7,7 @@
 		anchored = FALSE
 		density = TRUE
 		req_access = list(access_engine_equip)
-		circuit = /obj/item/electronics/circuitboard/shieldwallgen
+		circuit = /obj/item/weapon/electronics/circuitboard/shieldwallgen
 		var/shield_type = /obj/machinery/shieldwall //Overridden by excelsior variant
 		var/active = 0
 		var/power = 0
@@ -224,7 +224,7 @@
 				src.anchored = FALSE
 				return
 
-	if(istype(I, /obj/item/card/id) || istype(I, /obj/item/modular_computer))
+	if(istype(I, /obj/item/weapon/card/id) || istype(I, /obj/item/modular_computer))
 		if (src.allowed(user))
 			src.locked = !src.locked
 			to_chat(user, "Controls are now [src.locked ? "locked." : "unlocked."]")
@@ -330,21 +330,21 @@
 	if(needs_power)
 		var/obj/machinery/shieldwallgen/G
 		switch(severity)
-			if(1) //big boom
+			if(1.0) //big boom
 				if(prob(50))
 					G = gen_primary
 				else
 					G = gen_secondary
 				G.storedpower -= 120000
 
-			if(2) //medium boom
+			if(2.0) //medium boom
 				if(prob(50))
 					G = gen_primary
 				else
 					G = gen_secondary
 				G.storedpower -= 30000
 
-			if(3) //lil boom
+			if(3.0) //lil boom
 				if(prob(50))
 					G = gen_primary
 				else

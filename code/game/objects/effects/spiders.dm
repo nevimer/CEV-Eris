@@ -11,12 +11,12 @@
 //similar to weeds, but only barfed out by nurses manually
 /obj/effect/spider/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(1.0)
 			qdel(src)
-		if(2)
+		if(2.0)
 			if (prob(50))
 				qdel(src)
-		if(3)
+		if(3.0)
 			if (prob(5))
 				qdel(src)
 	return
@@ -27,7 +27,7 @@
 	else
 		visible_message(SPAN_WARNING("\The [src] have been attacked with \the [I][(user ? " by [user]." : ".")]"))
 
-	var/damage = I.force / 4
+	var/damage = I.force / 4.0
 
 	if(QUALITY_WELDING in I.tool_qualities)
 		if(I.use_tool(user, src, WORKTIME_INSTANT, QUALITY_WELDING, FAILCHANCE_ZERO))
@@ -78,7 +78,7 @@
 	name = "egg cluster"
 	desc = "They seem to pulse slightly with an inner life"
 	icon_state = "eggs"
-	var/amount_grown = 0
+	var/amount_grown = 0		
 
 /obj/effect/spider/eggcluster/New(location, atom/parent)
 	pixel_x = rand(3,-3)
@@ -210,7 +210,7 @@
 
 	if(isturf(loc))
 		if(prob(25))
-			var/list/nearby = RANGE_TURFS(5, src) - loc
+			var/list/nearby = trange(5, src) - loc
 			if(nearby.len)
 				var/target_atom = pick(nearby)
 				walk_to(src, target_atom, 5)

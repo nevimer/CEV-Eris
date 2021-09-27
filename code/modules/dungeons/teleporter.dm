@@ -236,7 +236,6 @@
 
 		for(var/mob/living/silicon/robot/R in range(8, src))//Borgs too
 			victims_to_teleport += R
-			
 		for(var/obj/structure/closet/C in range(8, src))//Clostes as well, for transport and storage
 			victims_to_teleport += C
 		for(var/atom/movable/M in victims_to_teleport)

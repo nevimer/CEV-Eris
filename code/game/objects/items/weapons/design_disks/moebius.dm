@@ -1,5 +1,5 @@
 // Moebius
-/obj/item/computer_hardware/hard_drive/portable/design/medical
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/medical
 	disk_name = "Moebius Medical Designs"
 	icon_state = "moebius"
 	rarity_value = 4.5
@@ -24,11 +24,11 @@
 		/datum/design/autolathe/container/freezer_medical,
 		/datum/design/autolathe/device/implanter,
 		/datum/design/autolathe/container/syringegun_ammo,
-		/datum/design/autolathe/container/syringe/large,
+//		/datum/design/autolathe/container/syringe/large, Occulus Edit Not ported
 
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/surgery
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/surgery
 	disk_name = "Back Alley Organs"
 	icon_state = "moebius"
 	license = 5
@@ -36,7 +36,7 @@
 		/datum/design/bioprinter/lungs
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/computer
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/computer
 	disk_name = "Moebius Computer Parts"
 	icon_state = "moebius"
 	spawn_tags = SPAWN_TAG_DESIGN_COMMON
@@ -71,7 +71,7 @@
 		/datum/design/autolathe/computer_part/scanner/medical,
 	)
 
-/obj/item/computer_hardware/hard_drive/portable/design/guns/ms_dartgun
+/obj/item/weapon/computer_hardware/hard_drive/portable/design/guns/ms_dartgun
 	disk_name = "Moebius Scientifica - Z-H P Artemis Dartgun"
 	icon_state = "moebius"
 	spawn_tags = SPAWN_TAG_DESIGN_ADVANCED

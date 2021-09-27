@@ -9,7 +9,6 @@
 	canhear_range = 0 // can't hear headsets from very far away
 
 	slot_flags = SLOT_EARS
-	body_parts_covered = EARS
 	var/translate_binary = 0
 	var/translate_hive = 0
 	var/obj/item/device/encryptionkey/keyslot1
@@ -54,6 +53,7 @@
 
 	return ..()
 
+/*
 /obj/item/device/radio/headset/receive_range(freq, level, aiOverride = 0)
 	if (aiOverride)
 		playsound(loc, 'sound/effects/radio_common.ogg', 25, 1, 1)
@@ -64,6 +64,7 @@
 			playsound(loc, 'sound/effects/radio_common.ogg', 25, 1, 1)
 			return ..(freq, level)
 	return -1
+*/		//Removed - squelch sounds.
 
 /obj/item/device/radio/headset/syndicate
 	origin_tech = list(TECH_COVERT = 3)
@@ -151,28 +152,28 @@
 	ks2type = /obj/item/device/encryptionkey/heads/moebius
 
 /obj/item/device/radio/headset/heads/hos
-	name = "ironhammer commander headset"
+	name = "aegis commander headset"
 	desc = "The headset of the man who protects your worthless lifes."
 	icon_state = "com_headset"
 	item_state = "headset"
 	ks2type = /obj/item/device/encryptionkey/heads/hos
 
 /obj/item/device/radio/headset/heads/ce
-	name = "exultant's headset"
+	name = "chief engineer's headset"
 	desc = "The headset of the guy who is in charge of morons"
 	icon_state = "com_headset"
 	item_state = "headset"
 	ks2type = /obj/item/device/encryptionkey/heads/ce
 
 /obj/item/device/radio/headset/heads/cmo
-	name = "biolab officer's headset"
+	name = "chief medical officer's headset"
 	desc = "The headset of the highly trained medical chief."
 	icon_state = "com_headset"
 	item_state = "headset"
-	ks2type = /obj/item/device/encryptionkey/heads/moebius
+	ks2type = /obj/item/device/encryptionkey/heads/cmo
 
 /obj/item/device/radio/headset/heads/hop
-	name = "first officer's headset"
+	name = "head of personnel's headset"
 	desc = "The headset of the guy who will one day be captain."
 	icon_state = "com_headset"
 	item_state = "headset"
@@ -186,7 +187,7 @@
 	ks2type = /obj/item/device/encryptionkey/heads/merchant
 
 /obj/item/device/radio/headset/heads/preacher
-	name = "neotheology preacher's headset"
+	name = "mekhane preacher's headset"
 	desc = "The headset of the man who leads you to god."
 	icon_state = "nt_com_headset"
 	item_state = "headset"
@@ -214,19 +215,19 @@
 	ks2type = /obj/item/device/encryptionkey/heads/hos
 
 /obj/item/device/radio/headset/church
-	name = "neotheology headset"
+	name = "mekhane headset"
 	desc = "If you listen closely you can hear God."
 	icon_state = "nt_headset"
 	item_state = "headset"
 	ks2type = /obj/item/device/encryptionkey/headset_church
 
-/obj/item/device/radio/headset/attackby(obj/item/W, mob/user)
+/obj/item/device/radio/headset/attackby(obj/item/weapon/W, mob/user)
 //	..()
 	user.set_machine(src)
-	if (!( istype(W, /obj/item/tool/screwdriver) || (istype(W, /obj/item/device/encryptionkey/ ))))
+	if (!( istype(W, /obj/item/weapon/tool/screwdriver) || (istype(W, /obj/item/device/encryptionkey/ ))))
 		return
 
-	if(istype(W, /obj/item/tool/screwdriver))
+	if(istype(W, /obj/item/weapon/tool/screwdriver))
 		if(keyslot1 || keyslot2)
 
 

@@ -1,19 +1,18 @@
 /obj/machinery/autolathe/excelsior
-	name = "Excelsior autoforge"
+	name = "Excelsior autolathe"
 	desc = "It produces items using metal and glass."
 	icon = 'icons/obj/machines/excelsior/autolathe.dmi'
 	icon_state = "stanok"
-	circuit = /obj/item/electronics/circuitboard/excelsiorautolathe
+	circuit = /obj/item/weapon/electronics/circuitboard/excelsiorautolathe
 
 	build_type = AUTOLATHE | BIOPRINTER
 	speed = 4
 	storage_capacity = 240
-	low_quality_print = FALSE
 	unsuitable_materials = list()	// Can use biomatter too.
 
 /obj/machinery/autolathe/excelsior/Initialize()
 	. = ..()
-	container = new /obj/item/reagent_containers/glass/beaker/large(src)
+	container = new /obj/item/weapon/reagent_containers/glass/beaker/large(src)
 
 /obj/machinery/autolathe/excelsior/on_update_icon()
 	..()

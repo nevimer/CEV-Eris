@@ -1,3 +1,12 @@
+#define ERR_OK 0
+#define ERR_NOTFOUND "not found"
+#define ERR_NOMATERIAL "no material"
+#define ERR_NOREAGENT "no reagent"
+#define ERR_NOLICENSE "no license"
+#define ERR_PAUSED "paused"
+#define ERR_NOINSIGHT "no insight"
+
+
 /obj/machinery/autolathe
 	name = "autolathe"
 	desc = "It produces items using metal and glass."
@@ -9,14 +18,14 @@
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 10
 	active_power_usage = 2000
-	circuit = /obj/item/electronics/circuitboard/autolathe
+	circuit = /obj/item/weapon/electronics/circuitboard/autolathe
 
 	var/build_type = AUTOLATHE
 
-	var/obj/item/computer_hardware/hard_drive/portable/disk
+	var/obj/item/weapon/computer_hardware/hard_drive/portable/disk
 
 	var/list/stored_material = list()
-	var/obj/item/reagent_containers/glass/container
+	var/obj/item/weapon/reagent_containers/glass/container
 
 	var/unfolded
 	var/show_category
@@ -60,8 +69,7 @@
 		ERR_NOMATERIAL = "Not enough materials.",
 		ERR_NOREAGENT = "Not enough reagents.",
 		ERR_PAUSED = "**Construction Paused**",
-		ERR_NOINSIGHT = "Not enough insight.",
-		ERR_NOODDITY = "catalyst not found."
+		ERR_NOINSIGHT = "Not enough insight."
 	)
 
 	var/tmp/datum/wires/autolathe/wires
@@ -69,17 +77,6 @@
 	// A vis_contents hack for materials loading animation.
 	var/tmp/obj/effect/flicker_overlay/image_load
 	var/tmp/obj/effect/flicker_overlay/image_load_material
-
-	// If it prints high quality or bulky/deformed/debuffed items, or if it prints good items for one faction only.
-	var/low_quality_print = TRUE
-	var/list/high_quality_faction_list = list()
-
-	//for nanoforge and/or artist bench
-	var/use_oddities = FALSE
-	var/datum/component/inspiration/inspiration
-	var/obj/item/oddity
-	var/is_nanoforge = FALSE
-	var/list/saved_designs = list()
 
 /obj/machinery/autolathe/Initialize()
 	. = ..()
@@ -91,18 +88,12 @@
 	if(have_disk && default_disk)
 		disk = new default_disk(src)
 
-	update_icon()
-
 /obj/machinery/autolathe/Destroy()
 	QDEL_NULL(wires)
 	QDEL_NULL(image_load)
 	QDEL_NULL(image_load_material)
 	return ..()
 
-/obj/machinery/autolathe/proc/requiere_license(datum/computer_file/binary/design/_design_file)
-	if(_design_file in saved_designs)
-		return FALSE
-	return TRUE
 
 // Also used by R&D console UI.
 /obj/machinery/autolathe/proc/materials_data()
@@ -211,20 +202,6 @@
 	data["queue"] = Q
 	data["queue_max"] = queue_max
 
-	data["use_oddities"] = use_oddities
-
-	if(inspiration)
-		var/list/stats = list()
-		var/list/LE = inspiration.calculate_statistics()
-		for(var/stat in LE)
-			var/list/LF = list("name" = stat, "level" = LE[stat])
-			stats.Add(list(LF))
-
-		data["oddity_name"] = oddity.name
-		data["oddity_stats"] = stats
-
-	data["use_license"] = !!disk
-	data["is_nanoforge"] = is_nanoforge
 	return data
 
 
@@ -242,8 +219,6 @@
 		ui.add_template("_reagents", "autolathe_reagents.tmpl")
 		ui.add_template("_designs", "autolathe_designs.tmpl")
 		ui.add_template("_queue", "autolathe_queue.tmpl")
-		ui.add_template("_oddity", "autolathe_oddity.tmpl")
-		ui.add_template("_nanoforge", "nanoforge_actions.tmpl")
 
 		// when the ui is first opened this is the data it will use
 		ui.set_initial_data(data)
@@ -258,38 +233,24 @@
 	if(default_part_replacement(I, user))
 		return
 
-	if(istype(I, /obj/item/computer_hardware/hard_drive/portable))
+	if(istype(I, /obj/item/weapon/computer_hardware/hard_drive/portable))
 		insert_disk(user, I)
 
 	// Some item types are consumed by default
-	if(istype(I, /obj/item/stack) || istype(I, /obj/item/trash) || istype(I, /obj/item/material/shard))
+	if(istype(I, /obj/item/stack) || istype(I, /obj/item/trash) || istype(I, /obj/item/weapon/material/shard))
 		eat(user, I)
 		return
 
-	if(istype(I, /obj/item/reagent_containers/glass))
+	if(istype(I, /obj/item/weapon/reagent_containers/glass))
 		insert_beaker(user, I)
-		return
-
-	if(use_oddities)
-		GET_COMPONENT_FROM(C, /datum/component/inspiration, I)
-		if(C && C.perk)
-			insert_oddity(user, I)
-			return
-
-	if(!check_user(user))
 		return
 
 	user.set_machine(src)
 	ui_interact(user)
 
-/obj/machinery/autolathe/proc/check_user(mob/user)
-	return TRUE
 
 /obj/machinery/autolathe/attack_hand(mob/user)
 	if(..())
-		return TRUE
-
-	if(!check_user(user))
 		return TRUE
 
 	user.set_machine(src)
@@ -303,8 +264,9 @@
 	usr.set_machine(src)
 
 	if(href_list["insert"])
-		eat(usr)
-		return 1
+		if(istype(usr.get_active_hand(), /obj/item/stack) || istype(usr.get_active_hand(), /obj/item/trash) || istype(usr.get_active_hand(), /obj/item/weapon/material/shard)) //SYZYGY Edit: Prevent new NanouUI function from bypassing scrap code for lathes.
+			eat(usr)
+			return 1
 
 	if(href_list["disk"])
 		if(disk)
@@ -400,14 +362,8 @@
 			unfolded = href_list["unfold"]
 		return 1
 
-	if(href_list["oddity_name"])
-		if(oddity)
-			remove_oddity(usr)
-		else
-			insert_oddity(usr)
-		return TRUE
 
-/obj/machinery/autolathe/proc/insert_disk(mob/living/user, obj/item/computer_hardware/hard_drive/portable/inserted_disk)
+/obj/machinery/autolathe/proc/insert_disk(mob/living/user, obj/item/weapon/computer_hardware/hard_drive/portable/inserted_disk)
 	if(!inserted_disk && istype(user))
 		inserted_disk = user.get_active_hand()
 
@@ -434,7 +390,7 @@
 	SSnano.update_uis(src)
 
 
-/obj/machinery/autolathe/proc/insert_beaker(mob/living/user, obj/item/reagent_containers/glass/beaker)
+/obj/machinery/autolathe/proc/insert_beaker(mob/living/user, obj/item/weapon/reagent_containers/glass/beaker)
 	if(!beaker && istype(user))
 		beaker = user.get_active_hand()
 
@@ -537,9 +493,9 @@
 		to_chat(user, SPAN_WARNING("\The [eating] does not contain significant amounts of useful materials and cannot be accepted."))
 		return FALSE
 
-	if(istype(eating, /obj/item/computer_hardware/hard_drive/portable))
-		var/obj/item/computer_hardware/hard_drive/portable/DISK = eating
-		if(DISK.license)
+	if(istype(eating, /obj/item/weapon/computer_hardware/hard_drive/portable))
+		var/obj/item/weapon/computer_hardware/hard_drive/portable/disk = eating
+		if(disk.license)
 			to_chat(user, SPAN_WARNING("\The [src] refuses to accept \the [eating] as it has non-null license."))
 			return FALSE
 
@@ -668,7 +624,7 @@
 //////////////////////////////////////////
 /obj/machinery/autolathe/proc/design_list()
 	if(!disk)
-		return saved_designs
+		return list()
 
 	return disk.find_files_by_type(/datum/computer_file/binary/design)
 
@@ -685,7 +641,7 @@
 	if(panel_open)
 		add_overlays(image(icon, "[icon_state]_panel"))
 
-	if(icon_off())
+	if(stat & NOPOWER)
 		return
 
 	if(working) // if paused, work animation looks awkward.
@@ -701,7 +657,7 @@
 /obj/machinery/autolathe/proc/print_post()
 	FLICK("[initial(icon_state)]_finish", src)
 	if(!current_file && !queue.len)
-		playsound(src.loc, 'sound/machines/ping.ogg', 50, 1, -3)
+		playsound(src.loc, 'sound/machines/ping.ogg', 50, 1 -3)
 		visible_message("\The [src] pings, indicating that queue is complete.")
 
 
@@ -713,44 +669,34 @@
 		FLICK("[initial(icon_state)]_load_m", image_load_material)
 
 
-/obj/machinery/autolathe/proc/check_materials(datum/design/design)
-
-	for(var/rmat in design.materials)
-		if(!(rmat in stored_material))
-			return ERR_NOMATERIAL
-
-		if(stored_material[rmat] < SANITIZE_LATHE_COST(design.materials[rmat]))
-			return ERR_NOMATERIAL
-
-	if(design.chemicals.len)
-		if(!container || !container.is_drawable())
-			return ERR_NOREAGENT
-
-		for(var/rgn in design.chemicals)
-			if(!container.reagents.has_reagent(rgn, design.chemicals[rgn]))
-				return ERR_NOREAGENT
-
-	return ERR_OK
-
 /obj/machinery/autolathe/proc/can_print(datum/computer_file/binary/design/design_file)
-
-	if(use_oddities && !oddity)
-		return ERR_NOODDITY
-
-	if(paused)
-		return ERR_PAUSED
-
 	if(progress <= 0)
 		if(!design_file || !design_file.design)
 			return ERR_NOTFOUND
 
-		if(requiere_license(design_file) && !design_file.check_license())
+		if(!design_file.check_license())
 			return ERR_NOLICENSE
 
 		var/datum/design/design = design_file.design
-		var/error_mat = check_materials(design)
-		if(error_mat != ERR_OK)
-			return error_mat
+
+		for(var/rmat in design.materials)
+			if(!(rmat in stored_material))
+				return ERR_NOMATERIAL
+
+			if(stored_material[rmat] < SANITIZE_LATHE_COST(design.materials[rmat]))
+				return ERR_NOMATERIAL
+
+		if(design.chemicals.len)
+			if(!container || !container.is_drawable())
+				return ERR_NOREAGENT
+
+			for(var/rgn in design.chemicals)
+				if(!container.reagents.has_reagent(rgn, design.chemicals[rgn]))
+					return ERR_NOREAGENT
+
+
+	if(paused)
+		return ERR_PAUSED
 
 	return ERR_OK
 
@@ -863,7 +809,7 @@
 
 	//And if there's any remainder, we eject that as a shard
 	if(remainder)
-		new /obj/item/material/shard(drop_location(), material, _amount = remainder)
+		new /obj/item/weapon/material/shard(drop_location(), material, _amount = remainder)
 
 	//The stored material gets the amount (whole+remainder) subtracted
 	stored_material[material] -= amount
@@ -881,7 +827,7 @@
 	..()
 	var/mb_rating = 0
 	var/mb_amount = 0
-	for(var/obj/item/stock_parts/matter_bin/MB in component_parts)
+	for(var/obj/item/weapon/stock_parts/matter_bin/MB in component_parts)
 		mb_rating += MB.rating
 		mb_amount++
 
@@ -889,20 +835,20 @@
 
 	var/man_rating = 0
 	var/man_amount = 0
-	for(var/obj/item/stock_parts/manipulator/M in component_parts)
+	for(var/obj/item/weapon/stock_parts/manipulator/M in component_parts)
 		man_rating += M.rating
 		man_amount++
 	man_rating -= man_amount
 
 	var/las_rating = 0
 	var/las_amount = 0
-	for(var/obj/item/stock_parts/micro_laser/M in component_parts)
+	for(var/obj/item/weapon/stock_parts/micro_laser/M in component_parts)
 		las_rating += M.rating
 		las_amount++
 	las_rating -= las_amount
 
 	speed = initial(speed) + man_rating + las_rating
-	mat_efficiency = max(0.2, 1 - (man_rating * 0.1))
+	mat_efficiency = max(0.2, 1.0 - (man_rating * 0.1))
 
 
 
@@ -918,7 +864,7 @@
 
 //Finishing current construction
 /obj/machinery/autolathe/proc/finish_construction()
-	if(!requiere_license(current_file) || current_file.use_license()) //In the case of an an unprotected design, this will always be true
+	if(current_file.use_license()) //In the case of an an unprotected design, this will always be true
 		fabricate_design(current_file.design)
 	else
 		//If we get here, then the user attempted to print something but the disk had run out of its limited licenses
@@ -927,64 +873,14 @@
 
 
 /obj/machinery/autolathe/proc/fabricate_design(datum/design/design)
-    consume_materials(design)
+	consume_materials(design)
+	design.Fabricate(drop_location(), mat_efficiency, src)
 
-    if(disk && disk.GetComponent(/datum/component/oldficator))
-        design.Fabricate(drop_location(), mat_efficiency, src, TRUE)
-    else
-        design.Fabricate(drop_location(), mat_efficiency, src, FALSE)
+	working = FALSE
+	current_file = null
+	print_post()
+	next_file()
 
-    working = FALSE
-    current_file = null
-    print_post()
-    next_file()
-
-
-/obj/machinery/autolathe/proc/insert_oddity(mob/living/user, obj/item/inserted_oddity) //Not sure if nessecary to name oddity this way. obj/item/oddity/inserted_oddity
-	if(oddity)
-		to_chat(user, SPAN_NOTICE("There's already \a [oddity] inside [src]."))
-		return
-
-	if(!inserted_oddity && istype(user))
-		inserted_oddity = user.get_active_hand()
-
-	if(!istype(inserted_oddity))
-		return
-
-	if(!Adjacent(user) || !Adjacent(inserted_oddity))
-		return
-
-	GET_COMPONENT_FROM(C, /datum/component/inspiration, inserted_oddity)
-	if(!C || !C.perk)
-		return
-
-	if(istype(user) && (inserted_oddity in user))
-		user.unEquip(inserted_oddity, src)
-
-	inserted_oddity.forceMove(src)
-	oddity = inserted_oddity
-	inspiration = C
-	to_chat(user, SPAN_NOTICE("You insert [oddity] in [src]."))
-	SSnano.update_uis(src)
-
-/obj/machinery/autolathe/proc/remove_oddity(mob/living/user, use_perk = FALSE)
-	if(!oddity)
-		return
-
-	oddity.forceMove(drop_location())
-	if(user)
-		if(!use_perk)
-			to_chat(user, SPAN_NOTICE("You remove [oddity] from [src]."))
-		else
-			to_chat(user, SPAN_NOTICE("[src] consumes the perk of [oddity]"))
-			inspiration.perk = null
-
-		if(istype(user) && Adjacent(user))
-			user.put_in_hands(oddity)
-
-	oddity = null
-	inspiration = null
-	SSnano.update_uis(src)
 
 #undef ERR_OK
 #undef ERR_NOTFOUND
@@ -1004,7 +900,7 @@
 
 /obj/machinery/autolathe/loaded/Initialize()
 	. = ..()
-	container = new /obj/item/reagent_containers/glass/beaker(src)
+	container = new /obj/item/weapon/reagent_containers/glass/beaker(src)
 
 
 // You (still) can't flicker overlays in BYOND, and this is a vis_contents hack to provide the same functionality.

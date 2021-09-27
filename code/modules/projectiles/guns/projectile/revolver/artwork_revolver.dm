@@ -1,4 +1,4 @@
-/obj/item/gun/projectile/revolver/artwork_revolver
+/obj/item/weapon/gun/projectile/revolver/artwork_revolver
 	name = "Weird Revolver"
 	desc = "This is an artistically-made revolver."
 	icon = 'icons/obj/guns/projectile/artwork_revolver.dmi'
@@ -14,16 +14,17 @@
 	recoil_buildup = 30
 	spawn_frequency = 0
 
-/obj/item/gun/projectile/revolver/artwork_revolver/Initialize()
+/obj/item/weapon/gun/projectile/revolver/artwork_revolver/Initialize()
 	name = get_weapon_name(capitalize = TRUE)
+
 	var/random_icon = rand(1,5)
 	icon_state = "artwork_revolver_[random_icon]"
 	item_state = "artwork_revolver_[random_icon]"
-	set_item_state("_[random_icon]")
 	caliber = pick(CAL_MAGNUM,CAL_PISTOL)
 	max_shells += rand(-2,7)
 
-	AddComponent(/datum/component/atom_sanity, 0.2 + pick(0,0.1,0.2), "")
+	var/sanity_value = 0.2 + pick(0,0.1,0.2)
+	AddComponent(/datum/component/atom_sanity, sanity_value, "")
 
 	//var/gun_pattern = pick("pistol","magnum","shotgun","rifle","sniper","gyro","cap","rocket","grenade")
 
@@ -33,7 +34,7 @@
 	price_tag += rand(0, 2500)
 	. = ..()
 
-/obj/item/gun/projectile/revolver/artwork_revolver/get_item_cost(export)
+/obj/item/weapon/gun/projectile/revolver/artwork_revolver/get_item_cost(export)
 	. = ..()
 	GET_COMPONENT(comp_sanity, /datum/component/atom_sanity)
 	. += comp_sanity.affect * 100

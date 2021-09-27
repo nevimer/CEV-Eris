@@ -295,61 +295,61 @@
 	area_light_color = COLOR_LIGHTING_CREW_SOFT
 
 /area/eris/command/fo
-	name = "\improper Command - First Officer's Office"
+	name = "\improper Command - Head of Personnel's Office"
 	icon_state = "head_quarters"
 	sound_env = SMALL_SOFTFLOOR
 
 /area/eris/command/fo/quarters
-	name = "\improper Command - First Officer's Quarters"
+	name = "\improper Command - Head of Personnel's Quarters"
 	icon_state = "head_quarters"
 	sound_env = SMALL_SOFTFLOOR
 	area_light_color = COLOR_LIGHTING_CREW_SOFT
 
 /area/eris/command/meo
-	name = "\improper Research - MEO's Office"
+	name = "\improper Research - CSO's Office"
 	icon_state = "head_quarters"
 	sound_env = SMALL_SOFTFLOOR
 	holomap_color = HOLOMAP_AREACOLOR_SCIENCE
 
 /area/eris/command/meo/quarters
-	name = "\improper Research - MEO's Quarters"
+	name = "\improper Research - CSO's Quarters"
 	icon_state = "head_quarters"
 	sound_env = SMALL_SOFTFLOOR
 	area_light_color = COLOR_LIGHTING_CREW_SOFT
 
 /area/eris/command/exultant
-	name = "\improper Engineering - Exultant Office"
+	name = "\improper Engineering - Supervisor's Office"
 	icon_state = "head_quarters"
 	sound_env = SMALL_SOFTFLOOR
 	holomap_color = HOLOMAP_AREACOLOR_ENGINEERING
 
 /area/eris/command/exultant/quarters
-	name = "\improper Engineering - Exultant Quarters"
+	name = "\improper Engineering - Supervisor's Quarters"
 	icon_state = "head_quarters"
 	sound_env = SMALL_SOFTFLOOR
 	area_light_color = COLOR_LIGHTING_CREW_SOFT
 
 /area/eris/command/mbo
-	name = "\improper Medbay - MBO's Office"
+	name = "\improper Medbay - CMO's Office"
 	icon_state = "head_quarters"
 	sound_env = SMALL_SOFTFLOOR
 	holomap_color = HOLOMAP_AREACOLOR_MEDICAL
 
 /area/eris/command/mbo/quarters
-	name = "\improper Medbay - MBO's Quarters"
+	name = "\improper Medbay - CMO's Quarters"
 	icon_state = "head_quarters"
 	sound_env = SMALL_SOFTFLOOR
 	area_light_color = COLOR_LIGHTING_CREW_SOFT
 
 /area/eris/command/commander
-	name = "Ironhammer Commander's Office"
+	name = "CSO's Office"
 	icon_state = "hammerred"
 	sound_env = SMALL_SOFTFLOOR
 	area_light_color = COLOR_LIGHTING_CREW_SOFT
 	holomap_color = HOLOMAP_AREACOLOR_SECURITY
 
 /area/eris/command/merchant
-	name = "\improper Cargo - Merchant Office"
+	name = "\improper Cargo - Guild Office"
 	icon_state = "quart"
 	sound_env = SMALL_SOFTFLOOR
 	holomap_color = HOLOMAP_AREACOLOR_CARGO
@@ -457,10 +457,6 @@
 	name = "\improper Kitchen"
 	icon_state = "kitchen"
 
-/area/eris/crew_quarters/kitchen_storage
-	name = "\improper Kitchen Storage"
-	icon_state = "kitchen"
-
 /area/eris/crew_quarters/bar
 	name = "\improper Bar"
 	icon_state = "bar"
@@ -469,10 +465,6 @@
 /area/eris/crew_quarters/barbackroom
 	name = "Bar Backroom"
 	icon_state = "erisgreen"
-
-/area/eris/crew_quarters/barquarters
-	name = "Bar Quarters"
-	icon_state = "erisblue"
 
 /area/eris/crew_quarters/theatre
 	name = "\improper Theatre"
@@ -516,7 +508,6 @@
 	name = "Public Hydroponics"
 	icon_state = "erisblue"
 
-// NeoTheology
 
 /area/eris/neotheology
 	icon_state = "erisgreen"
@@ -547,23 +538,6 @@
 /area/eris/neotheology/chapelritualroom
 	name = "Chapel Rituals Room"
 	icon_state = "erisgreen"
-
-/area/eris/neotheology/biogenerator
-	name = "\improper Church Biogenerator Room"
-	icon_state = "erisred"
-	area_light_color = COLOR_LIGHTING_NEOTHEOLOGY_BRIGHT
-
-/area/eris/neotheology/churchbarracks
-	name = "Church Barracks"
-	icon_state = "erisblue"
-
-/area/eris/neotheology/churchcorridor
-	name = "Church Hallway"
-	icon_state = "erisyellow"
-
-/area/eris/neotheology/churchbooth
-	name = "Chapel Vending Booth"
-	icon_state = "erisyellow"
 
 //Engineering
 
@@ -1076,7 +1050,7 @@
 	icon_state = "robotics"
 
 /area/eris/rnd/rdoffice
-	name = "\improper Moebius Expedition Overseer's Office"
+	name = "\improper Chief Science Officer's Office"
 	icon_state = "head_quarters"
 
 /area/eris/rnd/supermatter

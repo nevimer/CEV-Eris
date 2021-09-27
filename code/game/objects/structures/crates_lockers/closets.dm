@@ -348,7 +348,7 @@
 
 /obj/structure/closet/attackby(obj/item/I, mob/user)
 
-	if(istype(I, /obj/item/gripper))
+	if(istype(I, /obj/item/weapon/gripper))
 		//Empty gripper attacks will call attack_AI
 		return 0
 
@@ -405,8 +405,8 @@
 	if(src.opened)
 		if(istype(I,/obj/item/tk_grab))
 			return 0
-		if(istype(I, /obj/item/storage/laundry_basket) && I.contents.len)
-			var/obj/item/storage/laundry_basket/LB = I
+		if(istype(I, /obj/item/weapon/storage/laundry_basket) && I.contents.len)
+			var/obj/item/weapon/storage/laundry_basket/LB = I
 			var/turf/T = get_turf(src)
 			for(var/obj/item/II in LB.contents)
 				LB.remove_from_storage(II, T)
@@ -433,12 +433,12 @@
 			user.drop_item()
 			I.forceMove(src)
 			return
-	else if(istype(I, /obj/item/packageWrap))
+	else if(istype(I, /obj/item/weapon/packageWrap))
 		return
-	else if(istype(I,/obj/item/card/id))
+	else if(istype(I,/obj/item/weapon/card/id))
 		src.togglelock(user)
 		return
-	else if(istype(I, /obj/item/melee/energy/blade) && secure)
+	else if(istype(I, /obj/item/weapon/melee/energy/blade) && secure)
 		emag_act(INFINITY, user)
 		return
 	else if((QUALITY_PULSING in I.tool_qualities) && secure && locked)
@@ -449,7 +449,7 @@
 		if(I.use_tool(user, src, WORKTIME_LONG, QUALITY_PULSING, FAILCHANCE_HARD, required_stat = STAT_MEC))
 			if(hack_stage < hack_require)
 
-				var/obj/item/tool/T = I
+				var/obj/item/weapon/tool/T = I
 				if(istype(T) && T.item_flags & SILENT)
 					playsound(src.loc, 'sound/items/glitch.ogg', 3, 1, -5) //Silenced tools can hack it silently
 				else if(istype(T) && T.item_flags & LOUD)
@@ -605,11 +605,14 @@
 				add_overlay("[icon_lock]_off")
 				add_overlay(icon_sparking)
 
-/obj/structure/closet/attack_generic(var/mob/user, var/damage, var/attack_message = "destroys", var/wallbreaker)
+/obj/structure/closet/attack_generic(var/mob/user, var/damage, var/attack_message = "smashes", var/wallbreaker)//Occulus Edit
+	if(damage)//Occulus edit
+		damage(damage)//Occulus Edit
+		attack_animation(user)
+		visible_message(SPAN_DANGER("[user] [attack_message] the [src]!"))
+		return 1
 	if(!damage || !wallbreaker)
 		return
-	attack_animation(user)
-	visible_message(SPAN_DANGER("[user] [attack_message] the [src]!"))
 	dump_contents()
 	spawn(1) qdel(src)
 	return 1

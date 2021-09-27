@@ -9,7 +9,7 @@
 	var/oxygen = 0
 	var/carbon_dioxide = 0
 	var/nitrogen = 0
-	var/plasma = 0
+	var/phoron = 0
 
 	var/list/initial_gas
 
@@ -209,7 +209,7 @@ var/const/enterloopsanity = 100
 /turf/proc/levelupdate()
 	for(var/obj/O in src)
 		O.hide(O.hides_under_flooring() && !is_plating())
-		SEND_SIGNAL(O, COMSIG_TURF_LEVELUPDATE, !is_plating())
+		SEND_SIGNAL(O, CONSIG_TURF_LEVELUPDATE, !is_plating())
 
 /turf/proc/AdjacentTurfs()
 	var/L[] = new()
@@ -242,13 +242,15 @@ var/const/enterloopsanity = 100
 				L.Add(t)
 	return L
 
-/turf/proc/contains_dense_objects(unincludehumans)
+/turf/proc/contains_dense_objects()
 	if(density)
 		return 1
 	for(var/atom/A in src)
-		if(A.density && !(A.flags & ON_BORDER) && (unincludehumans && !ishuman(A)))
+		if(A.density && !(A.flags & ON_BORDER))
 			return 1
 	return 0
+
+
 
 /turf/get_footstep_sound(var/mobtype)
 
@@ -262,6 +264,7 @@ var/const/enterloopsanity = 100
 
 	return sound
 
+
 /turf/simulated/floor/get_footstep_sound(var/mobtype)
 
 	var/sound
@@ -270,11 +273,13 @@ var/const/enterloopsanity = 100
 	sound =  footstep_sound("floor")
 	if(catwalk)
 		sound = footstep_sound("catwalk")
+
 	else if(flooring)
 		sound = footstep_sound(flooring.footstep_sound)
 	else if(initial_flooring)
-		var/decl/flooring/floor = decls_repository.get_decl(initial_flooring)
+		var/decl/flooring/floor = initial_flooring
 		sound = footstep_sound(floor.footstep_sound)
+
 
 	return sound
 

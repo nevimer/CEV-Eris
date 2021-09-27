@@ -1,6 +1,6 @@
 //Talk crystal
 
-/obj/item/talkingcrystal
+/obj/item/weapon/talkingcrystal
 
 	name = "Crystal"
 	icon = 'icons/obj/xenoarchaeology.dmi'
@@ -8,7 +8,7 @@
 	spawn_tags = SPAWN_TAG_XENOARCH_ITEM
 	spawn_blacklisted = TRUE
 
-/obj/item/talkingcrystal/Initialize(mapload)
+/obj/item/weapon/talkingcrystal/Initialize(mapload)
 	. = ..()
 	src.talking_atom = new (src)
 	if(prob(50))

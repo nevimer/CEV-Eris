@@ -1,5 +1,5 @@
 
-/obj/item/grab/proc/inspect_organ(mob/living/carbon/human/H, mob/user, var/target_zone)
+/obj/item/weapon/grab/proc/inspect_organ(mob/living/carbon/human/H, mob/user, var/target_zone)
 
 	var/obj/item/organ/external/E = H.get_organ(target_zone)
 
@@ -14,7 +14,7 @@
 		to_chat(user, SPAN_WARNING("You find [E.get_wounds_desc()]"))
 	else
 		to_chat(user, SPAN_NOTICE("You find no visible wounds."))
-	if(locate(/obj/item/material/shard/shrapnel) in E.implants)
+	if(locate(/obj/item/weapon/material/shard/shrapnel) in E.implants)
 		to_chat(user, SPAN_WARNING("There is what appears to be shrapnel embedded within [affecting]'s [E.name]."))
 
 	to_chat(user, SPAN_NOTICE("Checking bones now..."))
@@ -43,7 +43,7 @@
 		if(!bad)
 			to_chat(user, SPAN_NOTICE("[H]'s skin is normal."))
 
-/obj/item/grab/proc/jointlock(mob/living/carbon/human/target, mob/attacker, var/target_zone)
+/obj/item/weapon/grab/proc/jointlock(mob/living/carbon/human/target, mob/attacker, var/target_zone)
 	if(state < GRAB_AGGRESSIVE)
 		to_chat(attacker, SPAN_WARNING("You require a better grab to do this."))
 		return
@@ -53,15 +53,17 @@
 		return
 
 	var/time_to_jointlock = max( 0, ( target.getarmor(target_zone, ARMOR_MELEE) - attacker.stats.getStat(STAT_ROB) ) )
+	attacker.visible_message(SPAN_WARNING("[attacker] starts putting [target]'s [organ.name] into a jointlock!"))
+	
 	if(!do_mob(attacker, target, time_to_jointlock))
-		attacker << SPAN_WARNING("You must stand still to jointlock [target]!")
+		to_chat(attacker, SPAN_WARNING("You must stand still to jointlock [target]!"))
 	else
-		attacker << SPAN_WARNING("[attacker] [pick("bent", "twisted")] [target]'s [organ.name] into a jointlock!")
+		attacker.visible_message(SPAN_WARNING("[attacker] [pick("bent", "twisted")] [target]'s [organ.name] into a jointlock!"))
 		to_chat(target, SPAN_DANGER("You feel extreme pain!"))
 		affecting.adjustHalLoss(CLAMP(0, 60-affecting.halloss, 30)) //up to 60 halloss
 
 
-/obj/item/grab/proc/attack_eye(mob/living/carbon/human/target, mob/living/carbon/human/attacker)
+/obj/item/weapon/grab/proc/attack_eye(mob/living/carbon/human/target, mob/living/carbon/human/attacker)
 	if(!istype(attacker))
 		return
 
@@ -86,7 +88,7 @@
 
 	attack.handle_eye_attack(attacker, target)
 
-/obj/item/grab/proc/headbutt(mob/living/carbon/human/target, mob/living/carbon/human/attacker)
+/obj/item/weapon/grab/proc/headbut(mob/living/carbon/human/target, mob/living/carbon/human/attacker)
 	if(!istype(attacker))
 		return
 	if(target.lying)
@@ -95,14 +97,13 @@
 
 	var/damage = 20
 	var/obj/item/clothing/hat = attacker.head
-	var/victim_armor = target.getarmor(BP_HEAD, ARMOR_MELEE)
 	if(istype(hat))
 		damage += hat.force * 3
 
 	target.damage_through_armor(damage, BRUTE, BP_HEAD, ARMOR_MELEE)
 	attacker.damage_through_armor(10, BRUTE, BP_HEAD, ARMOR_MELEE)
 
-	if(!victim_armor && target.headcheck(BP_HEAD) && prob(damage))
+	if(!armor && target.headcheck(BP_HEAD) && prob(damage))
 		target.apply_effect(20, PARALYZE)
 		target.visible_message(SPAN_DANGER("[target] [target.species.knockout_message]"))
 
@@ -116,7 +117,7 @@
 	qdel(src)
 	return
 
-/obj/item/grab/proc/dislocate(mob/living/carbon/human/target, mob/living/attacker, var/target_zone)
+/obj/item/weapon/grab/proc/dislocate(mob/living/carbon/human/target, mob/living/attacker, var/target_zone)
 	if(state < GRAB_NECK)
 		to_chat(attacker, SPAN_WARNING("You require a better grab to do this."))
 		return
@@ -124,7 +125,7 @@
 		playsound(loc, 'sound/weapons/thudswoosh.ogg', 50, 1, -1)
 		return
 
-/obj/item/grab/proc/pin_down(mob/target, mob/attacker)
+/obj/item/weapon/grab/proc/pin_down(mob/target, mob/attacker)
 	if(state < GRAB_AGGRESSIVE)
 		to_chat(attacker, SPAN_WARNING("You require a better grab to do this."))
 		return
@@ -137,7 +138,7 @@
 		attacker.visible_message(SPAN_DANGER("[attacker] forces [target] to the ground!"))
 		apply_pinning(target, attacker)
 
-/obj/item/grab/proc/apply_pinning(mob/target, mob/attacker)
+/obj/item/weapon/grab/proc/apply_pinning(mob/target, mob/attacker)
 	force_down = 1
 	target.Weaken(3)
 	target.lying = 1
@@ -145,7 +146,7 @@
 	attacker.set_dir(EAST) //face the victim
 	target.set_dir(SOUTH) //face up
 
-/obj/item/grab/proc/devour(mob/target, mob/user)
+/obj/item/weapon/grab/proc/devour(mob/target, mob/user)
 	var/can_eat
 	var/mob/living/carbon/human/H = user
 	if(istype(H) && H.species.gluttonous && (iscarbon(target) || isanimal(target)))

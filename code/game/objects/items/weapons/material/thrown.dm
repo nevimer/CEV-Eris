@@ -1,4 +1,4 @@
-/obj/item/material/star
+/obj/item/weapon/material/star
 	name = "shuriken"
 	desc = "A sharp, perfectly weighted piece of metal."
 	icon_state = "star"
@@ -7,19 +7,19 @@
 	throw_speed = 10
 	throw_range = 15
 	sharp = TRUE
-	edge = TRUE
+	edge =  1
 	embed_mult = 5 //We want these to embed
 
-/obj/item/material/star/New()
+/obj/item/weapon/material/star/New()
 	..()
 	src.pixel_x = rand(-12, 12)
 	src.pixel_y = rand(-12, 12)
 
-/obj/item/material/star/throw_impact(atom/hit_atom)
+/obj/item/weapon/material/star/throw_impact(atom/hit_atom)
 	..()
 	if(material && material.radioactivity>0 && isliving(hit_atom))
 		var/mob/living/M = hit_atom
 		M.adjustToxLoss(rand(20,40))
 
-/obj/item/material/star/ninja
+/obj/item/weapon/material/star/ninja
 	default_material = null

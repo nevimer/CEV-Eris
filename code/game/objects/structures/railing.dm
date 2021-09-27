@@ -17,6 +17,8 @@
 	var/reinforced = FALSE
 	var/reinforcement_security = 0 // extra health from being reinforced, hardcoded to 40 on add
 	var/icon_modifier = ""	//adds string to icon path for color variations
+	can_buckle = TRUE //Occulus Addition
+	buckle_require_restraints = 1 //Occulus Addition
 
 /obj/structure/railing/grey
 	name = "grey railing"
@@ -67,7 +69,7 @@
 				to_chat(user, SPAN_WARNING("It looks severely damaged!"))
 			if(0.25 to 0.5)
 				to_chat(user, SPAN_WARNING("It looks damaged!"))
-			if(0.5 to 1)
+			if(0.5 to 1.0)
 				to_chat(user, SPAN_NOTICE("It has a few scrapes and dents."))
 	if(reinforced)
 		var/reinforcement_text = "It is reinforced with rods"
@@ -291,7 +293,7 @@
 			if(!anchored)
 				if(I.use_tool(user, src, WORKTIME_FAST, tool_type, FAILCHANCE_VERY_EASY, required_stat = STAT_MEC))
 					user.visible_message(SPAN_NOTICE("\The [user] dismantles \the [src]."), SPAN_NOTICE("You dismantle \the [src]."))
-					drop_materials(get_turf(user), user)
+					drop_materials(get_turf(user))
 					qdel(src)
 			if(reinforced)
 				if(I.use_tool(user, src, WORKTIME_FAST, tool_type, FAILCHANCE_VERY_EASY, required_stat = STAT_MEC))
@@ -330,13 +332,13 @@
 
 /obj/structure/railing/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(1.0)
 			qdel(src)
 			return
-		if(2)
+		if(2.0)
 			qdel(src)
 			return
-		if(3)
+		if(3.0)
 			qdel(src)
 			return
 		else
@@ -384,4 +386,4 @@
 /obj/structure/railing/bullet_act(obj/item/projectile/P, def_zone)
 	. = ..()
 	take_damage(P.get_structure_damage())
-
+	

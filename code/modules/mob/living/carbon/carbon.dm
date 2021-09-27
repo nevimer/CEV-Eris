@@ -36,9 +36,9 @@
 	. = ..()
 	if(.)
 		if (src.nutrition && src.stat != 2)
-			src.adjustNutrition(-DEFAULT_HUNGER_FACTOR/10)
+			src.nutrition -= DEFAULT_HUNGER_FACTOR/10
 			if (move_intent.flags & MOVE_INTENT_EXERTIVE)
-				src.adjustNutrition(-DEFAULT_HUNGER_FACTOR/10)
+				src.nutrition -= DEFAULT_HUNGER_FACTOR/10
 
 		if(is_watching == TRUE)
 			reset_view(null)
@@ -86,15 +86,15 @@
 /mob/living/carbon/attack_hand(mob/M as mob)
 	if (ishuman(M))
 		var/mob/living/carbon/human/H = M
-		var/obj/item/organ/external/temp = H.organs_by_name[BP_R_ARM]
+		var/obj/item/organ/external/temp = H.organs_by_name[BP_R_HAND]
 		if (H.hand)
-			temp = H.organs_by_name[BP_L_ARM]
+			temp = H.organs_by_name[BP_L_HAND]
 		if(temp && !temp.is_usable())
 			to_chat(H, "\red You can't use your [temp.name]")
 			return
 
 
-/mob/living/carbon/electrocute_act(var/shock_damage, var/obj/source, var/siemens_coeff = 1, var/def_zone = null)
+/mob/living/carbon/electrocute_act(var/shock_damage, var/obj/source, var/siemens_coeff = 1.0, var/def_zone = null)
 	if(status_flags & GODMODE)	return 0	//godmode
 	shock_damage *= siemens_coeff
 	if (shock_damage<1)
@@ -192,14 +192,7 @@
 							src.ExtinguishMob()
 							src.fire_stacks = 0
 		else
-			var/t_him = "it"
-			if (src.gender == MALE)
-				t_him = "him"
-			else if (src.gender == FEMALE)
-				t_him = "her"
-			if (ishuman(src) && src:w_uniform)
-				var/mob/living/carbon/human/H = src
-				H.w_uniform.add_fingerprint(M)
+			var/datum/gender/t_him = gender_datums[get_gender()].him // OCCULUS EDIT - adjusting for gender rework
 
 			var/show_ssd
 			var/target_organ_exists = FALSE
@@ -220,7 +213,7 @@
 			else if((M.targeted_organ == BP_HEAD) && target_organ_exists)
 				M.visible_message(SPAN_NOTICE("[M] pats [src]'s head."), \
 									SPAN_NOTICE("You pat [src]'s head."))
-			else if(M.targeted_organ == BP_R_ARM || M.targeted_organ == BP_L_ARM)
+			else if(M.targeted_organ == BP_R_HAND || M.targeted_organ == BP_L_HAND) //Syz Edit
 				if(target_organ_exists)
 					M.visible_message(SPAN_NOTICE("[M] shakes hands with [src]."), \
 										SPAN_NOTICE("You shake hands with [src]."))
@@ -273,8 +266,8 @@
 
 	if(!item) return
 
-	if (istype(item, /obj/item/grab))
-		var/obj/item/grab/G = item
+	if (istype(item, /obj/item/weapon/grab))
+		var/obj/item/weapon/grab/G = item
 		item = G.throw_held() //throw the person instead of the grab
 		if(!item) return
 		unEquip(G, loc)
@@ -407,7 +400,7 @@
 	<BR><B>Head(Mask):</B> <A href='?src=\ref[src];item=mask'>[(wear_mask ? wear_mask : "Nothing")]</A>
 	<BR><B>Left Hand:</B> <A href='?src=\ref[src];item=l_hand'>[(l_hand ? l_hand  : "Nothing")]</A>
 	<BR><B>Right Hand:</B> <A href='?src=\ref[src];item=r_hand'>[(r_hand ? r_hand : "Nothing")]</A>
-	<BR><B>Back:</B> <A href='?src=\ref[src];item=back'>[(back ? back : "Nothing")]</A> [((istype(wear_mask, /obj/item/clothing/mask) && istype(back, /obj/item/tank) && !( internal )) ? text(" <A href='?src=\ref[];item=internal'>Set Internal</A>", src) : "")]
+	<BR><B>Back:</B> <A href='?src=\ref[src];item=back'>[(back ? back : "Nothing")]</A> [((istype(wear_mask, /obj/item/clothing/mask) && istype(back, /obj/item/weapon/tank) && !( internal )) ? text(" <A href='?src=\ref[];item=internal'>Set Internal</A>", src) : "")]
 	<BR>[(internal ? text("<A href='?src=\ref[src];item=internal'>Remove Internal</A>") : "")]
 	<BR><A href='?src=\ref[src];item=pockets'>Empty Pockets</A>
 	<BR><A href='?src=\ref[user];refresh=1'>Refresh</A>

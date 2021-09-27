@@ -1,34 +1,40 @@
-/obj/item/gun/projectile/selfload
+/obj/item/weapon/gun/projectile/selfload
 	name = "S HG .35 Auto \"Clarissa\""
 	desc = "A small, easily concealable, but somewhat underpowered gun. Uses both standard and highcap .35 Auto mags."
-
 	icon = 'icons/obj/guns/projectile/clarissa.dmi'
 	icon_state = "clarissa"
 	item_state = "clarissa"
-
 	w_class = ITEM_SIZE_SMALL
-	can_dual = TRUE
-	silenced = FALSE
+	can_dual = 1
+	silenced = 0
 	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2)
 	matter = list(MATERIAL_PLASTEEL = 12, MATERIAL_PLASTIC = 6)
-	price_tag = 1000
+	price_tag = 1200
 	fire_sound = 'sound/weapons/guns/fire/pistol_fire.ogg'
 	caliber = CAL_PISTOL
 	load_method = MAGAZINE
 	mag_well = MAG_WELL_PISTOL|MAG_WELL_H_PISTOL
 	magazine_type = /obj/item/ammo_magazine/pistol
-	rarity_value = 16
+	gun_tags = list(GUN_SILENCABLE)
 	damage_multiplier = 1
 	recoil_buildup = 2
-
-	gun_tags = list(GUN_SILENCABLE)
+	silenced = 0
+	can_dual = 1
 	init_firemodes = list(
 		SEMI_AUTO_NODELAY,
 		FULL_AUTO_800
 		)
-	//spawn_tags = SPAWN_TAG_FS_PROJECTILE
 
-/obj/item/gun/projectile/selfload/on_update_icon()
+	fire_sound = 'sound/weapons/guns/fire/pistol_fire.ogg'
+
+	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2)
+	matter = list(MATERIAL_PLASTEEL = 12, MATERIAL_PLASTIC = 6)
+
+	rarity_value = 16
+	price_tag = 1200
+	//spawn_tags = SPAWN_TAG_FS_PROJECTILE Occulus edit : We don't have those tags yet
+
+/obj/item/weapon/gun/projectile/selfload/on_update_icon()
 	..()
 
 	var/iconstring = initial(icon_state)
@@ -47,7 +53,7 @@
 	icon_state = iconstring
 	set_item_state(itemstring)
 
-/obj/item/gun/projectile/selfload/makarov
+/obj/item/weapon/gun/projectile/selfload/makarov
 	name = "Excelsior .35 Auto \"Makarov\""
 	desc = "Old-designed pistol of space communists. Small and easily concealable. Uses .35 Auto rounds."
 	icon = 'icons/obj/guns/projectile/makarov.dmi'

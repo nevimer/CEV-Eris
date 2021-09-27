@@ -12,13 +12,13 @@
 	var/total_positions = 0					// How many players can be this job
 	var/spawn_positions = 0					// How many players can spawn in as this job
 	var/current_positions = 0				// How many players have this job
-	var/supervisors							// Supervisors, who this person answers to directly
+	var/supervisors = null					// Supervisors, who this person answers to directly
 	var/selection_color = "#ffffff"			// Selection screen color
 	var/list/alt_titles
 	var/list/datum/job_flavor/random_flavors = list(null)
 
 	var/req_admin_notify					// If this is set to 1, a text is printed to the player when jobs are assigned, telling him that he should let admins know that he has to disconnect.
-	var/department							// Does this position have a department tag?
+	var/department = null					// Does this position have a department tag?
 	var/head_position = FALSE				// Is this position Command?
 	var/department_account_access = FALSE	// Can this position access the department acount, even if they're not a head?
 	var/minimum_character_age = 0
@@ -70,6 +70,8 @@
 	for(var/perk in perks)
 		target.stats.addPerk(perk)
 
+	target.dna.stats = target.stats
+
 	return TRUE
 
 /datum/job/proc/add_additiional_language(var/mob/living/carbon/human/target)
@@ -94,14 +96,15 @@
 		return
 
 	//give them an account in the station database
-	if(H.job == "Vagabond") // Vagabound do not get an account.
-		H.mind.store_memory("As a freelancer you do not have a bank account.")
-		return
-	var/species_modifier = (H.species ? economic_species_modifier[H.species.type] : 2)
-	if(!species_modifier)
-		species_modifier = economic_species_modifier[/datum/species/human]
+	// var/species_modifier = (H.species ? economic_species_modifier[H.species.type] : 2) // OCCULUS EDIT - Nobles get 5x the starting balance (This bit is uneeded, as it wasn't used whatsoever)
+	// if(!species_modifier)
+	// 	species_modifier = economic_species_modifier[/datum/species/human]
 
-	var/money_amount = one_time_payment(species_modifier)
+	var/modifier = 1		// OCCULUS EDIT v
+	if(H.stats.getPerk(PERK_NOBLE)) // OCCULUS EDIT - Nobles get 5x the starting balance
+		modifier *= 5
+	
+	var/money_amount = one_time_payment(modifier)
 	var/datum/money_account/M = create_account(H.real_name, money_amount, null)
 	if(H.mind)
 		var/remembered_info = ""

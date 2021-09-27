@@ -122,7 +122,7 @@
 
 // attach a wire to a power machine - leads from the turf you are standing on
 //almost never called, overwritten by all power machines but terminal and generator
-/obj/machinery/power/attackby(obj/item/W, mob/user)
+/obj/machinery/power/attackby(obj/item/weapon/W, mob/user)
 
 	if(istype(W, /obj/item/stack/cable_coil))
 
@@ -287,7 +287,7 @@
 //power_source is a source of electricity, can be powercell, area, apc, cable, powernet or null
 //source is an object caused electrocuting (airlock, grille, etc)
 //No animations will be performed by this proc.
-/proc/electrocute_mob(mob/living/carbon/M, power_source, obj/source, siemens_coeff = 1, hands = TRUE)
+/proc/electrocute_mob(mob/living/carbon/M, power_source, obj/source, siemens_coeff = 1.0, hands = TRUE)
 	if (!M || !istype(M) || siemens_coeff == 0)
 		return	FALSE
 	if(istype(M.loc, /mob/living/exosuit))	return FALSE	//feckin mechs are dumb
@@ -300,11 +300,11 @@
 		power_source = Cable.powernet
 
 	var/datum/powernet/PN
-	var/obj/item/cell/cell
+	var/obj/item/weapon/cell/cell
 
 	if(istype(power_source,/datum/powernet))
 		PN = power_source
-	else if(istype(power_source,/obj/item/cell))
+	else if(istype(power_source,/obj/item/weapon/cell))
 		cell = power_source
 	else if(istype(power_source,/obj/machinery/power/apc))
 		var/obj/machinery/power/apc/apc = power_source
@@ -323,7 +323,7 @@
 
 	var/body_part = null
 	if(hands)
-		body_part = M.hand ? BP_L_ARM : BP_R_ARM
+		body_part = M.hand ? BP_L_HAND : BP_R_HAND
 	else
 		body_part = pick(BP_L_LEG, BP_R_LEG)
 
@@ -354,6 +354,6 @@
 	else if (istype(power_source,/datum/powernet))
 		var/drained_power = drained_energy/CELLRATE
 		drained_power = PN.draw_power(drained_power)
-	else if (istype(power_source, /obj/item/cell))
+	else if (istype(power_source, /obj/item/weapon/cell))
 		drained_energy = cell.use(drained_energy)
 	return drained_energy

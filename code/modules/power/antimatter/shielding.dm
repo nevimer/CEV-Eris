@@ -9,7 +9,7 @@
 
 /obj/machinery/am_shielding
 	name = "antimatter reactor section"
-	desc = "A device built using a plasma-based life-form with the ability to increase plasma's natural ability to react with neutrinos while reducing its combustibility."
+	desc = "A device built using a phoron-based life-form with the ability to increase phoron's natural ability to react with neutrinos while reducing its combustibility."
 
 	icon = 'icons/obj/machines/antimatter.dmi'
 	icon_state = "shield"
@@ -23,7 +23,7 @@
 	var/obj/machinery/power/am_control_unit/control_unit
 	var/processing = 0//To track if we are in the update list or not, we need to be when we are damaged and if we ever
 	var/stability = 100//If this gets low bad things tend to happen
-	var/efficiency = 1//How many cores this core counts for when doing power processing, plasma in the air and stability could affect this
+	var/efficiency = 1//How many cores this core counts for when doing power processing, phoron in the air and stability could affect this
 
 
 /obj/machinery/am_shielding/New(loc)
@@ -81,7 +81,7 @@
 /obj/machinery/am_shielding/Process()
 	if(!processing) . = PROCESS_KILL
 	//TODO: core functions and stability
-	//TODO: think about checking the airmix for plasma and increasing power output
+	//TODO: think about checking the airmix for phoron and increasing power output
 	return
 
 
@@ -91,11 +91,11 @@
 
 /obj/machinery/am_shielding/ex_act(severity)
 	switch(severity)
-		if(1)
+		if(1.0)
 			stability -= 80
-		if(2)
+		if(2.0)
 			stability -= 40
-		if(3)
+		if(3.0)
 			stability -= 20
 	check_stability()
 	return
@@ -194,7 +194,7 @@
 	spawn_tags = null
 
 /obj/item/device/am_shielding_container/attackby(obj/item/I, mob/user)
-	if(istype(I, /obj/item/tool/multitool) && istype(src.loc,/turf))
+	if(istype(I, /obj/item/weapon/tool/multitool) && istype(src.loc,/turf))
 		new/obj/machinery/am_shielding(src.loc)
 		qdel(src)
 		return

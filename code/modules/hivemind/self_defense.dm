@@ -49,7 +49,7 @@
 //Emmits an energy wave, that short stuns the enemies and damage them
 /datum/hivemind_sdp/shockwave
 	name = "Shockwave v0.3"
-	cooldown = 20 SECONDS
+	cooldown = 5 SECONDS
 	silent = TRUE
 	var/attack_range = 3
 
@@ -108,33 +108,26 @@
 	var/champion_path
 	var/amount = 1
 
-	var/squad = pick("defiler", "twins", "zeus", "swarm", "tyrant")
+	var/squad = pick("defiler", "twins", "zeus", "swarm")
 	switch(squad)
 		if("defiler")
 			champion_path = /mob/living/simple_animal/hostile/hivemind/mechiver
 			champ_names += "Defiler"
 		if("twins")
-			champ_names = list("Twin Alpha", "Twin Beta", "Twin Gamma")
-			amount = 3
+			champ_names = list("Twin A", "Twin B")
+			amount = 2
 			champion_path = /mob/living/simple_animal/hostile/hivemind/himan
 		if("zeus")
-			champ_names = list("Zeus", "Thor")
 			champion_path = /mob/living/simple_animal/hostile/hivemind/hiborg
-			amount = 2
+			champ_names += "Zeus"
 		if("swarm")
-			champ_names = list("Swarmer Slicer", "Swarmer Destroyer", "Swarmer Annihilater", "Swarmer Stinger", "Swarmer Cutter", "Swarmer Dicer")
-			amount = 6
+			champ_names = list("Swarmer Slicer", "Swarmer Destroyer", "Swarmer Annihilater", "Swarmer Stinger")
+			amount = 4
 			champion_path = /mob/living/simple_animal/hostile/hivemind/stinger
-		if("tyrant")
-			champion_path = /mob/living/simple_animal/hostile/megafauna/hivemind_tyrant
-		//Death of the tyrant = death of the hive. Players wont have to chase a bunch of nodes all over the ship around.
-		//Although this would be a problem if the players go after a undefended node, said node spawns the tyrant, tyrant dies, entire hive dies.
-		//Would be better if we could apply the death effect of the tyrant to the spawned champions.
-		//So for now, It has a chance of showing up
 	for(var/i = 1 to amount)
 		var/turf/spawn_loc = pick(places_to_spawn)
 		champion = new champion_path(spawn_loc)
-		champion.adjustMaxHealth(150)
+		champion.maxHealth += 150
 		champion.health += 150
 		champion.malfunction_chance = 0
 		champion.name = "Champion "
@@ -145,14 +138,15 @@
 		if(places_to_spawn.len > 1)
 			places_to_spawn -= spawn_loc
 	playsound(master, 'sound/effects/teleport.ogg', 80, 1)
-	champion.say(pick("You shall be destroyed!", "Fear me!", "Face me!", "You have lived for far too long!", "Die vermin!", "Fight me insect!", "There is no escape!"))
-	
+	champion.say(pick("You will be destroyed!", "Fear me!", "Face me!", "You has lived too long!", "Die vermin!"))
+
+
 
 //EMERGENCY JUMP
 //Teleports master to new location
 //Also disconnect wireweeds if this is node
 //Single usage
-/datum/hivemind_sdp/emergency_jump
+/*/datum/hivemind_sdp/emergency_jump
 	name = "wOrm-hOle"
 
 
@@ -180,4 +174,5 @@
 			bluespace_entropy(2, new_place, TRUE)
 			master.visible_message("[master] appeared from an air!")
 			playsound(master, 'sound/effects/cascade.ogg', 50, 1)
-			message_admins("Hivemind node [master] emergency run at \the [jumplink(new_place)]")
+			message_admins("Hivemind node [master] emergency run at \the [jumplink(new_place)]") */	//SYZYGY EMERGENCY DISABLE
+																									//TODO: REWORK OR REMOVE FULLY

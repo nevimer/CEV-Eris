@@ -29,22 +29,8 @@
 /obj/machinery/artifact,
 /turf/simulated/floor/reinforced,
 /area/template_noop)
-"q" = (
-/obj/structure/bed/chair/wood,
-/obj/spawner/credits/low_chance,
-/turf/simulated/floor/carpet,
-/area/template_noop)
-"E" = (
-/mob/living/simple_animal/hostile/roomba/boomba,
-/turf/simulated/floor/carpet,
-/area/template_noop)
 "I" = (
 /obj/structure/bed/chair/wood,
-/turf/simulated/floor/carpet,
-/area/template_noop)
-"R" = (
-/obj/structure/bed/chair/wood,
-/obj/spawner/credits/c1000,
 /turf/simulated/floor/carpet,
 /area/template_noop)
 
@@ -60,7 +46,7 @@ d
 (2,1,1) = {"
 b
 e
-R
+I
 f
 g
 g
@@ -79,14 +65,14 @@ b
 c
 f
 f
-E
+f
 h
 i
 d
 "}
 (5,1,1) = {"
 b
-q
+I
 I
 f
 h
@@ -96,7 +82,7 @@ b
 (6,1,1) = {"
 b
 I
-q
+I
 f
 g
 g

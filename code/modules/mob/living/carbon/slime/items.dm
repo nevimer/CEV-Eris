@@ -3,7 +3,7 @@
 	desc = "Goo extracted from a slime. Legends claim these to have \"magical powers\"."
 	icon = 'icons/mob/slimes.dmi'
 	icon_state = "grey slime extract"
-	force = 1
+	force = 1.0
 	w_class = ITEM_SIZE_TINY
 	throwforce = 0
 	throw_speed = 3
@@ -16,7 +16,7 @@
 	var/enhanced = 0 //has it been enhanced before?
 
 	attackby(obj/item/O, mob/user)
-		if(istype(O, /obj/item/slimesteroid2))
+		if(istype(O, /obj/item/weapon/slimesteroid2))
 			if(enhanced == 1)
 				to_chat(user, SPAN_WARNING(" This extract has already been enhanced!"))
 				return ..()
@@ -123,7 +123,7 @@
 
 ////Pet Slime Creation///
 
-/obj/item/slimepotion
+/obj/item/weapon/slimepotion
 	name = "docility potion"
 	desc = "A potent chemical mix that will nullify a slime's powers, causing it to become docile and tame."
 	icon = 'icons/obj/chemical.dmi'
@@ -157,7 +157,7 @@
 		pet.real_name = newname
 		qdel(src)
 
-/obj/item/slimepotion2
+/obj/item/weapon/slimepotion2
 	name = "advanced docility potion"
 	desc = "A potent chemical mix that will nullify a slime's powers, causing it to become docile and tame. This one is meant for adult slimes"
 	icon = 'icons/obj/chemical.dmi'
@@ -189,7 +189,7 @@
 		qdel(src)
 
 
-/obj/item/slimesteroid
+/obj/item/weapon/slimesteroid
 	name = "slime steroid"
 	desc = "A potent chemical mix that will cause a slime to generate more extract."
 	icon = 'icons/obj/chemical.dmi'
@@ -213,7 +213,7 @@
 		M.cores = 3
 		qdel(src)
 
-/obj/item/slimesteroid2
+/obj/item/weapon/slimesteroid2
 	name = "extract enhancer"
 	desc = "A potent chemical mix that will give a slime extract three uses."
 	icon = 'icons/obj/chemical.dmi'

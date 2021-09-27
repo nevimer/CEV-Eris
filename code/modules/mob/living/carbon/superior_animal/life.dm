@@ -7,17 +7,21 @@
 
 	return 1
 
-/*
-
 /mob/living/carbon/superior_animal/Life()
 	. = ..()
 
 	objectsInView = null
 
+	if(client || AI_inactive)
+		return
+
 	//CONSCIOUS UNCONSCIOUS DEAD
 
 	if (!check_AI_act())
 		return
+
+	if (!check_gravity() && !allow_spacemove())	// OCCULUS EDIT: if there is no gravity and spacemove is disallowed...
+		walk(src, 0)							// 				 stop movement.
 
 	switch(stance)
 		if(HOSTILE_STANCE_IDLE)
@@ -35,11 +39,14 @@
 			stance = HOSTILE_STANCE_ATTACKING
 			set_glide_size(DELAY2GLIDESIZE(move_to_delay))
 			if(!kept_distance)
-				walk_to(src, target_mob, 1, move_to_delay)
+				handle_walk_to(target_mob) // OCCULUS EDIT: Move to shared function
 			else
 				step_to(src, target_mob, kept_distance)
 
 		if(HOSTILE_STANCE_ATTACKING)
+
+			handle_walk_to(target_mob) // OCCULUS EDIT: Move to shared function
+
 			if(destroy_surroundings)
 				destroySurroundings()
 
@@ -48,18 +55,36 @@
 	//random movement
 	if(wander && !stop_automated_movement && !anchored)
 		if(isturf(src.loc) && !resting && !buckled && canmove)
-			turns_since_move++
-			if(turns_since_move >= turns_per_move)
-				if(!(stop_automated_movement_when_pulled && pulledby))
-					var/moving_to = pick(cardinal)
-					set_dir(moving_to)
-					step_glide(src, moving_to, DELAY2GLIDESIZE(0.5 SECONDS))
-					turns_since_move = 0
+			// OCCULUS EDIT: Make superior animals obey gravity
+			if (check_gravity())
+				handle_wander()
+			else
+				if (allow_spacemove())
+					handle_wander()
+			// OCCULUS EDIT END
 
 	//Speaking
 	if(speak_chance && prob(speak_chance))
 		visible_emote(emote_see)
-*/
+
+// OCCULUS EDIT: Make angry superior animals obey gravity. avoids repeating code
+/mob/living/carbon/superior_animal/proc/handle_walk_to(target_mob)
+	if (check_gravity())	// yes gravity
+		walk_to(src, target_mob, 1, move_to_delay)
+	else	// no gravity
+		if (allow_spacemove())
+			walk_to(src, target_mob, 1, move_to_delay)
+
+// OCCULUS EDIT: handle_wander() in a separate function so as to avoid repeating code
+/mob/living/carbon/superior_animal/proc/handle_wander()
+	turns_since_move++
+	if(turns_since_move >= turns_per_move)
+		if(!(stop_automated_movement_when_pulled && pulledby))
+			var/moving_to = pick(cardinal)
+			set_dir(moving_to)
+			step_glide(src, moving_to, DELAY2GLIDESIZE(0.5 SECONDS))
+			turns_since_move = 0
+// OCCULUS EDIT END
 
 /mob/living/carbon/superior_animal/handle_chemicals_in_body()
 	if(reagents)

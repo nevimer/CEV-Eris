@@ -1,10 +1,10 @@
-/obj/machinery/autodoc
+/*/obj/machinery/autodoc
 	name = "Autodoc"
 	icon = 'icons/obj/autodoc.dmi'
 	icon_state = "powered_off"
 	density = TRUE
 	anchored = TRUE
-//	circuit = /obj/item/electronics/circuitboard/autodoc
+	circuit = /obj/item/weapon/electronics/circuitboard/autodoc
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 60
 	active_power_usage = 10000
@@ -81,9 +81,6 @@
 	src.occupant = L
 	src.add_fingerprint(usr)
 	if(stat & (NOPOWER|BROKEN))
-		update_icon()
-		return
-	else
 		autodoc_processor.set_patient(L)
 		ui_interact(L)
 		update_use_power(2)
@@ -133,6 +130,7 @@
 		return
 	if(occupant)
 		locked = autodoc_processor.active
+		ui_interact(occupant)
 	update_icon()
 
 /obj/machinery/autodoc/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FORCE_OPEN, var/datum/topic_state/state = GLOB.default_state)
@@ -148,3 +146,4 @@
 		icon_state = "powered_on"
 	if(autodoc_processor.active)
 		icon_state = "active"
+*/

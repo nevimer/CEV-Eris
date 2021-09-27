@@ -12,7 +12,7 @@
 #define listequal(A, B) (A.len == B.len && !length(A^B))
 
 #define LAZYINITLIST(L) if (!L) L = list()
-
+// Adds I to L, initalizing L if necessary, if I is not already in L
 #define LAZYLEN(L) length(L)
 #define UNSETEMPTY(L) if (L && !LAZYLEN(L)) L = null
 #define LAZYREMOVE(L, I) if(L) { L -= I; if(!LAZYLEN(L)) { L = null; } }
@@ -258,7 +258,7 @@
 	total = rand() * total
 	for (item in L)
 		total -= L[item]
-		if (total <= 0)
+		if (total <= 0 && L[item] > 0)//Occulus Edit: If we have a weight of zero or lower, do not pick that option.
 			return item
 
 //Picks a number of elements from a list based on weight.
@@ -939,7 +939,7 @@ Checks if a list has the same entries and values as an element of big.
 	. = 0
 	if(istext(L))
 		L = try_json_decode(L)
-	if(length(L))
+	else if(length(L))
 		. += length(L)
 		for(var/list/i in L)
 			if(islist(i))

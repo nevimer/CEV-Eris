@@ -457,7 +457,6 @@
 	amount = 5
 	max_amount = 5
 	rarity_value = 20
-	spawn_tags = SPAWN_TAG_MEDICINE_COMMON
 
 /obj/item/stack/medical/splint/attack(mob/living/carbon/M, mob/living/user)
 	if(..())
@@ -472,7 +471,7 @@
 			return TRUE
 
 		var/limb = affecting.name
-		if(!(affecting.organ_tag in list(BP_R_ARM, BP_L_ARM, BP_R_LEG, BP_L_LEG, BP_GROIN, BP_HEAD, BP_CHEST)))
+		if(!(affecting.organ_tag in list(BP_L_ARM, BP_R_ARM, BP_L_HAND, BP_R_HAND, BP_L_LEG, BP_R_LEG, BP_L_FOOT, BP_R_FOOT)))	//Eclipse edit.
 			to_chat(user, SPAN_DANGER("You can't apply a splint there!"))
 			return
 		if(affecting.status & ORGAN_SPLINTED)

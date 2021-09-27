@@ -1,7 +1,7 @@
 // SEE code/modules/materials/materials.dm FOR DETAILS ON INHERITED DATUM.
 // This class of weapons takes force and appearance data from a material datum.
 // They are also fragile based on material data and many can break/smash apart.
-/obj/item/material
+/obj/item/weapon/material
 	health = 10
 	hitsound = 'sound/weapons/bladeslice.ogg'
 	gender = NEUTER
@@ -10,9 +10,8 @@
 	w_class = ITEM_SIZE_NORMAL
 	sharp = FALSE
 	edge = FALSE
-	bad_type = /obj/item/material
+	bad_type = /obj/item/weapon/material
 	spawn_tags = SPAWN_TAG_WEAPON
-	icon = 'icons/obj/weapons.dmi'
 	var/applies_material_colour = 1
 	var/unbreakable
 	var/force_divisor = 1
@@ -22,7 +21,7 @@
 	var/drops_debris = 1
 	var/furniture_icon  //icon states for non-material colorable overlay, i.e. handles
 
-/obj/item/material/New(var/newloc, var/material_key)
+/obj/item/weapon/material/New(var/newloc, var/material_key)
 	..(newloc)
 	if(!material_key)
 		material_key = default_material
@@ -37,10 +36,10 @@
 			if(!isnull(matter[material_type]))
 				matter[material_type] = round(max(1, matter[material_type] * force_divisor)) // current system uses rounded values, so no less than 1.
 
-/obj/item/material/get_material()
+/obj/item/weapon/material/get_material()
 	return material
 
-/obj/item/material/proc/update_force()
+/obj/item/weapon/material/proc/update_force()
 	if(edge || sharp)
 		force = material.get_edge_damage()
 	else
@@ -50,7 +49,7 @@
 	//spawn(1)
 	//	world << "[src] has force [force] and throwforce [throwforce] when made from default material [material.name]"
 
-/obj/item/material/proc/set_material(var/new_material)
+/obj/item/weapon/material/proc/set_material(var/new_material)
 	material = get_material_by_name(new_material)
 	if(!material)
 		qdel(src)
@@ -63,11 +62,11 @@
 			START_PROCESSING(SSobj, src)
 		update_force()
 
-/obj/item/material/Destroy()
+/obj/item/weapon/material/Destroy()
 	STOP_PROCESSING(SSobj, src)
 	. = ..()
 
-/obj/item/material/apply_hit_effect()
+/obj/item/weapon/material/apply_hit_effect()
 	..()
 	if(!unbreakable)
 		if(material.is_brittle())
@@ -76,11 +75,11 @@
 			health--
 		check_health()
 
-/obj/item/material/proc/check_health(var/consumed)
+/obj/item/weapon/material/proc/check_health(var/consumed)
 	if(health<=0)
 		shatter(consumed)
 
-/obj/item/material/proc/shatter(var/consumed)
+/obj/item/weapon/material/proc/shatter(var/consumed)
 	var/turf/T = get_turf(src)
 	T.visible_message(SPAN_DANGER("\The [src] [material.destruction_desc]!"))
 	if(isliving(loc))
@@ -91,7 +90,7 @@
 	qdel(src)
 /*
 Commenting this out pending rebalancing of radiation based on small objects.
-/obj/item/material/Process()
+/obj/item/weapon/material/Process()
 	if(!material.radioactivity)
 		return
 	for(var/mob/living/L in range(1,src))
@@ -100,17 +99,17 @@ Commenting this out pending rebalancing of radiation based on small objects.
 
 /*
 // Commenting this out while fires are so spectacularly lethal, as I can't seem to get this balanced appropriately.
-/obj/item/material/fire_act(datum/gas_mixture/air, exposed_temperature, exposed_volume)
+/obj/item/weapon/material/fire_act(datum/gas_mixture/air, exposed_temperature, exposed_volume)
 	TemperatureAct(exposed_temperature)
 
 // This might need adjustment. Will work that out later.
-/obj/item/material/proc/TemperatureAct(temperature)
+/obj/item/weapon/material/proc/TemperatureAct(temperature)
 	health -= material.combustion_effect(get_turf(src), temperature, 0.1)
 	check_health(1)
 
-/obj/item/material/attackby(obj/item/W as obj, mob/user as mob)
-	if(istype(W,/obj/item/tool/weldingtool))
-		var/obj/item/tool/weldingtool/WT = W
+/obj/item/weapon/material/attackby(obj/item/weapon/W as obj, mob/user as mob)
+	if(istype(W,/obj/item/weapon/tool/weldingtool))
+		var/obj/item/weapon/tool/weldingtool/WT = W
 		if(material.ignition_point && WT.remove_fuel(0, user))
 			TemperatureAct(150)
 	else

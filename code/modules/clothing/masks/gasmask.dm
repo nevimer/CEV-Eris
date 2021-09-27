@@ -1,8 +1,6 @@
-#define GAS_MASK_SANITY_COEFF_BUFF 1.7
-
 /obj/item/clothing/mask/gas
 	name = "gas mask"
-	desc = "A face-covering mask that can be connected to an air supply. Filters harmful gases from the air and the smell of roaches."
+	desc = "A face-covering mask that can be connected to an air supply. Filters harmful gases from the air."
 	icon_state = "gas_alt"
 	item_flags = BLOCK_GAS_SMOKE_EFFECT | AIRTIGHT
 	flags_inv = HIDEEARS|HIDEEYES|HIDEFACE
@@ -12,8 +10,9 @@
 	gas_transfer_coefficient = 0.01
 	permeability_coefficient = 0.01
 	siemens_coefficient = 0.9
+	rarity_value = 10
 	var/gas_filter_strength = 1			//For gas mask filters
-	var/list/filtered_gases = list("plasma", "sleeping_agent")
+	var/list/filtered_gases = list("phoron", "sleeping_agent")
 	armor = list(
 		melee = 0,
 		bullet = 0,
@@ -38,14 +37,10 @@
 
 	return filtered
 
-/obj/item/clothing/mask/gas/New()
-	..()
-	AddComponent(/datum/component/clothing_sanity_protection, GAS_MASK_SANITY_COEFF_BUFF)
-
 //Plague Dr suit can be found in clothing/suits/bio.dm
 /obj/item/clothing/mask/gas/plaguedoctor
 	name = "plague doctor mask"
-	desc = "A modernised version of the classic design, this mask will not only filter out plasma but it can also be connected to an air supply."
+	desc = "A modernised version of the classic design, this mask will not only filter out phoron but it can also be connected to an air supply."
 	icon_state = "plaguedoctor"
 	item_state = "gas_mask"
 	body_parts_covered = HEAD|FACE|EYES
@@ -58,13 +53,15 @@
 	siemens_coefficient = 0.7
 	body_parts_covered = FACE|EYES
 	price_tag = 50
+	rarity_value = 100
 
 /obj/item/clothing/mask/gas/ihs
-	name = "Ironhammer gasmask"
+	name = "Aegis gasmask"
 	icon_state = "IHSgasmask"
 	siemens_coefficient = 0.7
 	body_parts_covered = FACE|EYES
 	price_tag = 40
+	rarity_value = 20
 
 /obj/item/clothing/mask/gas/syndicate
 	name = "tactical mask"
@@ -72,6 +69,7 @@
 	icon_state = "swat"
 	siemens_coefficient = 0.7
 	price_tag = 50
+	rarity_value = 100
 	spawn_blacklisted = TRUE
 
 /obj/item/clothing/mask/gas/artist_hat
@@ -97,6 +95,7 @@
 	desc = "A true prankster's facial attire. A clown is incomplete without their wig and mask."
 	icon_state = "clown"
 	item_state = "clown_hat"
+	rarity_value = 20
 	style = STYLE_NONE
 
 /obj/item/clothing/mask/gas/clown_hat/attack_self(mob/user)
@@ -158,8 +157,10 @@
 	desc = "Twoooo!"
 	icon_state = "owl"
 	body_parts_covered = HEAD|FACE|EYES
+	rarity_value = 100
 
 /obj/item/clothing/mask/gas/german
 	name = "Oberth Republic gas mask"
 	icon_state = "germangasmask"
+	rarity_value = 100
 

@@ -6,6 +6,8 @@
 	matter = list(MATERIAL_BIOMATTER = 5)
 	price_tag = 200
 	spawn_blacklisted = FALSE
+	spawn_frequency = 10
+	rarity_value = 10
 	spawn_tags = SPAWN_TAG_HOLSTER
 	var/obj/item/holstered
 
@@ -34,7 +36,7 @@
 	if(!holstered)
 		return
 
-	if(istype(user.get_active_hand(),/obj))
+	if(istype(user.get_active_hand(),/obj) && istype(user.get_inactive_hand(),/obj))
 		to_chat(user, SPAN_WARNING("You need an empty hand to draw \the [holstered]!"))
 	else
 		if(user.a_intent == I_HURT)
@@ -47,7 +49,7 @@
 				SPAN_NOTICE("[user] draws \the [holstered], pointing it at the ground."),
 				SPAN_NOTICE("You draw \the [holstered], pointing it at the ground.")
 				)
-		user.put_in_active_hand(holstered)
+		user.put_in_hands(holstered)
 		holstered.add_fingerprint(user)
 		w_class = initial(w_class)
 		clear_holster()

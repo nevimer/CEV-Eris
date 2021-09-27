@@ -1,27 +1,42 @@
 /mob/living/carbon/human
-	//first and last name
+/*	//first and last name
 	var/first_name
 	var/last_name
+*/		//Eclipse refactor.
+	var/family_name		//Replacement.
 
 	//Hair colour and style
-	var/hair_color = "#000000"
+	var/r_hair = 0
+	var/g_hair = 0
+	var/b_hair = 0
 	var/h_style = "Bald"
 
 	//Facial hair colour and style
-	var/facial_color = "#000000"
+	var/r_facial = 0
+	var/g_facial = 0
+	var/b_facial = 0
 	var/f_style = "Shaved"
 
+	var/wagging = 0 //UGH.
+
 	//Eye colour
-	var/eyes_color = "#000000"
+	var/r_eyes = 0
+	var/g_eyes = 0
+	var/b_eyes = 0
 
 	var/s_tone = 0	//Skin tone
+	var/s_base = "" //Skin base
+
 
 	//Skin colour
-	var/skin_color = "#000000"
+	var/r_skin = 0
+	var/g_skin = 0
+	var/b_skin = 0
 
-	var/size_multiplier = 1 //multiplier for the mob's icon size
 	var/damage_multiplier = 1 //multiplies melee combat damage
 	var/icon_update = 1 //whether icon updating shall take place
+
+	var/list/body_markings = list()
 
 	var/lip_style	//no lipstick by default- arguably misleading, as it could be used for general makeup
 
@@ -61,6 +76,7 @@
 	var/list/bad_external_organs = list()// organs we check until they are good.
 
 	var/xylophone = 0 //For the spoooooooky xylophone cooldown
+	var/flapping = 0
 
 	var/mob/remoteview_target
 	var/remoteviewer = FALSE //Acts as an override for remoteview_target viewing, see human/life.dm: handle_vision()
@@ -97,3 +113,5 @@
 	var/language_blackout = 0
 	var/suppress_communication = 0
 
+	var/genetic_corruption = 0  //Eclipse add - Mekhanite's vat genetic corruption
+	var/stable_genes = FALSE //Eclipse add - Genetic stability

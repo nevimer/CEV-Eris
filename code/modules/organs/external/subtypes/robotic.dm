@@ -1,6 +1,7 @@
 /obj/item/organ/external/robotic
 	name = "robotic"
-	force_icon = 'icons/mob/human_races/cyberlimbs/generic.dmi'
+	force_icon = 'icons/mob/human_races/cyberlimbs/unbranded/unbranded_alt1.dmi'
+	icon = 'icons/mob/human_races/cyberlimbs/unbranded/unbranded_alt1.dmi'
 	desc = "A skeletal limb wrapped in pseudomuscles, with a low-conductivity case."
 	dislocated = -1
 	nature = MODIFICATION_SILICON
@@ -11,14 +12,33 @@
 	var/min_malfunction_damage = 20 // Any more damage than that and you start getting nasty random malfunctions
 
 /obj/item/organ/external/robotic/get_cache_key()
-	return "Robotic[model]"
+///// OCCULUS EDIT START - delete the laggy old markings system
+	var/part_key = "Robotic[model]"
+	for(var/M in markings)
+		part_key += "[M][markings[M]["color"]]"
+	return part_key
+///// OCCULUS EDIT END /////
 
 /obj/item/organ/external/robotic/on_update_icon()
 	var/gender = "m"
+	overlays.Cut()	// OCCULUS EDIT - Make sure we're not stacking up redundant overlays
 	if(owner)
 		gender = owner.gender == FEMALE ? "f" : "m"
-	icon_state = "[organ_tag]_[gender]"
+	var/key = "[organ_tag]_[gender]"
+	if(key in icon_states(force_icon))
+		icon_state = key
+	else
+		icon_state = "[organ_tag]"
 	mob_icon = icon(force_icon, icon_state)
+///// OCCULUS EDIT START - delete the laggy old markings system
+	for(var/M in markings)
+		var/datum/sprite_accessory/marking/mark_style = markings[M]["datum"]
+		var/icon/mark_s = new/icon("icon" = mark_style.icon, "icon_state" = "[mark_style.icon_state]-[organ_tag]")
+		mark_s.Blend(markings[M]["color"], mark_style.color_blend_mode)
+		add_overlay(mark_s) //So when it's not on your body, it has icons
+		mob_icon.Blend(mark_s, ICON_OVERLAY) //So when it's on your body, it has icons
+		//icon_cache_key += "[M][markings[M]["color"]]"	//This is implemented in get_cache_keys() instead
+///// OCCULUS EDIT END /////
 	icon = mob_icon
 	return mob_icon
 
@@ -66,6 +86,9 @@
 	w_class = ITEM_SIZE_SMALL
 	bad_type = /obj/item/organ/external/robotic/tiny
 
+/obj/item/organ/external/robotic/New()
+	. = ..()
+
 
 /obj/item/organ/external/robotic/l_arm
 	default_description = /datum/organ_description/arm/left
@@ -81,3 +104,25 @@
 
 /obj/item/organ/external/robotic/groin
 	default_description = /datum/organ_description/groin
+
+/obj/item/organ/external/robotic/head
+	default_description = /datum/organ_description/head
+
+/obj/item/organ/external/robotic/chest
+	default_description = /datum/organ_description/chest
+
+/obj/item/organ/external/robotic/l_hand
+	default_description = /datum/organ_description/hand/left
+	w_class = ITEM_SIZE_SMALL
+
+/obj/item/organ/external/robotic/r_hand
+	default_description = /datum/organ_description/hand/right
+	w_class = ITEM_SIZE_SMALL
+
+/obj/item/organ/external/robotic/l_foot
+	default_description = /datum/organ_description/foot/left
+	w_class = ITEM_SIZE_SMALL
+
+/obj/item/organ/external/robotic/r_foot
+	default_description = /datum/organ_description/foot/right
+	w_class = ITEM_SIZE_SMALL

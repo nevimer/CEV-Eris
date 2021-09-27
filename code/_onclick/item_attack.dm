@@ -55,9 +55,9 @@ avoid code duplication. This includes items that may sometimes act as a standard
 
 /obj/proc/nt_sword_attack(obj/item/I, mob/living/user)//for sword of truth
 	. = FALSE
-	if(!istype(I, /obj/item/tool/sword/nt_sword))
+	if(!istype(I, /obj/item/weapon/tool/sword/nt_sword))
 		return FALSE
-	var/obj/item/tool/sword/nt_sword/NT = I
+	var/obj/item/weapon/tool/sword/nt_sword/NT = I
 	if(NT.isBroken)
 		return FALSE
 	if(!(NT.flags & NOBLUDGEON))
@@ -70,7 +70,7 @@ avoid code duplication. This includes items that may sometimes act as a standard
 		user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
 		if(prob(10))
 			for(var/mob/living/carbon/human/H in viewers(user))
-				SEND_SIGNAL(H, SWORD_OF_TRUTH_OF_DESTRUCTION, src)
+//				SEND_SIGNAL(H, SWORD_OF_TRUTH_OF_DESTRUCTION, src)
 			qdel(src)
 		. = TRUE
 

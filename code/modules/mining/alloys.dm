@@ -11,11 +11,11 @@
 /datum/alloy/plasteel
 	metaltag = "plasteel"
 	requires = list(
-		"plasma" = 1,
+		"phoron" = 1,
 		"carbon" = 2,
 		"hematite" = 2
 		)
-	product_mod = 0.3
+	product_mod = 0.4 //Occulus Edit: Slightly bumping up Plasteel production to 2 sheets per tick.
 	product = /obj/item/stack/material/plasteel
 
 /datum/alloy/steel
@@ -27,9 +27,9 @@
 	product = /obj/item/stack/material/steel
 
 /datum/alloy/borosilicate
-	metaltag = MATERIAL_PLASMAGLASS
+	metaltag = MATERIAL_PHORONGLASS
 	requires = list(
-		"plasma" = 1,
+		"phoron" = 1,
 		"sand" = 2
 		)
-	product = /obj/item/stack/material/glass/plasmaglass
+	product = /obj/item/stack/material/glass/phoronglass
