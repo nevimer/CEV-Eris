@@ -6,7 +6,11 @@
 	if(join_motd)
 		to_chat(src, "<div class=\"motd\">[join_motd]</div>")
 	to_chat(src, "<div class='info'>Game ID: <div class='danger'>[game_id]</div></div>")
-
+	if(client)
+		if(client.view_size)
+			client.view_size.resetToDefault() // Resets the client.view in case it was changed.
+		else
+			client.change_view("21x15")
 	if(!mind)
 		mind = new /datum/mind(key)
 		mind.active = 1

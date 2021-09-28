@@ -1312,7 +1312,7 @@ obj/screen/fire/DEADelize()
 
 
 /obj/screen/glasses_overlay/Process()
-	update_icon()
+//	update_icon()
 	return
 
 /obj/screen/glasses_overlay/on_update_icon()
